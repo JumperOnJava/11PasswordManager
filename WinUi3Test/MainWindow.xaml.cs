@@ -65,6 +65,7 @@ namespace WinUi3Test
                 InputNonClientPointerSource.GetForWindowId(this.AppWindow.Id);
             nonClientInputSrc.SetRegionRects(NonClientRegionKind.Passthrough, rectArray);
         }
+
     }
 
 }

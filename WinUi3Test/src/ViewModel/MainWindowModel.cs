@@ -1,8 +1,10 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using WinUi3Test;
 using WinUi3Test.src;
@@ -10,56 +12,65 @@ using WinUi3Test.src.Storage;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
 
-public class MainWindowModel : INotifyPropertyChanged, WindowModel
+public class MainWindowModel : PropertyChangable, WindowModel
 {
-    private readonly Frame navigator;
+    public readonly Frame navigator;
     private Storage storage;
 
-    private ObservableCollection<Tag> tags;
-    public ObservableCollection<Tag> Tags { get => tags; }
+    private ObservableCollection<UiTag> tags;
+    public ObservableCollection<UiTag> Tags { get => tags; }
 
-    private ObservableCollection<UiAccount> accounts;
-    public ObservableCollection<UiAccount> Accounts { get => accounts; }
-
-    private UiAccount? currentEditAccount = null;
-    public UiAccount? CurrentEditAccount
+    private ObservableCollection<Account> accounts;
+    public ObservableCollection<Account> Accounts { get => accounts; }
+    public ObservableCollection<UiAccountModel> displayAccounts;
+    public ObservableCollection<UiAccountModel> DisplayAccounts { get => displayAccounts; }
+    public bool isPaneOpen = true;
+    public bool IsPaneOpen
     {
-        get => currentEditAccount;
-        set
+        get => isPaneOpen; set
         {
-            currentEditAccount = value;
-            if(currentEditAccount != null && navigator!=null)
-            {
-                 navigator.Navigate(typeof(PasswordEdit));
-            }
-            else
-            {
-                navigator.GoBack();
-            }
-            onPropertyChanged("CurrentEditAccount");
-            onPropertyChanged("CurrentAccountBeingEdited");
+            isPaneOpen = value;
+            onPropertyChanged("IsPaneOpen");
         }
     }
-    public bool CurrentAccountBeingEdited {
-        get
-        {
-            return currentEditAccount != null;
-        }
-    }
+
+    private UiAccountModel? currentEditAccount = null;
     public MainWindowModel(Storage storage,Frame navigator)
     {
         this.navigator = navigator;
         this.storage = storage;
-        this.tags = new(storage.Tags);
-        this.accounts = new(storage.Accounts.Map(e => new UiAccountImpl(this,e.TargetApp, e.Username, e.Password)));
-        this.CurrentEditAccount = accounts[0];
+        this.tags = new(storage.Tags.Map((e)=>new UiTag(e)));
+        this.accounts = new(storage.Accounts);
+        this.displayAccounts = new ObservableCollection<UiAccountModel>();
         Tags.CollectionChanged += (_,_) => onPropertyChanged("Tags");
-        Accounts.CollectionChanged += (_,_) => onPropertyChanged("Accounts");
+        Accounts.CollectionChanged += (_, _) => FilterAccounts();
+        FilterAccounts();
     }
-    public event PropertyChangedEventHandler PropertyChanged;
-    private void onPropertyChanged([CallerMemberName] string prop = "")
+
+    internal void FilterAccounts()
     {
-        if (PropertyChanged != null)
-            PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        DisplayAccounts.Clear();
+        foreach (var account in Accounts)
+        {
+            if (isFiltered(account))
+            {
+                DisplayAccounts.Add(new UiAccountModel(navigator, account));
+            }
+        }
+    }
+
+    private bool isFiltered(Account account)
+    {
+        foreach (var tag in Tags)
+        {
+            if (tag.Selected)
+            {
+                if (!tag.matches(account))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

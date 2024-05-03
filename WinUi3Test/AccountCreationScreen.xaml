@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinUi3Test.AccountCreationScreen"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinUi3Test"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Grid DataContext="{x:Bind model.Account}" Background="Transparent">
+        <Grid Width="570">
+            <StackPanel HorizontalAlignment="Left" Width="200">
+                <TextBlock>App</TextBlock>
+                <AppBarSeparator Height="5"/>
+                <TextBox PlaceholderText="" Text="{Binding TargetApp,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <AppBarSeparator/>
+                <TextBlock>Username</TextBlock>
+                <AppBarSeparator Height="5"/>
+                <TextBox PlaceholderText="" Text="{Binding Username,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <AppBarSeparator/>
+                <TextBlock>Email</TextBlock>
+                <AppBarSeparator Height="5"/>
+                <TextBox PlaceholderText="" Text="{Binding Email,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <AppBarSeparator/>
+                <TextBlock>Password</TextBlock>
+                <AppBarSeparator Height="5"/>
+                <PasswordBox Password="{Binding Password,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" Width="256">
+                <ColorPicker
+                    Margin="-72,0,0,0"
+                    x:Name="ColorPickerRing"
+                    ColorChanged="ColorPickerRing_ColorChanged"
+      ColorSpectrumShape="Ring"
+      IsMoreButtonVisible="False"
+      IsColorSliderVisible="False"
+      IsColorChannelTextInputVisible="False"
+      IsHexInputVisible="False"
+      IsAlphaEnabled="False"
+      IsAlphaSliderVisible="True"
+      IsAlphaTextInputVisible="True" />
+                <Grid CornerRadius="4" Width="256" Margin="-144,-20,0,0" Height="40">
+                    <Rectangle Fill="{Binding BaseColorBrush,UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+                
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

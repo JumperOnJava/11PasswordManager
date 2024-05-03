@@ -13,6 +13,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using WinUi3Test.src.ViewModel;
+using WinUi3Test.src.ViewModel.AccountDefault;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,13 +25,13 @@ namespace WinUi3Test
     /// </summary>
     public sealed partial class PasswordEdit : Page
     {
-        public UiAccount model;
+        private AccountOperation target;
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             try
             {
-                this.model = e.Parameter as UiAccount;
+                target = e.Parameter as AccountOperation;
             }
             catch (InvalidCastException ex)
             {
@@ -40,6 +41,15 @@ namespace WinUi3Test
         public PasswordEdit()
         {
             this.InitializeComponent();
+        }
+
+        private void Save(object sender, RoutedEventArgs e)
+        {
+            target.Finish(true);
+        }
+        private void Cancel(object sender, RoutedEventArgs e)
+        {
+            target.Finish(false);
         }
     }
 }

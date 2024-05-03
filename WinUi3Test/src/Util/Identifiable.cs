@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,5 +10,6 @@ namespace WinUi3Test.src.Util
     public interface Identifiable
     {
         public long Identifier { get; }
+
     }
 }
