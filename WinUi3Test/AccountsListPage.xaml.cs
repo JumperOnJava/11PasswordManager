@@ -29,8 +29,6 @@ namespace WinUi3Test
     public sealed partial class AccountsListPage : Page
     {
         private MainWindowModel model;
-
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -100,14 +98,13 @@ namespace WinUi3Test
             var dialog = new ContentDialog();
             dialog.XamlRoot = this.XamlRoot;
             var newAccount = AccountOperation.Start();
-            var screen = new AccountCreationScreen(dialog,newAccount);
+            var screen = new AccountCreationScreen(dialog,newAccount,new List<Tag>(model.Tags));
             newAccount.onFinished += (account) =>
             {
-                if (account != null)
-                    model.Accounts.Add(account);
+                    if (account != null) 
+                        model.Accounts.Add(account);
             };
         }
-
         private void ShowPane_Click(object sender, RoutedEventArgs e)
         {
             model.IsPaneOpen = true;
@@ -115,16 +112,6 @@ namespace WinUi3Test
         private void Refilter()
         {
             model.FilterAccounts();
-        }
-
-        private void AccountSelector_DropCompleted(UIElement sender, DropCompletedEventArgs args)
-        {
-
-        }
-
-        private void AccountSelector_DragOver(object sender, DragEventArgs e)
-        {
-            e.AcceptedOperation = DataPackageOperation.Move;
         }
     }
 }

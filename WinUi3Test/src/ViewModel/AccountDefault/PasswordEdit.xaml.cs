@@ -1,37 +1,24 @@
-using Microsoft.UI.Xaml;
+    using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using WinUi3Test.src.Storage;
+using WinUi3Test.src.Ui;
+using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
-using WinUi3Test.src.ViewModel.AccountDefault;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace WinUi3Test
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class PasswordEdit : Page
     {
-        private AccountOperation target;
+        private PasswordEditModel model;
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             try
             {
-                target = e.Parameter as AccountOperation;
+                model.Target = e.Parameter as AccountOperation;
+                ColorPickerRing.Color = model.Target.Colors.BaseColor.asWinColor;
             }
             catch (InvalidCastException ex)
             {
@@ -40,16 +27,70 @@ namespace WinUi3Test
         }
         public PasswordEdit()
         {
-            this.InitializeComponent();
+            model = new PasswordEditModel();
+            InitializeComponent();
         }
 
-        private void Save(object sender, RoutedEventArgs e)
+        private async void Save(object sender, RoutedEventArgs e)
         {
-            target.Finish(true);
+            var dialog = new ContentDialog();
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Title = "Save changes?";
+            dialog.PrimaryButtonText = "Save";
+            dialog.SecondaryButtonText = "Cancel";
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                model.Target.Finish(true);
+            }
         }
-        private void Cancel(object sender, RoutedEventArgs e)
+        private async void Cancel(object sender, RoutedEventArgs e)
         {
-            target.Finish(false);
+            var dialog = new ContentDialog();
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Title = "Cancel changes?";
+            dialog.PrimaryButtonText = "Confirm";
+            dialog.SecondaryButtonText = "Cancel";
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                model.Target.Finish(false);
+            }
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            model.PasswordRevealMode = ((bool)PasswordCheck.IsChecked) ? PasswordRevealMode.Visible : PasswordRevealMode.Hidden; 
+        }
+
+        private void ColorPickerRing_OnColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+            model.Target.Colors = new ColorsScheme(new AdvColor(sender.Color));
+        }
+    }
+
+    internal class PasswordEditModel : PropertyChangable
+    {
+        private AccountOperation target;
+
+        private PasswordRevealMode passwordRevealMode;
+        public PasswordRevealMode PasswordRevealMode
+        {
+            get => passwordRevealMode; set
+            {
+                passwordRevealMode = value;
+                onPropertyChanged("PasswordRevealMode");
+            }
+        }
+        public AccountOperation Target
+        {
+            get => target; set
+            {
+                target = value;
+                onPropertyChanged("Target");
+            }
         }
     }
 }

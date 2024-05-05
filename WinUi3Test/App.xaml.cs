@@ -15,6 +15,9 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics;
+using Windows.UI.ViewManagement;
+using Microsoft.UI.Windowing;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -42,9 +45,19 @@ namespace WinUi3Test
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             m_window = new MainWindow();
+
+            m_window.SizeChanged += (sender,e) =>
+            {
+                e.Handled = true;
+                m_window.AppWindow.Resize(new SizeInt32(
+                    Math.Max(600,m_window.AppWindow.Size.Width),
+                    Math.Max(600,m_window.AppWindow.Size.Height)
+                ));
+            };
+            
             m_window.Activate();
         }
-
+        
         private Window m_window;
     }
 }

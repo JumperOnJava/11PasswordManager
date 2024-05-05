@@ -8,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
+using Microsoft.UI.Xaml;
 using WinUi3Test.src.Storage;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
@@ -30,6 +31,7 @@ namespace WinUi3Test.src.ViewModel
             return new AccountOperation(account);
         }
         private Account target;
+        public static readonly DependencyProperty BaseColorBrushProperty = DependencyProperty.Register(nameof(BaseColorBrush), typeof(object), typeof(AccountOperation), new PropertyMetadata(default(object)));
         public event Action<Account?> onFinished;
 
         private AccountOperation(Account target)
@@ -93,7 +95,11 @@ namespace WinUi3Test.src.ViewModel
 
         public Color BaseColorBindable => target.BaseColorBindable;
 
-        public SolidColorBrush BaseColorBrush => target.BaseColorBrush;
+        Color Account.BaseColorBindable { get => target.BaseColorBindable; set => target.BaseColorBindable = value; }
+
+        public Brush BaseColorBrush => Colors.BaseColor.asBrush;
+        public Brush HoverColorBrush => Colors.HoverColor.asBrush;
+        public Brush SymbolColoBrush => Colors.SymbolColor.asBrush;
 
         public Account Clone()
         {

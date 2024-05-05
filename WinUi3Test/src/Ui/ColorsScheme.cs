@@ -10,9 +10,26 @@ namespace WinUi3Test.src.Ui
 {
     public struct ColorsScheme
     {
-        public AdvColor baseColor;
-        public AdvColor hoverColor;
-        public AdvColor symbolColor;
+        private AdvColor baseColor;
+        public AdvColor BaseColor
+        {
+            get => baseColor;
+            set => baseColor = value;
+        }
+
+        private AdvColor hoverColor;
+        public AdvColor HoverColor
+        {
+            get => hoverColor;
+            set => hoverColor = value;
+        }
+
+        private AdvColor symbolColor;
+        public AdvColor SymbolColor
+        {
+            get => symbolColor;
+            set => symbolColor = value;
+        }
 
         public ColorsScheme(AdvColor baseColor, AdvColor hoverColor, AdvColor symbolColor)
         {

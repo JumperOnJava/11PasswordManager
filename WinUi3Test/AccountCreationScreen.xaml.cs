@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -29,7 +30,7 @@ namespace WinUi3Test
     {
 
         private AccountCreationModel model;
-        public AccountCreationScreen(ContentDialog dialog, AccountOperation account)
+        public AccountCreationScreen(ContentDialog dialog, AccountOperation account, IList<Tag> tags)
         {
             dialog.Content = this;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -53,11 +54,12 @@ namespace WinUi3Test
             };
             model = new AccountCreationModel(account);
             model.Account.PropertyChanged += (_, _) => UpdateSaveButton();
+            model.UnselectedTags = new ObservableCollection<Tag>(tags);
         }
 
         private void UpdateSaveButton()
         {
-            var enabled = model.Account.TargetApp != String.Empty && model.Account.Password!=String.Empty && (model.Account.Username != String.Empty || model.Account.Email != String.Empty);
+            var enabled = model.Account.TargetApp != String.Empty && model.Account.Password != String.Empty && (model.Account.Username != String.Empty || model.Account.Email != String.Empty);
             dialog.IsPrimaryButtonEnabled = enabled;
         }
 
@@ -69,11 +71,31 @@ namespace WinUi3Test
                 return;
             model.Account.Colors = new ColorsScheme(new AdvColor(args.NewColor));
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            long id = (long)((sender as ButtonBase).CommandParameter);
+            try
+            {
+                var tag = model.SelectedTags.First(e => e.Identifier == id);
+                model.SelectedTags.Remove(tag);
+                model.UnselectedTags.Add(tag);
+            }
+            catch (Exception ex)
+            {
+                var tag = model.UnselectedTags.First(e => e.Identifier == id);
+                model.UnselectedTags.Remove(tag);
+                model.SelectedTags.Add(tag);
+            }
+        }
     }
 
     internal class AccountCreationModel : PropertyChangable
     {
         public AccountOperation Account { get; }
+        public ObservableCollection<Tag> SelectedTags => Account.Tags;
+        public ObservableCollection<Tag> UnselectedTags {  get; set; }
+
         public AccountCreationModel(AccountOperation account)
         {
             this.Account = account;

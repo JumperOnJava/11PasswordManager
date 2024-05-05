@@ -19,6 +19,9 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics;
+using Windows.Security.Isolation;
+using Windows.UI.ViewManagement;
 using WinUi3Test.src.Storage;
 using WinUi3Test.src.Util;
 
@@ -33,21 +36,22 @@ namespace WinUi3Test
     public sealed partial class MainWindow : Window
     {
         private AppWindow m_AppWindow;
-        public static MainWindowModel StaticModel;
-        public MainWindowModel model { get => MainWindow.StaticModel; set => MainWindow.StaticModel = value; }
+        public MainWindowModel model { get; set; }
+
         public MainWindow()
         {
             //Map((i) => new AccountEntry(i, (it) => model.CurrentEditAccount = it.Clone())));
             this.InitializeComponent();
-            model = new MainWindowModel(StaticStorage.instance,this.ContentFrame);
-
-            ContentFrame.Navigate(typeof(AccountsListPage), model);
-            
             ExtendsContentIntoTitleBar = true;
             m_AppWindow = this.AppWindow;
             AppTitleBar.SizeChanged += (f, f2) => SetRegionsForCustomTitleBar();
             AppTitleBar.Loaded += (f3, f4) => SetRegionsForCustomTitleBar();
             ExtendsContentIntoTitleBar = true;
+
+            model = new MainWindowModel(StaticStorage.instance,this.ContentFrame);
+            ContentFrame.Navigate(typeof(AccountsListPage), model);
+
+
         }
         private void SetRegionsForCustomTitleBar()
         {
@@ -65,7 +69,6 @@ namespace WinUi3Test
                 InputNonClientPointerSource.GetForWindowId(this.AppWindow.Id);
             nonClientInputSrc.SetRegionRects(NonClientRegionKind.Passthrough, rectArray);
         }
-
     }
 
 }

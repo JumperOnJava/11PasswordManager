@@ -11,7 +11,7 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <Grid DataContext="{x:Bind model}">
+    <Grid DataContext="{x:Bind model}" Padding="0,0,8,8" >
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -53,6 +53,7 @@
                                             </Rectangle>
                                         </Grid>
                                         <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
+                                        <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
                                         <Grid>
                                             <CheckBox x:Name="TagCheckBox" Loaded="TagCheckBox_Loaded" Margin="10,0,0,0" Checked="CheckBox_Changed" Unchecked="CheckBox_Changed" CommandParameter="{Binding Self}">
                                                 <CheckBox.Resources>
@@ -75,21 +76,21 @@
                     </StackPanel>
                 </Grid>
             </SplitView.Pane>
-            <StackPanel x:Name="AccountsList" Orientation="Vertical" Background="Transparent" CornerRadius="8" Margin="6,6,6,6">
+            <Grid Background="Transparent">
                 <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
                     <AppBarButton x:Name="ShowPane" Icon="OpenPane" Label="Add" Visibility="Visible" Click="ShowPane_Click"/>
                     <AppBarButton Icon="Add" Label="Add" Click="CreateAccount"/>
                     <AppBarButton Icon="Repair" Label="Reset"/>
                 </CommandBar>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                
+                <Grid x:Name="AccountsList" Margin="0,48,0,0" Padding="8,8,8,8" CornerRadius="16">
                     <ListView
-                    Grid.Row="0"
                     x:Name="AccountSelector"
                     SelectionMode="None"
+                    Height="Auto"
+                    CornerRadius="8"
+                    Padding="-16,-4,-16,-4"
+                    
                     ItemsSource="{x:Bind model.DisplayAccounts}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="viewModel:UiAccountModel">
@@ -97,7 +98,7 @@
                                 Background="{ThemeResource CardBackgroundFillColorDefault}" 
                                 BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}"
                                 CornerRadius="8"
-                                Margin="0,5,0,5">
+                                Margin="0,4,4,4">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
@@ -105,7 +106,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid DataContext="{Binding Target, UpdateSourceTrigger=PropertyChanged}" Margin="-15,10,5,10" Width="20" VerticalAlignment="Stretch" HorizontalAlignment="Left" CornerRadius="4">
-                                        <Rectangle Fill="{Binding BaseColorBrush, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Rectangle Fill="{Binding Colors.BaseColor.asBrush, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
 
                                     <Grid DataContext="{Binding Target, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" VerticalAlignment="Center" Height="45" Margin="5,-3,0,0" HorizontalAlignment="Left">
@@ -115,8 +116,13 @@
                                             <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="5,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Email,UpdateSourceTrigger=PropertyChanged}"/>
                                         </StackPanel>
                                     </Grid>
+                                    <ScrollView Grid.Column="2">
+                                        <StackPanel>
+                                            
+                                        </StackPanel>
+                                    </ScrollView>
                                     <StackPanel x:Name="Actions" Grid.Row="0" Grid.Column="3" 
-                                Padding="5,0,5,0"
+                                Padding="5,0,4,0"
                                 HorizontalAlignment="Right" 
                                 VerticalAlignment="Center"
                                 CornerRadius="8"
@@ -137,7 +143,7 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </Grid>
-            </StackPanel>
+            </Grid>
         </SplitView>
     </Grid>
 </Page>

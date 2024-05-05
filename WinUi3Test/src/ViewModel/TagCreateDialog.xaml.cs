@@ -33,7 +33,7 @@ namespace WinUi3Test.src.ViewModel
             InitializeComponent();
             this.dialog = dialog;
             this.target = tag;
-            ColorPickerRing.Color = ColorsScheme.AccentColors.baseColor.asWinColor;
+            ColorPickerRing.Color = ColorsScheme.AccentColors.BaseColor.asWinColor;
             Action<string> buttonEnabled = (s) =>
             {
                 dialog.IsPrimaryButtonEnabled = s != String.Empty;

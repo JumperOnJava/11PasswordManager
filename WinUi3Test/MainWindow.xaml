@@ -12,7 +12,7 @@
     </Window.SystemBackdrop>
     <Grid>
         <Grid x:Name="AppTitleBar" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <MenuBar Name="menuBar_main" >
+            <MenuBar Name="menuBar_main">
                 <MenuBarItem Title="File">
                     <MenuFlyoutItem Text="New"/>
                     <MenuFlyoutItem Text="Open"/>

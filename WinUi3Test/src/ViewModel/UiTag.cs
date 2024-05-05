@@ -57,10 +57,16 @@ namespace WinUi3Test.src.ViewModel
                 onPropertyChanged("symbolColor");
             }
         }
-        public Color baseColor => this.TagColors.baseColor.asWinColor;
-        public SolidColorBrush baseColorBrush => new SolidColorBrush(this.TagColors.baseColor.asWinColor);
-        public Color hoverColor => this.TagColors.hoverColor.asWinColor;
-        public Color symbolColor => this.TagColors.symbolColor.asWinColor;
+        public Color baseColor => this.TagColors.BaseColor.asWinColor;
+        public SolidColorBrush baseColorBrush => new SolidColorBrush(this.TagColors.BaseColor.asWinColor);
+        public Color hoverColor => this.TagColors.HoverColor.asWinColor;
+        public Color symbolColor => this.TagColors.SymbolColor.asWinColor;
+
+        public Brush BaseColorBrush => Tag.BaseColorBrush;
+
+        public Brush HoverColorBrush => Tag.HoverColorBrush;
+
+        public Brush SymbolColorBrush => Tag.SymbolColorBrush;
 
         public UiTag(Tag tag)
         {

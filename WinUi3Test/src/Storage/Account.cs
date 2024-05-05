@@ -23,7 +23,6 @@ namespace WinUi3Test.src.Storage
         public Type AccountEditor => typeof(PasswordEdit);
         public Account Clone();
         public ColorsScheme Colors { get; set; }
-        public Color BaseColorBindable { get; }
-        public SolidColorBrush BaseColorBrush { get; }
+        public Color BaseColorBindable { get; set; }
     }
 }

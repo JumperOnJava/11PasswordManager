@@ -10,5 +10,11 @@ namespace WinUi3Test.src.Storage
     {
         public IList<Tag> Tags { get; }
         public IList<Account> Accounts { get; }
+        public Settings Settings { get; }
+        public Storage Clone();
+    }
+
+    public struct Settings
+    {
     }
 }

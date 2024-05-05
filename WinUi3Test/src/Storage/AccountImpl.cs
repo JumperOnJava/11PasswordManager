@@ -61,18 +61,11 @@ namespace WinUi3Test.src.Storage
         {
             get
             {
-                return Colors.baseColor.asWinColor;
+                return Colors.BaseColor.asWinColor;
             }
             set
             {
                 Colors = new ColorsScheme(new AdvColor(value));
-            }
-        }
-        public SolidColorBrush BaseColorBrush
-        {
-            get
-            {
-                return new SolidColorBrush(this.Colors.baseColor.asWinColor);
             }
         }
     }
