@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Windows.UI;
 using Microsoft.UI.Xaml;
@@ -104,6 +105,16 @@ namespace WinUi3Test.src.ViewModel
         public Account Clone()
         {
             return target.Clone();
+        }
+
+        public void Write(JsonObject dataWriter)
+        {
+            throw new NotSupportedException("AccountOperation is not supposed to be serialized");
+        }
+
+        public object Read(JsonObject element)
+        {
+            throw new NotSupportedException("AccountOperation is not supposed to be serialized");
         }
     }
 }

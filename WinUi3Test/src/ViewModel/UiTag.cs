@@ -30,27 +30,27 @@ namespace WinUi3Test.src.ViewModel
             }
         }
 
-        public Tag Tag { get; }
+        public Tag Target { get; }
         public string DisplayName
         {
-            get => Tag.DisplayName; set
+            get => Target.DisplayName; set
             {
-                if (Tag.DisplayName != value)
+                if (Target.DisplayName != value)
                 {
                     TextChanged?.Invoke(value);
                 }
-                Tag.DisplayName = value;
+                Target.DisplayName = value;
                 onPropertyChanged("DisplayName");
             }
         }
 
-        public long Identifier => Tag.Identifier;
+        public long Identifier => Target.Identifier;
         public UiTag Self { get => this; }
         public ColorsScheme TagColors
         {
-            get => Tag.TagColors; set
+            get => Target.TagColors; set
             {
-                Tag.TagColors = value;
+                Target.TagColors = value;
                 onPropertyChanged("TagColor");
                 onPropertyChanged("baseColor");
                 onPropertyChanged("hoverColor");
@@ -62,20 +62,25 @@ namespace WinUi3Test.src.ViewModel
         public Color hoverColor => this.TagColors.HoverColor.asWinColor;
         public Color symbolColor => this.TagColors.SymbolColor.asWinColor;
 
-        public Brush BaseColorBrush => Tag.BaseColorBrush;
+        public Brush BaseColorBrush => Target.BaseColorBrush;
 
-        public Brush HoverColorBrush => Tag.HoverColorBrush;
+        public Brush HoverColorBrush => Target.HoverColorBrush;
 
-        public Brush SymbolColorBrush => Tag.SymbolColorBrush;
+        public Brush SymbolColorBrush => Target.SymbolColorBrush;
 
-        public UiTag(Tag tag)
+        public UiTag(Tag target)
         {
-            this.Tag = tag;
+            this.Target = target;
         }
 
         public bool matches(Taggable tag)
         {
-            return Tag.matches(tag);
+            return Target.matches(tag);
+        }
+
+        public Tag Clone()
+        {
+            return Target.Clone();
         }
     }
 }

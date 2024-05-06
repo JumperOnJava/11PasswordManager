@@ -3,9 +3,17 @@ using WinUi3Test.src.Storage;
 
 namespace WinUi3Test.src.ViewModel;
 
-public interface Operation<T>
+public class Operation<T> where T : class, Clonable<T>
 {
-    public T Target { get; }
-    public event Action<Account?> onFinished;
-    public void Finish(bool successful);
+    public Operation(T target)
+    {
+        this.target = target.Clone();
+    }
+    public T target { get; private set; }
+    public event Action<T> onFinished;
+    public void Finish(bool successful)
+    {
+        T result = successful ? target : null;
+        onFinished.Invoke(result);
+    }
 }

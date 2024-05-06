@@ -16,7 +16,7 @@
                 <MenuBarItem Title="File">
                     <MenuFlyoutItem Text="New"/>
                     <MenuFlyoutItem Text="Open"/>
-                    <MenuFlyoutItem Text="Save"/>
+                    <MenuFlyoutItem Text="Save" Click="MenuFlyoutItem_OnClick"/>
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem Text="Exit"/>
                 </MenuBarItem>

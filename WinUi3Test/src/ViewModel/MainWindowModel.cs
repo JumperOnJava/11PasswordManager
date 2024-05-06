@@ -36,16 +36,38 @@ public class MainWindowModel : PropertyChangable, WindowModel
     }
 
     private UiAccountModel? currentEditAccount = null;
-    public MainWindowModel(Storage storage,Frame navigator)
+    private readonly Operation<Storage> operation;
+
+    public MainWindowModel(Operation<Storage> storage,Frame navigator)
     {
+        this.operation = storage;
         this.navigator = navigator;
-        this.storage = storage;
-        this.tags = new(storage.Tags.Map((e)=>new UiTag(e)));
-        this.accounts = new(storage.Accounts);
+        this.tags = new(storage.target.Tags.Map((e)=>new UiTag(e)));
+        this.accounts = new(storage.target.Accounts);
         this.displayAccounts = new ObservableCollection<UiAccountModel>();
         Tags.CollectionChanged += (_,_) => onPropertyChanged("Tags");
         Accounts.CollectionChanged += (_, _) => FilterAccounts();
         FilterAccounts();
+    }
+
+    public void Save()
+    {
+        operation.target.Accounts.Clear();
+        foreach (var account in Accounts)
+        {
+            operation.target.Accounts.Add(account);
+        }
+        operation.target.Tags.Clear();
+        foreach (var tag in Tags)
+        {
+            operation.target.Tags.Add(tag.Target);
+        }
+        
+        operation.Finish(true);
+    }
+    public void Cancel()
+    {
+        operation.Finish(false);
     }
 
     internal void FilterAccounts()

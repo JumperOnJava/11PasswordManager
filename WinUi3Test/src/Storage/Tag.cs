@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Windows.UI;
 using Microsoft.UI.Xaml.Media;
 using WinUi3Test.src.Ui;
@@ -9,7 +10,7 @@ using WinUi3Test.src.Util;
 
 namespace WinUi3Test.src.Storage
 {
-    public interface Tag : Identifiable
+    public interface Tag : Identifiable, Clonable<Tag>
     {
         ColorsScheme TagColors { get; set; }
         string DisplayName { get; set; }
@@ -21,6 +22,7 @@ namespace WinUi3Test.src.Storage
     public struct TagBasic : Tag
     {
         public string DisplayName { get; set; }
+        [JsonInclude]
         public long identifier;
         public long Identifier { get => identifier; private set => identifier=value; }
         public ColorsScheme TagColors { get; set; }
@@ -49,6 +51,11 @@ namespace WinUi3Test.src.Storage
         public static TagBasic createRandom()
         {
             return new TagBasic("tag" + Random.Shared.Next(100), ColorsScheme.AccentColors);
+        }
+
+        public Tag Clone()
+        {
+            return this;
         }
     }
 }

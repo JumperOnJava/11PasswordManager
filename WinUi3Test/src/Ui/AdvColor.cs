@@ -259,7 +259,7 @@ namespace WinUi3Test.src.Ui
         }
         public override string ToString()
         {
-            return $"(R: {R}, G: {G}, B: {B})";
+            return $"{R:X}{G:X}{B:X}";
         }
     }
 

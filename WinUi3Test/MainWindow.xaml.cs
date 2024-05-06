@@ -1,29 +1,13 @@
 using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
+using System.Text.Json;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics;
-using Windows.Security.Isolation;
-using Windows.UI.ViewManagement;
 using WinUi3Test.src.Storage;
-using WinUi3Test.src.Util;
+using WinUi3Test.src.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -48,7 +32,25 @@ namespace WinUi3Test
             AppTitleBar.Loaded += (f3, f4) => SetRegionsForCustomTitleBar();
             ExtendsContentIntoTitleBar = true;
 
-            model = new MainWindowModel(StaticStorage.instance,this.ContentFrame);
+
+            string asJson;
+            if(File.Exists("test.json"))
+                asJson = File.ReadAllText("test.json");
+            else
+                asJson = JsonSerializer.Serialize(StaticStorage.instance, Test.JsonOption);
+
+            
+            var result = JsonSerializer.Deserialize<StaticStorage>(asJson, Test.JsonOption);
+            
+            var operation = new Operation<Storage>(result);
+            model = new MainWindowModel(operation,this.ContentFrame);
+            operation.onFinished += (e) =>
+            {
+                if(e==null)
+                    return;
+                var json = JsonSerializer.Serialize(e, Test.JsonOption);
+                File.WriteAllText("test.json", json);
+            };
             ContentFrame.Navigate(typeof(AccountsListPage), model);
 
 
@@ -68,6 +70,11 @@ namespace WinUi3Test
             InputNonClientPointerSource nonClientInputSrc =
                 InputNonClientPointerSource.GetForWindowId(this.AppWindow.Id);
             nonClientInputSrc.SetRegionRects(NonClientRegionKind.Passthrough, rectArray);
+        }
+
+        private void MenuFlyoutItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            model.Save();
         }
     }
 
