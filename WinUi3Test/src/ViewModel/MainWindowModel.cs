@@ -56,7 +56,15 @@ public class MainWindowModel : PropertyChangable, WindowModel
         foreach (var account in Accounts)
         {
             operation.target.Accounts.Add(account);
+            var tags = new List<Tag>(account.Tags);
+            account.Tags.Clear();
+            foreach(var tag in Tags)
+                if (tag is UiTag)
+                    account.Tags.Add(tag.Target);
+                else
+                    account.Tags.Add(tag);
         }
+    
         operation.target.Tags.Clear();
         foreach (var tag in Tags)
         {
