@@ -13,10 +13,10 @@ namespace WinUi3Test.src.Storage
         public List<Tag> Tags { get; }
         [JsonInclude]
         public List<Account> Accounts { get; }
-        public Settings Settings { get; }
+        public StorageSettings StorageSettings { get; }
     }
 
-    public struct Settings
+    public struct StorageSettings
     {
     }
 }

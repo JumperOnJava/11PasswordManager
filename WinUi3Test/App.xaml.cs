@@ -23,6 +23,7 @@ namespace WinUi3Test
 {
     public partial class App : Application
     {
+        public static MainWindow MainWindow = new();
         public App()
         {
             this.InitializeComponent();
@@ -30,19 +31,20 @@ namespace WinUi3Test
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             Test.Start();
-            m_window = new MainWindow();
-            m_window.SizeChanged += (sender,e) =>
+            MainWindow = new MainWindow();
+            m_window = MainWindow;
+            MainWindow.SizeChanged += (sender,e) =>
             {
                 e.Handled = true;
-                m_window.AppWindow.Resize(new SizeInt32(
-                    Math.Max(600,m_window.AppWindow.Size.Width),
-                    Math.Max(600,m_window.AppWindow.Size.Height)
+                MainWindow.AppWindow.Resize(new SizeInt32(
+                    Math.Max(600,MainWindow.AppWindow.Size.Width),
+                    Math.Max(600,MainWindow.AppWindow.Size.Height)
                 ));
             };
             
-            m_window.Activate();
+            MainWindow.Activate();
         }
-        
         private Window m_window;
+
     }
 }

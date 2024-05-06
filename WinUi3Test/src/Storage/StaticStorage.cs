@@ -27,14 +27,14 @@ namespace WinUi3Test.src.Storage
         List <Tag> Storage.Tags => Tags;   
 
         List<Account> Storage.Accounts => Accounts;
-        public Settings Settings => settings;
-        private Settings settings;
+        public StorageSettings StorageSettings => storageSettings;
+        private StorageSettings storageSettings;
         public Storage Clone()
         {
             var storage = new StaticStorage();
             storage.Accounts = Accounts.Map(e => e.Clone());
             storage.Tags = Tags.Map(e => e);
-            storage.settings = new Settings();
+            storage.storageSettings = new StorageSettings();
             return storage;
         }
 

@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text.Json;
 using Windows.Foundation;
 using WinUi3Test.src.Storage;
@@ -19,7 +20,7 @@ namespace WinUi3Test
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        private AppWindow m_AppWindow;
+        public static AppWindow m_AppWindow;
         public MainWindowModel model { get; set; }
 
         public MainWindow()
@@ -41,17 +42,8 @@ namespace WinUi3Test
 
             
             var result = JsonSerializer.Deserialize<StaticStorage>(asJson, Test.JsonOption);
-            
-            var operation = new Operation<Storage>(result);
-            model = new MainWindowModel(operation,this.ContentFrame);
-            operation.onFinished += (e) =>
-            {
-                if(e==null)
-                    return;
-                var json = JsonSerializer.Serialize(e, Test.JsonOption);
-                File.WriteAllText("test.json", json);
-            };
-            ContentFrame.Navigate(typeof(AccountsListPage), model);
+
+            ContentFrame.Navigate(typeof(StartScreen), ContentFrame);
 
 
         }
