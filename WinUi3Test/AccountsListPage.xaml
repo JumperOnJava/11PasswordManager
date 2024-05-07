@@ -10,11 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="Transparent">
-
-    <Grid DataContext="{x:Bind model}" Padding="0,0,8,8" >
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="WideStateState">
@@ -32,59 +28,77 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <SplitView Grid.Row="0" x:Name="PanelView" DisplayMode="Overlay" IsPaneOpen="{Binding IsPaneOpen, UpdateSourceTrigger=PropertyChanged}" PaneBackground="Transparent" CornerRadius="8">
-            <SplitView.Pane>
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Rectangle x:Name="PaneRectangle" Fill="{ThemeResource AcrylicInAppFillColorDefaultBrush}"></Rectangle>
-                    <StackPanel Orientation="Vertical">
-                        <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
-                            <AppBarButton Icon="Add" Label="Add" Click="CreateTag"/>
-                            <AppBarButton Icon="ClearSelection" Label="Reset" Click="ClearSelection"/>
-                        </CommandBar>
-                        <ListView Width="300"
+        <Grid Margin="0,-40,0,0"  x:Name="AppTitleBar" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <MenuBar Name="menuBar_main">
+                <MenuBarItem Title="File">
+                    <MenuFlyoutItem Text="Save and exit" Click="SaveButton"/>
+                    <MenuFlyoutItem Text="Exit" Click="ExitButton"/>
+                </MenuBarItem>
+                <MenuBarItem Title="Tools">
+                    <MenuFlyoutItem Text="Find"/>
+                    <MenuFlyoutItem Text="Synchronization"/>
+                </MenuBarItem>
+            </MenuBar>
+            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Margin="10,10,10,10">11Password manager</TextBlock>
+        </Grid>
+        <Grid DataContext="{x:Bind model}" Padding="0,0,8,8" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <SplitView Grid.Row="0" x:Name="PanelView" DisplayMode="Overlay" IsPaneOpen="{Binding IsPaneOpen, UpdateSourceTrigger=PropertyChanged}" PaneBackground="Transparent" CornerRadius="8">
+                <SplitView.Pane>
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Rectangle x:Name="PaneRectangle" Fill="{ThemeResource AcrylicInAppFillColorDefaultBrush}"></Rectangle>
+                        <StackPanel Orientation="Vertical">
+                            <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
+                                <AppBarButton Icon="Add" Label="Add" Click="CreateTag"/>
+                                <AppBarButton Icon="ClearSelection" Label="Reset" Click="ClearSelection"/>
+                            </CommandBar>
+                            <ListView Width="300"
                                   x:Name="TagListView"
                                   SelectionMode="None"
                                   ItemsSource="{Binding Tags}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="viewModel:UiTag">
-                                    <Grid Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="8">
-                                        <Grid Width="20" Height="20" Margin="-16,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" CornerRadius="4">
-                                            <Rectangle Fill="{Binding baseColorBrush, UpdateSourceTrigger=PropertyChanged}">
-                                            </Rectangle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="viewModel:UiTag">
+                                        <Grid Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="8">
+                                            <Grid Width="20" Height="20" Margin="-16,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" CornerRadius="4">
+                                                <Rectangle Fill="{Binding baseColorBrush, UpdateSourceTrigger=PropertyChanged}">
+                                                </Rectangle>
+                                            </Grid>
+                                            <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
+                                            <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
+                                            <Grid>
+                                                <CheckBox x:Name="TagCheckBox" Loaded="TagCheckBox_Loaded" Margin="10,0,0,0" Checked="CheckBox_Changed" Unchecked="CheckBox_Changed" CommandParameter="{Binding Self}">
+                                                    <CheckBox.Resources>
+                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillChecked" Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeChecked" Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillCheckedPressed" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                                    </CheckBox.Resources>
+                                                </CheckBox>
+                                            </Grid>
                                         </Grid>
-                                        <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
-                                        <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
-                                        <Grid>
-                                            <CheckBox x:Name="TagCheckBox" Loaded="TagCheckBox_Loaded" Margin="10,0,0,0" Checked="CheckBox_Changed" Unchecked="CheckBox_Changed" CommandParameter="{Binding Self}">
-                                                <CheckBox.Resources>
-                                                    <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillChecked" Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}"/>
-                                                    <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeChecked" Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
 
-                                                    <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
-                                                    <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Grid>
+                </SplitView.Pane>
+                <Grid Background="Transparent">
+                    <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
+                        <AppBarButton x:Name="ShowPane" Icon="OpenPane" Label="Add" Visibility="Visible" Click="ShowPane_Click"/>
+                        <AppBarButton Icon="Add" Label="Add" Click="CreateAccount"/>
+                        <AppBarButton Icon="Repair" Label="Reset"/>
+                    </CommandBar>
 
-                                                    <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillCheckedPressed" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
-                                                    <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
-                                                </CheckBox.Resources>
-                                            </CheckBox>
-                                        </Grid>
-                                    </Grid>
-                                </DataTemplate>
-
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </StackPanel>
-                </Grid>
-            </SplitView.Pane>
-            <Grid Background="Transparent">
-                <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
-                    <AppBarButton x:Name="ShowPane" Icon="OpenPane" Label="Add" Visibility="Visible" Click="ShowPane_Click"/>
-                    <AppBarButton Icon="Add" Label="Add" Click="CreateAccount"/>
-                    <AppBarButton Icon="Repair" Label="Reset"/>
-                </CommandBar>
-                
-                <Grid x:Name="AccountsList" Margin="0,48,0,0" Padding="8,8,8,8" CornerRadius="16">
-                    <ListView
+                    <Grid x:Name="AccountsList" Margin="0,48,0,0" Padding="8,8,8,8" CornerRadius="16">
+                        <ListView
                     x:Name="AccountSelector"
                     SelectionMode="None"
                     Height="Auto"
@@ -92,58 +106,59 @@
                     Padding="-16,-4,-16,-4"
                     
                     ItemsSource="{x:Bind model.DisplayAccounts}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="viewModel:UiAccountModel">
-                                <Grid
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="viewModel:UiAccountModel">
+                                    <Grid
                                 Background="{ThemeResource CardBackgroundFillColorDefault}" 
                                 BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}"
                                 CornerRadius="8"
                                 Margin="0,4,4,4">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid DataContext="{Binding Target, UpdateSourceTrigger=PropertyChanged}" Margin="-15,10,5,10" Width="20" VerticalAlignment="Stretch" HorizontalAlignment="Left" CornerRadius="4">
-                                        <Rectangle Fill="{Binding Colors.BaseColor.asBrush, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid DataContext="{Binding Target, UpdateSourceTrigger=PropertyChanged}" Margin="-15,10,5,10" Width="20" VerticalAlignment="Stretch" HorizontalAlignment="Left" CornerRadius="4">
+                                            <Rectangle Fill="{Binding Colors.BaseColor.asBrush, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </Grid>
 
-                                    <Grid DataContext="{Binding Target, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" VerticalAlignment="Center" Height="45" Margin="5,-3,0,0" HorizontalAlignment="Left">
-                                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding TargetApp,UpdateSourceTrigger=PropertyChanged}"/>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Username,UpdateSourceTrigger=PropertyChanged}"/>
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="5,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Email,UpdateSourceTrigger=PropertyChanged}"/>
-                                        </StackPanel>
-                                    </Grid>
-                                    <ScrollView Grid.Column="2">
-                                        <StackPanel>
-                                            
-                                        </StackPanel>
-                                    </ScrollView>
-                                    <StackPanel x:Name="Actions" Grid.Row="0" Grid.Column="3" 
+                                        <Grid DataContext="{Binding Target, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" VerticalAlignment="Center" Height="45" Margin="5,-3,0,0" HorizontalAlignment="Left">
+                                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding TargetApp,UpdateSourceTrigger=PropertyChanged}"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Username,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="5,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Email,UpdateSourceTrigger=PropertyChanged}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <ScrollView Grid.Column="2">
+                                            <StackPanel>
+
+                                            </StackPanel>
+                                        </ScrollView>
+                                        <StackPanel x:Name="Actions" Grid.Row="0" Grid.Column="3" 
                                 Padding="5,0,4,0"
                                 HorizontalAlignment="Right" 
                                 VerticalAlignment="Center"
                                 CornerRadius="8"
                                 Orientation="Horizontal">
-                                        <Grid>
-                                            <StackPanel Orientation="Horizontal" Visibility="{Binding CopyMenuVisible, UpdateSourceTrigger=PropertyChanged}">
-                                                <AppBarButton Icon="Copy" Height="60" Label="Username"/>
-                                                <AppBarButton Icon="Copy" Height="60" Label="Password"/>
-                                                <AppBarSeparator/>
-                                                <AppBarButton Icon="Edit" Height="60" Label="Edit" Click="{x:Bind CallEntryMethod}" CommandParameter="{Binding EditThisAccount_}"/>
-                                                <AppBarSeparator/>
-                                            </StackPanel>
-                                        </Grid>
-                                        <AppBarButton Icon="AlignRight" Height="60" Label="Info" Click="{x:Bind CallEntryMethod}" CommandParameter="{Binding InvertVisibility_}"/>
-                                    </StackPanel>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                                            <Grid>
+                                                <StackPanel Orientation="Horizontal" Visibility="{Binding CopyMenuVisible, UpdateSourceTrigger=PropertyChanged}">
+                                                    <AppBarButton Icon="Copy" Height="60" Label="Username"/>
+                                                    <AppBarButton Icon="Copy" Height="60" Label="Password"/>
+                                                    <AppBarSeparator/>
+                                                    <AppBarButton Icon="Edit" Height="60" Label="Edit" Click="{x:Bind CallEntryMethod}" CommandParameter="{Binding EditThisAccount_}"/>
+                                                    <AppBarSeparator/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <AppBarButton Icon="AlignRight" Height="60" Label="Info" Click="{x:Bind CallEntryMethod}" CommandParameter="{Binding InvertVisibility_}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </SplitView>
+            </SplitView>
+        </Grid>
     </Grid>
 </Page>

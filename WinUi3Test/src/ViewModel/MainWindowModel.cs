@@ -104,4 +104,9 @@ public class MainWindowModel : PropertyChangable, WindowModel
         }
         return true;
     }
+
+    internal void ExitNoSave()
+    {
+        operation.Finish(false);
+    }
 }

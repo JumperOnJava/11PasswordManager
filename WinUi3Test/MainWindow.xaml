@@ -8,23 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Window.SystemBackdrop>
-        <MicaBackdrop Kind="Base"/>
+        <MicaBackdrop/>
     </Window.SystemBackdrop>
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid x:Name="AppTitleBar" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <MenuBar Name="menuBar_main">
-                <MenuBarItem Title="File">
-                    <MenuFlyoutItem Text="New"/>
-                    <MenuFlyoutItem Text="Open"/>
-                    <MenuFlyoutItem Text="Save" Click="MenuFlyoutItem_OnClick"/>
-                    <MenuFlyoutSeparator />
-                    <MenuFlyoutItem Text="Exit"/>
-                </MenuBarItem>
-                <MenuBarItem Title="Tools">
-                    <MenuFlyoutItem Text="Find"/>
-                    <MenuFlyoutItem Text="Synchronization"/>
-                </MenuBarItem>
-            </MenuBar>
             <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Margin="10,10,10,10">11Password manager</TextBlock>
         </Grid>
         <Grid>

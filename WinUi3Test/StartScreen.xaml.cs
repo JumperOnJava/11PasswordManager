@@ -7,15 +7,20 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography;
 using System.Text.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
+using Microsoft.UI.Xaml.Media.Animation;
+using WinUi3Test.src.Storage;
 using WinUi3Test.src.ViewModel;
 using WinUi3Test.Storage;
+using System.Collections.Specialized;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,9 +39,6 @@ namespace WinUi3Test
             {
                 this.navigator = e.Parameter as Frame;
                 model = new StartScreenModel();
-                if (File.Exists("settings"))
-                    model.appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText("settings"));
-                else model.appSettings = new AppSettings();
             }
             catch (InvalidCastException ex)
             {
@@ -47,23 +49,42 @@ namespace WinUi3Test
         {
             this.InitializeComponent();
         }
-        public class StartScreenModel
+        private async void CreateNew(object sender, RoutedEventArgs e)
         {
-            public AppSettings appSettings;
-        }
-
-        private void CreateNew(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private static bool opening = false;
-        private void OpenStorage(object sender, RoutedEventArgs e)
-        {
+            if (opening) return;
+            opening = true;
             try
             {
-                if (opening) return;
-                opening = true;
+                var saveFIleDialog = new FileSavePicker();
+                var window = App.MainWindow;
+
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+
+                WinRT.Interop.InitializeWithWindow.Initialize(saveFIleDialog, hWnd);
+
+                saveFIleDialog.FileTypeChoices.Add("Unencrypted json", new List<string>() { ".json" });
+
+                var file = await saveFIleDialog.PickSaveFileAsync();
+                if (file != null)
+                {
+                    OpenStorage(JsonSerializer.Serialize(new StaticStorage(), Test.JsonOption), file.Path);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            opening = false;
+        }
+
+        private static bool opening;
+        private async void OpenStorageDialog(object sender, RoutedEventArgs e)
+        {
+            if (opening) return;
+            opening = true;
+            try
+            {
                 var openFileDialog = new FileOpenPicker();
 
                 var window = App.MainWindow;
@@ -73,12 +94,11 @@ namespace WinUi3Test
                 WinRT.Interop.InitializeWithWindow.Initialize(openFileDialog, hWnd);
 
                 openFileDialog.FileTypeFilter.Add("*");
-                openFileDialog.PickSingleFileAsync();
-                var file = openFileDialog.PickSingleFileAsync().GetResults();
-                Console.WriteLine(file.Name);
+
+                var file = await openFileDialog.PickSingleFileAsync();
                 if (file != null)
                 {
-                    Console.WriteLine("Picked file: " + file.Name);
+                    OpenStorage(file.Path);
                 }
                 else
                 {
@@ -90,6 +110,76 @@ namespace WinUi3Test
                 Console.WriteLine(ex.Message);
             }
             opening = false;
+        }
+
+        public void OpenStorage(string path)
+        {
+            OpenStorage(File.ReadAllText(path), path);
+        }
+
+        private void OpenStorage(string json, string path)
+        {
+            try
+            {
+                StaticStorage staticStorage = JsonSerializer.Deserialize<StaticStorage>(json, Test.JsonOption);
+                var storageOperation = new Operation<src.Storage.Storage>(staticStorage);
+                navigator.Navigate(typeof(AccountsListPage), new MainWindowModel(storageOperation, navigator),
+                    new DrillInNavigationTransitionInfo());
+                model.history.Add(new StartScreenModelStoragePath(path));
+                storageOperation.onFinished += s =>
+                {
+                    if (s != null)
+                    {
+                        File.WriteAllText(path, JsonSerializer.Serialize(s, Test.JsonOption));
+                    }
+                    navigator.GoBack();
+                };
+            }
+            catch
+            {
+                var dialog = new ContentDialog();
+                dialog.PrimaryButtonText = "Ok";
+                dialog.Title = "Error reading file";
+            }
+        }
+
+        private void OpenRecentStorage(object sender, RoutedEventArgs e)
+        {
+            OpenStorage(((ButtonBase)sender).CommandParameter as string);
+        }
+        public class StartScreenModel
+        {
+            public AppSettings appSettings => AppSettings.settings;
+            public ObservableCollection<StartScreenModelStoragePath> history { get; set; }
+            public StartScreenModel()
+            {
+                AppSettings.Load();
+                history = new ObservableCollection<StartScreenModelStoragePath>();
+                foreach (var item in appSettings.storageHistory)
+                {
+                    history.Add(new StartScreenModelStoragePath(item));
+                }
+                NotifyCollectionChangedEventHandler action = (a, e) =>
+                {
+                    appSettings.storageHistory.Clear();
+                    history.ToList().ForEach(element => appSettings.storageHistory.Add(element.Path));
+                    AppSettings.Save();
+                };
+                history.CollectionChanged += action;
+                action.Invoke(null,null);
+            }
+            
+        }
+
+    }
+    public class StartScreenModelStoragePath
+    {
+        public string Path { get; set; } 
+        public string Name { get; set; }
+        public StartScreenModelStoragePath(string path)
+        {
+            this.Path = path;
+            this.Name = System.IO.Path.GetFileNameWithoutExtension(path);
         }
     }
 }

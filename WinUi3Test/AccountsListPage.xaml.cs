@@ -34,8 +34,8 @@ namespace WinUi3Test
             base.OnNavigatedTo(e);
             try
             {
-                this.model = e.Parameter as MainWindowModel;
-                this.model.Accounts.CollectionChanged += (_,_) => Refilter();
+                model = e.Parameter as MainWindowModel;
+                model.Accounts.CollectionChanged += (_,_) => Refilter();
             }
             catch (InvalidCastException ex)
             {
@@ -112,6 +112,16 @@ namespace WinUi3Test
         private void Refilter()
         {
             model.FilterAccounts();
+        }
+
+        private void SaveButton(object sender, RoutedEventArgs e)
+        {
+            model.Save();
+        }
+
+        private void ExitButton(object sender, RoutedEventArgs e)
+        {
+            model.ExitNoSave();
         }
     }
 }

@@ -7,16 +7,29 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-    <Grid>
+    Background="Transparent">
+    <Grid DataContext="{x:Bind model}" MaxWidth="600" MaxHeight="800" Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}" BorderThickness="1" CornerRadius="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
+        <TextBlock Margin="30,20,0,0" HorizontalAlignment="Left" Text="Recent" Style="{StaticResource TitleTextBlockStyle}"/>
+        <ListView Margin="10,60,10,0" ItemsSource="{Binding history}" SelectionMode="None" CornerRadius="4" Padding="-16,0,-16,0">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:StartScreenModelStoragePath">
+                    <Button Click="OpenRecentStorage" Margin="0,4,4,4" HorizontalAlignment="Stretch" CommandParameter="{Binding Path}">
+                        <StackPanel Grid.Column="0" Margin="-245,-5,0,0">
+                            <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}"/>
+                            <TextBlock Text="{Binding Path}"/>
+                        </StackPanel>
+                    </Button>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         <Grid Grid.Row="1">
-            <StackPanel Orientation="Horizontal">
-                <Button Content="Open" Click="OpenStorage"></Button>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                <Button Content="Open" Click="OpenStorageDialog"></Button>
+                <Rectangle Width="10"></Rectangle>
                 <Button Content="Create new" Click="CreateNew"></Button>
             </StackPanel>
         </Grid>
