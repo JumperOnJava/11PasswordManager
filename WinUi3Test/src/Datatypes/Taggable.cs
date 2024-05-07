@@ -6,6 +6,6 @@ namespace WinUi3Test.src.Storage
 {
     public interface Taggable
     {
-        public ObservableCollection<Tag> Tags { get; }
+        public List<TagRef> Tags { get; set; }
     }
 }

@@ -1,42 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using WinUi3Test.src.Util;
+using WinUi3Test.src.Storage;
 
-namespace WinUi3Test.src.Storage
+namespace WinUi3Test.Datatypes
 {
     public class StaticStorage : Storage
     {
         [JsonInclude]
-        public List<Account> Accounts = new List<Account>()
-            {};
-        private static Tag GAMING;
-        private static Tag SOCIAL;
-        static StaticStorage(){
-            GAMING = new TagBasic("Gaming");
-            SOCIAL = new TagBasic("Social");
-            instance = new StaticStorage();
-        }
-        public static StaticStorage instance;
+        public Dictionary<long, Tag> Tags { get; set; }
         [JsonInclude]
-        public List<Tag> Tags = new List<Tag>();
-        List <Tag> Storage.Tags => Tags;   
+        public List<TagRef> TagsOrder { get; set; }
+        [JsonInclude]
+        public List<Account> Accounts { get;  set; }
+        [JsonInclude]
+        public StorageSettings StorageSettings { get; set; }
 
-        List<Account> Storage.Accounts => Accounts;
-        public StorageSettings StorageSettings => storageSettings;
-        private StorageSettings storageSettings;
+        public StaticStorage()
+        {
+            Tags = new();
+            TagsOrder = new();
+            Accounts = new();
+            StorageSettings = new();
+        }
         public Storage Clone()
         {
-            var storage = new StaticStorage();
-            storage.Accounts = Accounts.Map(e => e.Clone());
-            storage.Tags = Tags.Map(e => e);
-            storage.storageSettings = new StorageSettings();
-            return storage;
+            var staticStorage = new StaticStorage();
+            staticStorage.StorageSettings = StorageSettings;
+            staticStorage.Accounts = new List<Account>(Accounts);
+            staticStorage.TagsOrder = new List<TagRef>(TagsOrder);
+            staticStorage.Tags = new Dictionary<long, Tag>(Tags);
+            return staticStorage;
         }
-
     }
 }

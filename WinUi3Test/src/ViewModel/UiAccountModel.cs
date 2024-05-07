@@ -15,14 +15,15 @@ using Windows.Security.Isolation;
 using WinUi3Test.src.Storage;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
+using WinUi3Test.ViewModel;
 
 namespace WinUi3Test.src.ViewModel
 {
     public class UiAccountModel : PropertyChangable
     {
         protected Frame navigator;
-        private Account target;
-        public Account Target
+        private AccountOperation target;
+        public AccountOperation Target
         {
             get => target; set
             {
@@ -31,11 +32,10 @@ namespace WinUi3Test.src.ViewModel
             }
         }
 
-        public UiAccountModel(Frame navigator, Account target) 
+        public UiAccountModel(Frame navigator, AccountOperation target) 
         {
             this.navigator = navigator;
             this.Target = target;
-            Target.PropertyChanged += (a, e) => onPropertyChanged(e.PropertyName);
         }
 
         private bool copyMenuVisible;
@@ -63,13 +63,14 @@ namespace WinUi3Test.src.ViewModel
         public void Navigate()
         {
             var operation = AccountOperation.Start(Target);
-            navigator.Navigate(Target.AccountEditor, operation, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
-            operation.onFinished += (result) =>
+            navigator.Navigate(this.Target.target.AccountEditor, operation, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+            operation.OnFinished += result =>
             {
                 if (result != null)
                 {
-                    this.Target = result;
+                    this.Target.target = result;
                 }
+                target.Finish(true);
                 navigator.GoBack();
             };
         }

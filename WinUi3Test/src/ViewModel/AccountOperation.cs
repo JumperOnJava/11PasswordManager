@@ -1,20 +1,14 @@
-﻿using Microsoft.UI.Xaml.Media;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using Windows.UI;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using WinUi3Test.src.Storage;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 
-namespace WinUi3Test.src.ViewModel
+namespace WinUi3Test.ViewModel
 {
     /// <summary>
     /// Takes input account, clones it, and allows to safely do changes
@@ -27,76 +21,112 @@ namespace WinUi3Test.src.ViewModel
         {
             return Start(new AccountImpl());
         }
+
         public static AccountOperation Start(Account account)
         {
             return new AccountOperation(account);
         }
-        private Account target;
-        public static readonly DependencyProperty BaseColorBrushProperty = DependencyProperty.Register(nameof(BaseColorBrush), typeof(object), typeof(AccountOperation), new PropertyMetadata(default(object)));
-        public event Action<Account?> onFinished;
+
+        public Account target;
+
+        public static readonly DependencyProperty BaseColorBrushProperty =
+            DependencyProperty.Register(nameof(BaseColorBrush), typeof(object), typeof(AccountOperation),
+                new PropertyMetadata(default(object)));
+
+        public event Action<Account?> OnFinished;
 
         private AccountOperation(Account target)
         {
             this.target = target.Clone();
-            onPropertyChanged("target");
-            this.target.PropertyChanged += (s, e) =>
-            {
-                onPropertyChanged(e.PropertyName);
-            };
         }
 
         public void Finish(bool successful)
-        {   
-            onFinished.Invoke(successful ? target : null);
+        {
+            OnFinished.Invoke(successful ? target : null);
         }
+
         public string TargetApp
         {
-            get => target.TargetApp; set
+            get => target.TargetApp;
+            set
             {
                 target.TargetApp = value;
+                onPropertyChanged();
             }
         }
+
         public string DisplayName
         {
-            get => target.DisplayName; set
+            get => target.DisplayName;
+            set
             {
                 target.DisplayName = value;
+                onPropertyChanged();
             }
         }
+
         public string Username
         {
-            get => target.Username; set
+            get => target.Username;
+            set
             {
                 target.Username = value;
+                onPropertyChanged();
             }
         }
+
         public string Email
         {
-            get => target.Email; set
+            get => target.Email;
+            set
             {
                 target.Email = value;
+                onPropertyChanged();
             }
         }
+
         public string Password
         {
-            get => target.Password; set
+            get => target.Password;
+            set
             {
                 target.Password = value;
+                onPropertyChanged();
             }
         }
+
         public ColorsScheme Colors
         {
-            get => target.Colors; set
+            get => target.Colors;
+            set
             {
                 target.Colors = value;
+                onPropertyChanged();
+                onPropertyChanged(nameof(BaseColorBindable));
+                onPropertyChanged(nameof(BaseColorBrush));
             }
         }
-        public long Identifier => target.Identifier;
-        public ObservableCollection<Tag> Tags => target.Tags;
 
-        public Color BaseColorBindable => target.BaseColorBindable;
+        public TagRef Identifier => target.Identifier;
 
-        Color Account.BaseColorBindable { get => target.BaseColorBindable; set => target.BaseColorBindable = value; }
+        public List<TagRef> Tags
+        {
+            get => target.Tags;
+            set
+            {
+                target.Tags = value;
+                onPropertyChanged();
+            }
+        }
+        public Color BaseColorBindable
+        {
+            get => target.BaseColorBindable;
+            set
+            {
+                target.BaseColorBindable = value;
+                onPropertyChanged();
+            }
+        }
 
         public Brush BaseColorBrush => Colors.BaseColor.asBrush;
         public Brush HoverColorBrush => Colors.HoverColor.asBrush;

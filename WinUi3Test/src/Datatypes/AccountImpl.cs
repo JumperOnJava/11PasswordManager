@@ -1,23 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization.Metadata;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using Windows.UI;
-using WinRT;
 using WinUi3Test.src.Ui;
-using WinUi3Test.src.Util;
-using JsonSerializer = System.Text.Json.JsonSerializer;
-using JsonValue = Windows.Data.Json.JsonValue;
 
 namespace WinUi3Test.src.Storage
 {
-    public class AccountImpl : PropertyChangable, Account
+    public class AccountImpl : Account
     {
         public string targetApp;
         public string displayName;
@@ -25,35 +13,26 @@ namespace WinUi3Test.src.Storage
         public string email;
         public string password;
         public ColorsScheme colors;
-        public ObservableCollection<Tag> Tags { get; }
-        public long Identifier { get; }
+        public TagRef identifier;
+        public List<TagRef> Tags { get; set; }
+        public TagRef Identifier => identifier;
 
-        public string TargetApp { get => targetApp; set { targetApp = value; onPropertyChanged("TargetApp"); } }
-        public string DisplayName { get => displayName; set { displayName = value; onPropertyChanged("DisplayName"); } }
-        public string Username { get => username; set { username = value; onPropertyChanged("Username"); } }
-        public string Email { get => email; set { email = value; onPropertyChanged("Email"); } }
-        public string Password { get => password; set { password = value; onPropertyChanged("Password"); } }
-        public ColorsScheme Colors
-        {
-            get => colors; set
-            {
-                colors = value;
-                onPropertyChanged("Colors");
-                onPropertyChanged("BaseColorBindable");
-                onPropertyChanged("BaseColorBrush");
-            }
-        }
-        public AccountImpl(string targetApp, string username, string password) : this(targetApp, username, password, new List<Tag>()) { }
-        public AccountImpl(string targetApp, string username, string password, IList<Tag> tags)
+        public string TargetApp { get => targetApp; set => targetApp = value; }
+        public string DisplayName { get => displayName; set => displayName = value; }
+        public string Username { get => username; set => username = value; }
+        public string Email { get => email; set => email = value; }
+        public string Password { get => password; set => password = value; }
+        public ColorsScheme Colors { get => colors; set => colors = value; }
+        public AccountImpl(string targetApp, string username, string password) : this(targetApp, username, password, new List<TagRef>()) { }
+        public AccountImpl(string targetApp, string username, string password, IEnumerable<TagRef> tags)
         {
             TargetApp = targetApp.Clone() as String;
             Username = username.Clone() as String;
             Password = password.Clone() as String;
             DisplayName = "";
             Email = "";
-            Tags = new ObservableCollection<Tag>(tags);
-            Tags.CollectionChanged += (_, _) => onPropertyChanged("Tags");
-            Identifier = Random.Shared.NextInt64();
+            Tags = new List<TagRef>(tags);
+            identifier = new TagRef(Random.Shared.NextInt64());
             Colors = ColorsScheme.AccentColors;
         }
         public AccountImpl() : this("", "", "") { }
@@ -67,14 +46,8 @@ namespace WinUi3Test.src.Storage
         }
         public Color BaseColorBindable
         {
-            get
-            {
-                return Colors.BaseColor.asWinColor;
-            }
-            set
-            {
-                Colors = new ColorsScheme(new AdvColor(value));
-            }
+            get => Colors.BaseColor.asWinColor;
+            set => Colors = new ColorsScheme(new AdvColor(value));
         }
 
     }

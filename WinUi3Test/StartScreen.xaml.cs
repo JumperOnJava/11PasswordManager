@@ -21,6 +21,7 @@ using WinUi3Test.src.Storage;
 using WinUi3Test.src.ViewModel;
 using WinUi3Test.Storage;
 using System.Collections.Specialized;
+using WinUi3Test.Datatypes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -122,24 +123,28 @@ namespace WinUi3Test
             try
             {
                 StaticStorage staticStorage = JsonSerializer.Deserialize<StaticStorage>(json, Test.JsonOption);
-                var storageOperation = new Operation<src.Storage.Storage>(staticStorage);
+                var storageOperation = new Operation<Datatypes.Storage>(staticStorage);
                 navigator.Navigate(typeof(AccountsListPage), new MainWindowModel(storageOperation, navigator),
                     new DrillInNavigationTransitionInfo());
-                model.history.Add(new StartScreenModelStoragePath(path));
                 storageOperation.onFinished += s =>
                 {
                     if (s != null)
                     {
+                        model.history.Add(new StartScreenModelStoragePath(path));
                         File.WriteAllText(path, JsonSerializer.Serialize(s, Test.JsonOption));
                     }
                     navigator.GoBack();
                 };
             }
-            catch
+            catch(Exception e)
             {
                 var dialog = new ContentDialog();
                 dialog.PrimaryButtonText = "Ok";
                 dialog.Title = "Error reading file";
+                dialog.Content = e.StackTrace;
+                dialog.XamlRoot = this.XamlRoot;
+                dialog.ShowAsync();
+                throw new Exception("",e);
             }
         }
 
@@ -157,8 +162,14 @@ namespace WinUi3Test
                 history = new ObservableCollection<StartScreenModelStoragePath>();
                 foreach (var item in appSettings.storageHistory)
                 {
-                    history.Add(new StartScreenModelStoragePath(item));
+                    if(File.Exists(item))
+                        history.Add(new StartScreenModelStoragePath(item));
                 }
+                appSettings.storageHistory.Sort((a, b) =>
+                {
+                    if (File.GetLastAccessTime(a) == File.GetLastAccessTime(b)) return 0;
+                    return File.GetLastAccessTime(a) > File.GetLastAccessTime(b) ? 1 : -1;
+                });
                 NotifyCollectionChangedEventHandler action = (a, e) =>
                 {
                     appSettings.storageHistory.Clear();

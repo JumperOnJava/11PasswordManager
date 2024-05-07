@@ -2,10 +2,15 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using WinUi3Test.src.Storage;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
+using WinUi3Test.ViewModel;
 
 namespace WinUi3Test
 {
@@ -18,6 +23,22 @@ namespace WinUi3Test
             try
             {
                 model.Target = e.Parameter as AccountOperation;
+                var allTags = AccountsListPage.Model.Tags.Map(t=>t.Target);
+                model.SelectedTags = new ObservableCollection<TagRef>(model.Target.Tags);
+                foreach (var tag in model.SelectedTags)
+                {
+                    for (var index = 0; index < allTags.Count; index++)
+                    {
+                        var tag2 = allTags[index];
+                        if (tag == tag2)
+                        {
+                            allTags.RemoveAt(index);
+                            continue;
+                        }
+                    }
+                }
+
+                model.UnselectedTags = new ObservableCollection<TagRef>(allTags);
                 ColorPickerRing.Color = model.Target.Colors.BaseColor.asWinColor;
             }
             catch (InvalidCastException ex)
@@ -42,6 +63,7 @@ namespace WinUi3Test
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
+                model.Target.Tags = new List<TagRef>(model.SelectedTags);
                 model.Target.Finish(true);
             }
         }
@@ -69,13 +91,38 @@ namespace WinUi3Test
         {
             model.Target.Colors = new ColorsScheme(new AdvColor(sender.Color));
         }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            TagRef r = (TagRef)(sender as ButtonBase).CommandParameter;
+            try
+            {
+                var tag = model.SelectedTags.First(e => e == r);
+                model.SelectedTags.Remove(tag);
+                model.UnselectedTags.Add(tag);
+            }
+            catch (Exception ex)
+            {
+                var tag = model.UnselectedTags.First(e => e == r);
+                model.UnselectedTags.Remove(tag);
+                model.SelectedTags.Add(tag);
+            }
+        }
     }
 
     internal class PasswordEditModel : PropertyChangable
     {
         private AccountOperation target;
+        public ObservableCollection<TagRef> SelectedTags { get; set; }
+        public ObservableCollection<TagRef> UnselectedTags {  get; set; }
 
         private PasswordRevealMode passwordRevealMode;
+
+        public PasswordEditModel()
+        {
+            SelectedTags = new();
+            UnselectedTags = new();
+        }
         public PasswordRevealMode PasswordRevealMode
         {
             get => passwordRevealMode; set

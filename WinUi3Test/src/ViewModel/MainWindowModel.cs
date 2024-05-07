@@ -1,78 +1,82 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using WinUi3Test;
-using WinUi3Test.src;
+using WinUi3Test.Datatypes;
 using WinUi3Test.src.Storage;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
+using WinUi3Test.ViewModel;
 
-public class MainWindowModel : PropertyChangable, WindowModel
+public class MainWindowModel : PropertyChangable
 {
     public readonly Frame navigator;
-    private Storage storage;
-
     private ObservableCollection<UiTag> tags;
-    public ObservableCollection<UiTag> Tags { get => tags; }
+
+    public ObservableCollection<UiTag> Tags
+    {
+        get => tags;
+    }
 
     private ObservableCollection<Account> accounts;
-    public ObservableCollection<Account> Accounts { get => accounts; }
+
+    public ObservableCollection<Account> Accounts
+    {
+        get => accounts;
+    }
+
     public ObservableCollection<UiAccountModel> displayAccounts;
-    public ObservableCollection<UiAccountModel> DisplayAccounts { get => displayAccounts; }
+
+    public ObservableCollection<UiAccountModel> DisplayAccounts
+    {
+        get => displayAccounts;
+    }
+
     public bool isPaneOpen = true;
+
     public bool IsPaneOpen
     {
-        get => isPaneOpen; set
+        get => isPaneOpen;
+        set
         {
             isPaneOpen = value;
-            onPropertyChanged("IsPaneOpen");
+            onPropertyChanged();
         }
     }
 
     private UiAccountModel? currentEditAccount = null;
     private readonly Operation<Storage> operation;
 
-    public MainWindowModel(Operation<Storage> storage,Frame navigator)
+    public MainWindowModel(Operation<Storage> storage, Frame navigator)
     {
         this.operation = storage;
+        TagManager.Instance.tags = storage.target.Tags;
         this.navigator = navigator;
-        this.tags = new(storage.target.Tags.Map((e)=>new UiTag(e)));
+        this.tags = new ObservableCollection<UiTag>(
+            storage.target.TagsOrder
+                .Map(r => new UiTag(r))
+        );
+
+
         this.accounts = new(storage.target.Accounts);
         this.displayAccounts = new ObservableCollection<UiAccountModel>();
-        Tags.CollectionChanged += (_,_) => onPropertyChanged("Tags");
+        Tags.CollectionChanged += (_, _) => onPropertyChanged("Tags");
         Accounts.CollectionChanged += (_, _) => FilterAccounts();
         FilterAccounts();
     }
 
     public void Save()
     {
-        operation.target.Accounts.Clear();
-        foreach (var account in Accounts)
-        {
-            operation.target.Accounts.Add(account);
-            var tags = new List<Tag>(account.Tags);
-            account.Tags.Clear();
-            foreach(var tag in Tags)
-                if (tag is UiTag)
-                    account.Tags.Add(tag.Target);
-                else
-                    account.Tags.Add(tag);
-        }
-    
-        operation.target.Tags.Clear();
-        foreach (var tag in Tags)
-        {
-            operation.target.Tags.Add(tag.Target);
-        }
-        
+        var newStorage = new StaticStorage();
+        newStorage.Accounts = new List<Account>(Accounts);
+        newStorage.TagsOrder = new List<TagRef>(Tags.Map(t => t.Target.Identifier));
+        newStorage.TagsOrder.ForEach(element => newStorage.Tags[element.innerId] = element);
+        newStorage.Tags = new Dictionary<long, Tag>(TagManager.Instance.tags);
+        operation.target = newStorage;
         operation.Finish(true);
     }
+
     public void Cancel()
     {
         operation.Finish(false);
@@ -81,11 +85,23 @@ public class MainWindowModel : PropertyChangable, WindowModel
     internal void FilterAccounts()
     {
         DisplayAccounts.Clear();
-        foreach (var account in Accounts)
+        for (var index = 0; index < Accounts.Count; index++)
         {
+            var indexRef = new { index };
+            var account = Accounts[index];
             if (isFiltered(account))
             {
-                DisplayAccounts.Add(new UiAccountModel(navigator, account));
+                var operation = AccountOperation.Start(account);
+                operation.OnFinished += acc =>
+                {
+                    if (acc != null)
+                    {
+                        //Console.WriteLine("ok");
+                        Accounts[indexRef.index] = acc;
+                    }
+                };
+                DisplayAccounts.Add(new UiAccountModel(navigator, operation));
+
             }
         }
     }
@@ -102,6 +118,7 @@ public class MainWindowModel : PropertyChangable, WindowModel
                 }
             }
         }
+
         return true;
     }
 

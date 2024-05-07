@@ -17,6 +17,7 @@ using WinUi3Test.src.Storage;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
+using WinUi3Test.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,7 +31,7 @@ namespace WinUi3Test
     {
 
         private AccountCreationModel model;
-        public AccountCreationScreen(ContentDialog dialog, AccountOperation account, IList<Tag> tags)
+        public AccountCreationScreen(ContentDialog dialog, AccountOperation account, IList<TagRef> tags)
         {
             dialog.Content = this;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -44,8 +45,9 @@ namespace WinUi3Test
             dialog.IsPrimaryButtonEnabled = false;
             dialog.PrimaryButtonClick += (a, b) =>
             {
-                a.Hide();
+                account.Tags = new List<TagRef>(model.SelectedTags);
                 account.Finish(true);
+                a.Hide();
             };
             dialog.CloseButtonClick += (a, b) =>
             {
@@ -54,7 +56,7 @@ namespace WinUi3Test
             };
             model = new AccountCreationModel(account);
             model.Account.PropertyChanged += (_, _) => UpdateSaveButton();
-            model.UnselectedTags = new ObservableCollection<Tag>(tags);
+            model.UnselectedTags = new ObservableCollection<TagRef>(tags);
         }
 
         private void UpdateSaveButton()
@@ -74,16 +76,16 @@ namespace WinUi3Test
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            long id = (long)((sender as ButtonBase).CommandParameter);
+            TagRef r = (TagRef)((sender as ButtonBase).CommandParameter);
             try
             {
-                var tag = model.SelectedTags.First(e => e.Identifier == id);
+                var tag = model.SelectedTags.First(e => e == r);
                 model.SelectedTags.Remove(tag);
                 model.UnselectedTags.Add(tag);
             }
             catch (Exception ex)
             {
-                var tag = model.UnselectedTags.First(e => e.Identifier == id);
+                var tag = model.UnselectedTags.First(e => e == r);
                 model.UnselectedTags.Remove(tag);
                 model.SelectedTags.Add(tag);
             }
@@ -93,12 +95,14 @@ namespace WinUi3Test
     internal class AccountCreationModel : PropertyChangable
     {
         public AccountOperation Account { get; }
-        public ObservableCollection<Tag> SelectedTags => Account.Tags;
-        public ObservableCollection<Tag> UnselectedTags {  get; set; }
+        public ObservableCollection<TagRef> SelectedTags { get; set; }
+        public ObservableCollection<TagRef> UnselectedTags {  get; set; }
 
         public AccountCreationModel(AccountOperation account)
         {
             this.Account = account;
+            SelectedTags = new ObservableCollection<TagRef>(Account.Tags);
+            UnselectedTags = new ObservableCollection<TagRef>(Account.Tags);
         }
     }
 }

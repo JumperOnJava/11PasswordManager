@@ -12,7 +12,7 @@ using WinUi3Test.src.Util;
 
 namespace WinUi3Test.src.ViewModel
 {
-    public class UiTag : PropertyChangable, Tag
+    public class UiTag : PropertyChangable
     {
         private bool selected;
         public event Action<bool> SelectedChanged;
@@ -30,7 +30,7 @@ namespace WinUi3Test.src.ViewModel
             }
         }
 
-        public Tag Target { get; }
+        public TagRef Target { get; set; }
         public string DisplayName
         {
             get => Target.DisplayName; set
@@ -44,7 +44,7 @@ namespace WinUi3Test.src.ViewModel
             }
         }
 
-        public long Identifier => Target.Identifier;
+        public TagRef Identifier => Target.Identifier;
         public UiTag Self { get => this; }
         public ColorsScheme TagColors
         {
@@ -68,7 +68,7 @@ namespace WinUi3Test.src.ViewModel
 
         public Brush SymbolColorBrush => Target.SymbolColorBrush;
 
-        public UiTag(Tag target)
+        public UiTag(TagRef target)
         {
             this.Target = target;
         }

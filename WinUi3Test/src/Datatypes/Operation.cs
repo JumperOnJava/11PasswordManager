@@ -9,7 +9,7 @@ public class Operation<T> where T : class, Clonable<T>
     {
         this.target = target.Clone();
     }
-    public T target { get; private set; }
+    public T target { get; set; }
     public event Action<T> onFinished;
     public void Finish(bool successful)
     {

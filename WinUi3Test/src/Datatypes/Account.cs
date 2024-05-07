@@ -14,7 +14,7 @@ using WinUi3Test.src.Util;
 
 namespace WinUi3Test.src.Storage
 {
-    public interface Account : Identifiable, Taggable, INotifyPropertyChanged, Clonable<Account>
+    public interface Account : Identifiable, Taggable, Clonable<Account>
     {
         public string TargetApp { get; set; }
         public string DisplayName { get; set; }

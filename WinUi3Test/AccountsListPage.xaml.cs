@@ -19,7 +19,9 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using WinUi3Test.src.Storage;
 using WinUi3Test.src.Ui;
+using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
+using WinUi3Test.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,7 +30,13 @@ namespace WinUi3Test
 {
     public sealed partial class AccountsListPage : Page
     {
-        private MainWindowModel model;
+        public static MainWindowModel Model;
+        public MainWindowModel model
+        {
+            get => Model;
+            set => Model = value;
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -72,7 +80,7 @@ namespace WinUi3Test
             ContentDialog dialog = new ContentDialog();
 
             // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
-            var newTag = new UiTag(new TagBasic(""));
+            var newTag = new UiTag(new TagBasic("").Identifier);
             var result = await TagEditDialog.ShowEditDialog(this.XamlRoot,newTag);
             if(result == ContentDialogResult.Primary)
             {
@@ -98,8 +106,8 @@ namespace WinUi3Test
             var dialog = new ContentDialog();
             dialog.XamlRoot = this.XamlRoot;
             var newAccount = AccountOperation.Start();
-            var screen = new AccountCreationScreen(dialog,newAccount,new List<Tag>(model.Tags));
-            newAccount.onFinished += (account) =>
+            var screen = new AccountCreationScreen(dialog,newAccount,new List<TagRef>(model.Tags.Map(e=>e.Identifier)));
+            newAccount.OnFinished += (account) =>
             {
                     if (account != null) 
                         model.Accounts.Add(account);

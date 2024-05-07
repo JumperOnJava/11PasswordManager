@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using WinUi3Test.src.Storage;
 
-namespace WinUi3Test.src.Storage
+namespace WinUi3Test.Datatypes
 {
     public interface Storage : Clonable<Storage>
     {
-        [JsonInclude]
-        public List<Tag> Tags { get; }
-        [JsonInclude]
-        public List<Account> Accounts { get; }
+        Dictionary<long, Tag> Tags { get; }
+        List<TagRef> TagsOrder { get; }
+        List<Account> Accounts { get; }
         public StorageSettings StorageSettings { get; }
     }
 

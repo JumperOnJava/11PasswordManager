@@ -87,7 +87,6 @@
 		<None Remove="AccountCreationScreen.xaml" />
 		<None Remove="AccountsListPage.xaml" />
 		<None Remove="BlankPage1.xaml" />
-		<None Remove="PasswordEdit.xaml" />
 		<None Remove="src\ViewModel\BlankPage1.xaml" />
 		<None Remove="src\ViewModel\TagCreateDialog.xaml" />
 		<None Remove="StartScreen.xaml" />
