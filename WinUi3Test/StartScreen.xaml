@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="Transparent">
-    <Grid DataContext="{x:Bind model}" MaxWidth="600" MaxHeight="800" Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}" BorderThickness="1" CornerRadius="8">
+    <Grid DataContext="{x:Bind model}" Margin="0,0,0,40" MaxWidth="600" MaxHeight="800" Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}" BorderThickness="1" CornerRadius="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="50"/>
@@ -21,7 +21,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Margin="0,-5,0,0" Padding="5,5,5,5">
+                        <StackPanel Margin="6,-5,0,0" Padding="5,5,5,5">
                             <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}"/>
                             <TextBlock Text="{Binding Path}"/>
                         </StackPanel>
