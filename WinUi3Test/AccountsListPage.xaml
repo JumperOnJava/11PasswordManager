@@ -104,6 +104,7 @@
                     Height="Auto"
                     CornerRadius="8"
                     Padding="-16,-4,-16,-4"
+                          CanDragItems="True" CanReorderItems="True" AllowDrop="True"
                     
                     ItemsSource="{x:Bind model.DisplayAccounts}">
                             <ListView.ItemTemplate>
