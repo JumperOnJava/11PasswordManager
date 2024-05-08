@@ -21,7 +21,9 @@ using WinUi3Test.src.Storage;
 using WinUi3Test.src.ViewModel;
 using WinUi3Test.Storage;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 using WinUi3Test.Datatypes;
+using WinUi3Test.src.Util;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -68,7 +70,8 @@ namespace WinUi3Test
                 var file = await saveFIleDialog.PickSaveFileAsync();
                 if (file != null)
                 {
-                    OpenStorage(JsonSerializer.Serialize(new StaticStorage(), Test.JsonOption), file.Path);
+                    var pw = await askPassword(true);
+                    OpenStorage(Encryption.Encrypt(JsonSerializer.Serialize(new StaticStorage(), Test.JsonOption),pw), file.Path,pw);
                 }
             }
             catch (Exception ex)
@@ -113,16 +116,21 @@ namespace WinUi3Test
             opening = false;
         }
 
-        public void OpenStorage(string path)
+        public async void OpenStorage(string path)
         {
-            OpenStorage(File.ReadAllText(path), path);
+            var pw = await askPassword(false);
+            OpenStorage(File.ReadAllBytes(path), path, pw);
         }
 
-        private void OpenStorage(string json, string path)
+        private void OpenStorage(byte[] data, string path, string password)
         {
+            if(password == null)
+            {
+                return;
+            }
             try
             {
-                StaticStorage staticStorage = JsonSerializer.Deserialize<StaticStorage>(json, Test.JsonOption);
+                StaticStorage staticStorage = JsonSerializer.Deserialize<StaticStorage>(Encryption.Decrypt(data,password), Test.JsonOption);
                 var storageOperation = new Operation<Datatypes.Storage>(staticStorage);
                 navigator.Navigate(typeof(AccountsListPage), new MainWindowModel(storageOperation, navigator),
                     new DrillInNavigationTransitionInfo());
@@ -131,7 +139,7 @@ namespace WinUi3Test
                     if (s != null)
                     {
                         model.history.Add(new StartScreenModelStoragePath(path));
-                        File.WriteAllText(path, JsonSerializer.Serialize(s, Test.JsonOption));
+                        File.WriteAllBytes(path,Encryption.Encrypt(JsonSerializer.Serialize(s, Test.JsonOption), password));
                     }
                     navigator.GoBack();
                 };
@@ -144,7 +152,7 @@ namespace WinUi3Test
                 dialog.Content = e.StackTrace;
                 dialog.XamlRoot = this.XamlRoot;
                 dialog.ShowAsync();
-                throw new Exception("",e);
+                //throw new Exception("",e);
             }
         }
 
@@ -179,9 +187,25 @@ namespace WinUi3Test
                 history.CollectionChanged += action;
                 action.Invoke(null,null);
             }
-            
         }
 
+        public async Task<string> askPassword(bool isDouble)
+        {
+            var dialog = new ContentDialog();
+            dialog.Title = "Enter password:";
+            dialog.PrimaryButtonText = "Confirm";
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.SecondaryButtonText = "Cancel";
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Content = new PasswordInputDialog(dialog,isDouble);
+            var result = await dialog.ShowAsync();
+            if(result == ContentDialogResult.Primary)
+            {
+                return (dialog.Content as PasswordInputDialog).model.Password;
+            }
+        
+            return null;
+        }
     }
     public class StartScreenModelStoragePath
     {

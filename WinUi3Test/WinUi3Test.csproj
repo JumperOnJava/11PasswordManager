@@ -87,12 +87,18 @@
 		<None Remove="AccountCreationScreen.xaml" />
 		<None Remove="AccountsListPage.xaml" />
 		<None Remove="BlankPage1.xaml" />
+		<None Remove="PasswordInputDialog.xaml" />
 		<None Remove="src\ViewModel\BlankPage1.xaml" />
 		<None Remove="src\ViewModel\TagCreateDialog.xaml" />
 		<None Remove="StartScreen.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 		<Page Remove="src\ViewModel\BlankPage1.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="PasswordInputDialog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="StartScreen.xaml">
@@ -123,5 +129,8 @@
 		<Page Update="BlankPage1.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="src\ViewModel\AccountDefault\" />
 	</ItemGroup>
 </Project>

@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Text;
 using System.Text.Json;
 using WinUi3Test.src.Storage;
+using WinUi3Test.src.Util;
 
 namespace WinUi3Test;
 
@@ -20,7 +23,13 @@ public class Test
 
     public static void Start()
     {
-        //JsonOption =
-
+        var text = "Encoding test";
+        var key = "secret";
+        var enc = Encryption.Encrypt(text, key);
+        var dec = Encryption.Decrypt(enc, key);
+        if (dec == text)
+            Console.WriteLine("Encoding test passed!");
+        else
+            throw new Exception("Encoding test failed");
     }
 }

@@ -30,7 +30,7 @@ namespace WinUi3Test
         }
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            Test.Start();
+            //Test.Start();
             MainWindow = new MainWindow();
             m_window = MainWindow;
             MainWindow.SizeChanged += (sender,e) =>
