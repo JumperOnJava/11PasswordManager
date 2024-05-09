@@ -28,7 +28,7 @@ namespace WinUi3Test.src.ViewModel
             get => target; set
             {
                 target = value;
-                onPropertyChanged("Target");
+                onPropertyChanged();
             }
         }
 
@@ -51,19 +51,22 @@ namespace WinUi3Test.src.ViewModel
 
         public Action EditThisAccount_ => EditThisAccount;
         public void EditThisAccount() => Navigate();
+        public bool EmailVisible => target.Email.Replace(" ", "").Length > 0;
+        public bool UsernameVisible => target.Username.Replace(" ", "").Length > 0;
+        public bool AppLinkBottonVisible => target.AppLink.Replace(" ", "").Length > 0;
 
         public void CallEntryMethod(object sender, RoutedEventArgs args)
         {
             if(sender is ButtonBase)
             {
+                
                 ((sender as ButtonBase).CommandParameter as Action).Invoke();
             }
         }
         private Frame Navigator { get; set; }
         public void Navigate()
         {
-            var operation = AccountOperation.Start(Target);
-            navigator.Navigate(this.Target.target.AccountEditor, operation, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+            var operation = AccountOperation.Start(Target.target);
             operation.OnFinished += result =>
             {
                 if (result != null)
@@ -73,6 +76,7 @@ namespace WinUi3Test.src.ViewModel
                 target.Finish(true);
                 navigator.GoBack();
             };
+            navigator.Navigate(this.Target.target.AccountEditor, operation, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         }
     }
 }

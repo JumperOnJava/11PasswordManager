@@ -56,6 +56,9 @@
                                 <AppBarButton Icon="ClearSelection" Label="Reset" Click="ClearSelection"/>
                             </CommandBar>
                             <ListView Width="300"
+                                  CanDragItems="True" 
+                                  CanReorderItems="True"
+                                  AllowDrop="True"
                                   x:Name="TagListView"
                                   SelectionMode="None"
                                   ItemsSource="{Binding Tags}">
@@ -69,7 +72,7 @@
                                             <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
                                             <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
                                             <Grid>
-                                                <CheckBox x:Name="TagCheckBox" Loaded="TagCheckBox_Loaded" Margin="10,0,0,0" Checked="CheckBox_Changed" Unchecked="CheckBox_Changed" CommandParameter="{Binding Self}">
+                                                <CheckBox x:Name="TagCheckBox" Margin="10,0,0,0" Checked="CheckBox_Changed" Unchecked="CheckBox_Changed" CommandParameter="{Binding Self}">
                                                     <CheckBox.Resources>
                                                         <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillChecked" Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}"/>
                                                         <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeChecked" Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}"/>
@@ -104,9 +107,10 @@
                     Height="Auto"
                     CornerRadius="8"
                     Padding="-16,-4,-16,-4"
-                          CanDragItems="True" CanReorderItems="True" AllowDrop="True"
-                    
-                    ItemsSource="{x:Bind model.DisplayAccounts}">
+                    CanDragItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
+                    CanReorderItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
+                    AllowDrop="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding DispayAccounts,UpdateSourceTrigger=PropertyChanged}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="viewModel:UiAccountModel">
                                     <Grid

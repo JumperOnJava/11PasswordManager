@@ -4,7 +4,7 @@ using WinUi3Test.src.Storage;
 
 namespace WinUi3Test.Datatypes
 {
-    public class StaticStorage : Storage
+    public class FileStorage : Storage
     {
         [JsonInclude]
         public Dictionary<long, Tag> Tags { get; set; }
@@ -15,7 +15,7 @@ namespace WinUi3Test.Datatypes
         [JsonInclude]
         public StorageSettings StorageSettings { get; set; }
 
-        public StaticStorage()
+        public FileStorage()
         {
             Tags = new();
             TagsOrder = new();
@@ -24,7 +24,7 @@ namespace WinUi3Test.Datatypes
         }
         public Storage Clone()
         {
-            var staticStorage = new StaticStorage();
+            var staticStorage = new FileStorage();
             staticStorage.StorageSettings = StorageSettings;
             staticStorage.Accounts = new List<Account>(Accounts);
             staticStorage.TagsOrder = new List<TagRef>(TagsOrder);

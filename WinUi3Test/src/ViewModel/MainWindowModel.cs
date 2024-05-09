@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using WinUi3Test;
 using WinUi3Test.Datatypes;
 using WinUi3Test.src.Storage;
@@ -19,19 +20,21 @@ public class MainWindowModel : PropertyChangable
         get => tags;
     }
 
-    private ObservableCollection<Account> accounts;
+    private ObservableCollection<UiAccountModel> accounts;
 
-    public ObservableCollection<Account> Accounts
+    public ObservableCollection<UiAccountModel> Accounts
     {
         get => accounts;
     }
 
-    public ObservableCollection<UiAccountModel> displayAccounts;
+    public ObservableCollection<UiAccountModel> filteredAccounts;
 
-    public ObservableCollection<UiAccountModel> DisplayAccounts
+    public ObservableCollection<UiAccountModel> FilteredAccounts
     {
-        get => displayAccounts;
+        get => filteredAccounts;
     }
+
+    public ObservableCollection<UiAccountModel> DispayAccounts => NoTagsSelected ? Accounts : FilteredAccounts; 
 
     public bool isPaneOpen = true;
 
@@ -45,31 +48,42 @@ public class MainWindowModel : PropertyChangable
         }
     }
 
-    private UiAccountModel? currentEditAccount = null;
+    public bool NoTagsSelected => !Tags.Any(t => t.Selected);
+    
     private readonly Operation<Storage> operation;
 
     public MainWindowModel(Operation<Storage> storage, Frame navigator)
     {
-        this.operation = storage;
+        operation = storage;
         TagManager.Instance.tags = storage.target.Tags;
         this.navigator = navigator;
-        this.tags = new ObservableCollection<UiTag>(
-            storage.target.TagsOrder
-                .Map(r => new UiTag(r))
-        );
 
-
-        this.accounts = new(storage.target.Accounts);
-        this.displayAccounts = new ObservableCollection<UiAccountModel>();
-        Tags.CollectionChanged += (_, _) => onPropertyChanged("Tags");
-        Accounts.CollectionChanged += (_, _) => FilterAccounts();
+        accounts = new(storage.target.Accounts.Map(a => new UiAccountModel(this.navigator, AccountOperation.Start(a))));
+        filteredAccounts = new ObservableCollection<UiAccountModel>();
+        tags = new ObservableCollection<UiTag>();
+        Tags.CollectionChanged += (_, _) =>
+        {
+            onPropertyChanged(nameof(NoTagsSelected));
+            onPropertyChanged(nameof(DispayAccounts));
+            onPropertyChanged(nameof(Tags));
+            foreach (var uiTag in Tags)
+            {
+                uiTag.PropertyChanged += (_,_) => onPropertyChanged(nameof(NoTagsSelected));
+            }
+        };
+        
+        storage.target.TagsOrder.Map(r => new UiTag(r)).ForEach(Tags.Add);
+        Accounts.CollectionChanged += (_, _) =>
+        {
+            FilterAccounts();
+        };
         FilterAccounts();
     }
 
     public void Save()
     {
         var newStorage = new StaticStorage();
-        newStorage.Accounts = new List<Account>(Accounts);
+        newStorage.Accounts = new List<Account>(Accounts.Map(a=>a.Target.target));
         newStorage.TagsOrder = new List<TagRef>(Tags.Map(t => t.Target.Identifier));
         newStorage.TagsOrder.ForEach(element => newStorage.Tags[element.innerId] = element);
         newStorage.Tags = new Dictionary<long, Tag>(TagManager.Instance.tags);
@@ -84,26 +98,26 @@ public class MainWindowModel : PropertyChangable
 
     internal void FilterAccounts()
     {
-        DisplayAccounts.Clear();
+        FilteredAccounts.Clear();
         for (var index = 0; index < Accounts.Count; index++)
         {
             var indexRef = new { index };
             var account = Accounts[index];
-            if (isFiltered(account))
+            var operation = AccountOperation.Start(account.Target);
+            operation.OnFinished += acc =>
             {
-                var operation = AccountOperation.Start(account);
-                operation.OnFinished += acc =>
+                if (acc != null)
                 {
-                    if (acc != null)
-                    {
-                        //Console.WriteLine("ok");
-                        Accounts[indexRef.index] = acc;
-                    }
-                };
-                DisplayAccounts.Add(new UiAccountModel(navigator, operation));
-
+                    //Console.WriteLine("ok");
+                    Accounts[indexRef.index] = new UiAccountModel(navigator,AccountOperation.Start(acc));
+                }
+            };
+            if (isFiltered(account.Target))
+            {
+                FilteredAccounts.Add(new UiAccountModel(navigator, operation));
             }
         }
+
     }
 
     private bool isFiltered(Account account)

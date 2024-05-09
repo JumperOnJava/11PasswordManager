@@ -9,6 +9,8 @@ namespace WinUi3Test.Datatypes
         List<TagRef> TagsOrder { get; }
         List<Account> Accounts { get; }
         public StorageSettings StorageSettings { get; }
+        public void Save();
+        public void Load();
     }
 
     public struct StorageSettings

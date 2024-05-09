@@ -21,7 +21,7 @@ namespace WinUi3Test
 {
     public sealed partial class PasswordInputDialog : Page
     {
-        public PasswordInputDialogModel model = new PasswordInputDialogModel();
+        public PasswordInputDialogModel model = new();
         public PasswordInputDialog(ContentDialog dialog, bool isDouble)
         {
             model.isDouble = isDouble;
