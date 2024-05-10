@@ -66,14 +66,6 @@ namespace WinUi3Test
             }
         }
 
-        private void TagCheckBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender.GetType() == typeof(CheckBox))
-            {
-                var checkbox = sender as CheckBox;
-                (checkbox.CommandParameter as UiTag).SelectedChanged += (b) => checkbox.IsChecked = b;
-            }
-        }
 
         private async void CreateTag(object sender, RoutedEventArgs e)
         {
@@ -110,7 +102,7 @@ namespace WinUi3Test
             newAccount.OnFinished += (account) =>
             {
                     if (account != null) 
-                        model.Accounts.Add(account);
+                        model.Accounts.Add(new UiAccountModel(model.navigator,AccountOperation.Start(account)));
             };
         }
         private void ShowPane_Click(object sender, RoutedEventArgs e)
@@ -131,5 +123,6 @@ namespace WinUi3Test
         {
             model.ExitNoSave();
         }
+
     }
 }

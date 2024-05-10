@@ -65,13 +65,13 @@ namespace WinUi3Test
 
                 WinRT.Interop.InitializeWithWindow.Initialize(saveFIleDialog, hWnd);
 
-                saveFIleDialog.FileTypeChoices.Add("Unencrypted json", new List<string>() { ".json" });
+                saveFIleDialog.FileTypeChoices.Add("Password storage", new List<string> { ".pwdb" });
 
                 var file = await saveFIleDialog.PickSaveFileAsync();
                 if (file != null)
                 {
                     var pw = await askPassword(true);
-                    OpenStorage(Encryption.Encrypt(JsonSerializer.Serialize(new StaticStorage(), Test.JsonOption),pw), file.Path,pw);
+                    OpenStorage(Encryption.Encrypt(JsonSerializer.Serialize(new FileStorage(), Test.JsonOption),pw), file.Path,pw);
                 }
             }
             catch (Exception ex)
@@ -97,6 +97,7 @@ namespace WinUi3Test
 
                 WinRT.Interop.InitializeWithWindow.Initialize(openFileDialog, hWnd);
 
+                openFileDialog.FileTypeFilter.Add(".pwdb");
                 openFileDialog.FileTypeFilter.Add("*");
 
                 var file = await openFileDialog.PickSingleFileAsync();
@@ -130,7 +131,7 @@ namespace WinUi3Test
             }
             try
             {
-                StaticStorage staticStorage = JsonSerializer.Deserialize<StaticStorage>(Encryption.Decrypt(data,password), Test.JsonOption);
+                FileStorage staticStorage = JsonSerializer.Deserialize<FileStorage>(Encryption.Decrypt(data,password), Test.JsonOption);
                 var storageOperation = new Operation<Datatypes.Storage>(staticStorage);
                 navigator.Navigate(typeof(AccountsListPage), new MainWindowModel(storageOperation, navigator),
                     new DrillInNavigationTransitionInfo());

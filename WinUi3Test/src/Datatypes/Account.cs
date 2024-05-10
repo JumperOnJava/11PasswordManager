@@ -25,5 +25,6 @@ namespace WinUi3Test.src.Storage
         public Type AccountEditor => typeof(PasswordEdit);
         public ColorsScheme Colors { get; set; }
         public Color BaseColorBindable { get; set; }
+        string AppLink { get; set; }
     }
 }

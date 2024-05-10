@@ -1,0 +1,5 @@
+﻿Search passwords / tags
+Delete passwords / tags on drag-n-drop
+Generate passwords
+Finish open app link
+Finish copy password/email/username

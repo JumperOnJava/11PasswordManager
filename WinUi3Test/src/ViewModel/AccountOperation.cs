@@ -42,6 +42,7 @@ namespace WinUi3Test.ViewModel
 
         public void Finish(bool successful)
         {
+            if (OnFinished != null)
             OnFinished.Invoke(successful ? target : null);
         }
 
@@ -132,19 +133,19 @@ namespace WinUi3Test.ViewModel
         public Brush HoverColorBrush => Colors.HoverColor.asBrush;
         public Brush SymbolColoBrush => Colors.SymbolColor.asBrush;
 
+        public string AppLink
+        {
+            get => target.AppLink;
+            set
+            {
+                target.AppLink = value;
+                onPropertyChanged();
+            }
+        }
+
         public Account Clone()
         {
             return target.Clone();
-        }
-
-        public void Write(JsonObject dataWriter)
-        {
-            throw new NotSupportedException("AccountOperation is not supposed to be serialized");
-        }
-
-        public object Read(JsonObject element)
-        {
-            throw new NotSupportedException("AccountOperation is not supposed to be serialized");
         }
     }
 }
