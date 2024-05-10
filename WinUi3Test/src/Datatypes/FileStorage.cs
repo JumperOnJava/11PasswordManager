@@ -31,5 +31,15 @@ namespace WinUi3Test.Datatypes
             staticStorage.Tags = new Dictionary<long, Tag>(Tags);
             return staticStorage;
         }
+
+        public void Save()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Load()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
