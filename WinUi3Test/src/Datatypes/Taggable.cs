@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 
-namespace WinUi3Test.src.Storage
+namespace WinUi3Test.Datatypes;
+
+public interface Taggable
 {
-    public interface Taggable
-    {
-        public List<TagRef> Tags { get; set; }
-    }
+    public List<TagRef> Tags { get; set; }
 }

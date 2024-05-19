@@ -17,7 +17,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics;
 using Windows.UI.ViewManagement;
-using WinUi3Test.src.Storage;
+using WinUi3Test.Datatypes.Serializing;
 
 namespace WinUi3Test
 {
@@ -30,7 +30,7 @@ namespace WinUi3Test
         }
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            //Test.Start();
+            Test.Start();
             MainWindow = new MainWindow();
             m_window = MainWindow;
             MainWindow.SizeChanged += (sender,e) =>

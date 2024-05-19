@@ -13,7 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using WinUi3Test.src.Storage;
+using WinUi3Test.Datatypes;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;

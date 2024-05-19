@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
-using WinUi3Test.src.Storage;
+using WinUi3Test.Datatypes;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 
@@ -107,8 +107,6 @@ namespace WinUi3Test.ViewModel
                 onPropertyChanged(nameof(BaseColorBrush));
             }
         }
-
-        public TagRef Identifier => target.Identifier;
 
         public List<TagRef> Tags
         {

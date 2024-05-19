@@ -1,7 +1,7 @@
 using System;
-using WinUi3Test.src.Storage;
+using WinUi3Test.Datatypes.Serializing;
 
-namespace WinUi3Test.src.ViewModel;
+namespace WinUi3Test.Datatypes;
 
 public class Operation<T> where T : class, Clonable<T>
 {

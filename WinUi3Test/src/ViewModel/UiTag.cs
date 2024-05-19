@@ -1,18 +1,15 @@
 ﻿using Microsoft.UI.Xaml.Media;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI;
-using WinUi3Test.src.Storage;
+using Newtonsoft.Json;
+using WinUi3Test.Datatypes;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
+using WinUi3Test.Datatypes.Serializing;
 
 namespace WinUi3Test.src.ViewModel
 {
-    public class UiTag : PropertyChangable
+    public class UiTag : PropertyChangable, Clonable<UiTag>
     {
         private bool selected;
         public event Action<bool> SelectedChanged;
@@ -57,15 +54,23 @@ namespace WinUi3Test.src.ViewModel
                 onPropertyChanged("symbolColor");
             }
         }
+        
+        [JsonIgnore]
         public Color baseColor => this.TagColors.BaseColor.asWinColor;
+        [JsonIgnore]
         public SolidColorBrush baseColorBrush => new SolidColorBrush(this.TagColors.BaseColor.asWinColor);
+        [JsonIgnore]
         public Color hoverColor => this.TagColors.HoverColor.asWinColor;
+        [JsonIgnore]
         public Color symbolColor => this.TagColors.SymbolColor.asWinColor;
 
+        [JsonIgnore]
         public Brush BaseColorBrush => Target.BaseColorBrush;
 
+        [JsonIgnore]
         public Brush HoverColorBrush => Target.HoverColorBrush;
 
+        [JsonIgnore]
         public Brush SymbolColorBrush => Target.SymbolColorBrush;
 
         public UiTag(TagRef target)
@@ -78,9 +83,10 @@ namespace WinUi3Test.src.ViewModel
             return Target.matches(tag);
         }
 
-        public Tag Clone()
+        public UiTag Clone()
         {
-            return Target.Clone();
+            return new UiTag(Target.Clone().Identifier);
         }
+
     }
 }

@@ -1,4 +1,4 @@
-namespace WinUi3Test;
+namespace WinUi3Test.Datatypes.Serializing;
 
 public interface Clonable<T>
 {

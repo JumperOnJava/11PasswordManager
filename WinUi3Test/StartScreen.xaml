@@ -14,7 +14,7 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <TextBlock Margin="30,20,0,0" HorizontalAlignment="Left" Text="Recent" Style="{StaticResource TitleTextBlockStyle}"/>
-        <ListView Margin="10,60,10,0" ItemsSource="{Binding history}" SelectionMode="None" CornerRadius="4" Padding="-16,0,-16,0">
+        <ListView Margin="10,60,10,0" ItemsSource="{Binding History}" SelectionMode="None" CornerRadius="4" Padding="-16,0,-16,0">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:StartScreenModelStoragePath">
                     <Grid Background="Transparent" Margin="0,5,0,5">

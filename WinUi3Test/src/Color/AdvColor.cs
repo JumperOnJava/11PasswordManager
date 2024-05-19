@@ -1,45 +1,38 @@
 ﻿using Microsoft.UI.Xaml.Media;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 using Windows.UI;
-using WinUi3Test.src.ViewModel;
+using Newtonsoft.Json;
 
 namespace WinUi3Test.src.Ui
 {
     public struct AdvColor
     {
-        private int r1;
-        private int g1;
-        private int b1;
+        [JsonRequired]
+        public int G { get; set; }
+        [JsonRequired]
+        public int R { get; set; }
+        
+        [JsonRequired]
+        public int B { get; set; }
 
-        public Color asWinColor
-        {
-            get
-            {
-                return new Color { A= 255,R=(byte)R,G=(byte)G,B=(byte)B};
-            }
-        }
-        public SolidColorBrush asBrush
-        {
-            get
-            {
-                return new SolidColorBrush(asWinColor); 
-            }
-        }
+        [Newtonsoft.Json.JsonIgnore]
+        public Color asWinColor => new() { A= 255,R=(byte)R,G=(byte)G,B=(byte)B};
+
+        [Newtonsoft.Json.JsonIgnore]
+        public SolidColorBrush asBrush => new(asWinColor);
+
         public AdvColor(int r, int g, int b)
         {
-            r1 = r;
-            g1 = g;
-            b1 = b;
+            R = r;
+            G = g;
+            B = b;
         }
         public AdvColor(float r, float g, float b)
         {
-            r1 = (int)(r * 255);
-            g1 = (int)(g * 255);
-            b1 = (int)(b * 255);
+            R = (int)(r * 255);
+            G = (int)(g * 255);
+            B = (int)(b * 255);
         }
 
         public AdvColor(Color color) : this(color.R, color.G, color.B)
@@ -47,19 +40,8 @@ namespace WinUi3Test.src.Ui
 
         }
 
-        public int R
-        {
-            get => r1; set => r1 = value;
-        }
-        public int G
-        {
-            get => g1; set => g1 = value;
-        }
-        public int B
-        {
-            get => b1; set => b1 = value;
-        }
-
+        
+        [Newtonsoft.Json.JsonIgnore]
         public float r
         {
             get
@@ -72,6 +54,7 @@ namespace WinUi3Test.src.Ui
             }
         }
 
+        [Newtonsoft.Json.JsonIgnore]
         public float g
         {
             get
@@ -84,6 +67,7 @@ namespace WinUi3Test.src.Ui
             }
         }
 
+        [Newtonsoft.Json.JsonIgnore]
         public float b
         {
             get
@@ -95,7 +79,7 @@ namespace WinUi3Test.src.Ui
                 B = (int)(value * 255);
             }
         }
-
+        [Newtonsoft.Json.JsonIgnore]
         public float H
         {
             get
@@ -115,6 +99,7 @@ namespace WinUi3Test.src.Ui
         }
 
         // Property for Saturation component
+        [Newtonsoft.Json.JsonIgnore]
         public float S
         {
             get
@@ -136,6 +121,7 @@ namespace WinUi3Test.src.Ui
         }
 
         // Property for Value component
+        [Newtonsoft.Json.JsonIgnore]
         public float V
         {
             get
@@ -251,12 +237,6 @@ namespace WinUi3Test.src.Ui
             value = hsv[2];
         }
 
-        public static void floatToInt(float r, float g, float b, out int red, out int green, out int blue)
-        {
-            red = (int)(r * 255);
-            green = (int)(g * 255);
-            blue = (int)(b * 255);
-        }
         public override string ToString()
         {
             return $"{R:X}{G:X}{B:X}";

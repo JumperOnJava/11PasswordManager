@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
+using WinUi3Test.Datatypes;
 using WinUi3Test.src.Ui;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -14,32 +15,35 @@ namespace WinUi3Test.src.ViewModel
     /// </summary>
     public sealed partial class TagEditDialog : Page
     {
-        public static async Task<ContentDialogResult> ShowEditDialog(XamlRoot parent, UiTag tag)
+        public static void ShowEditDialog(XamlRoot parent, Operation<UiTag> tag)
         {
-            var dialog = new ContentDialog();
-            dialog.XamlRoot = parent;
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = "Edit Tag";
-            dialog.PrimaryButtonText = "Save";
-            dialog.CloseButtonText = "Cancel";
-            dialog.DefaultButton = ContentDialogButton.Primary;
-            var newTag = tag;
-            var editDialog = new TagEditDialog(dialog, newTag);
+            var dialog = new ContentDialog
+            {
+                XamlRoot = parent,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                Title = "Edit Tag",
+                PrimaryButtonText = "Save",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
+            };
+            var editDialog = new TagEditDialog(dialog, tag);
             dialog.Content = editDialog;
-            return await dialog.ShowAsync();
+            dialog.PrimaryButtonClick += (_,_) => tag.Finish(true);
+            dialog.PrimaryButtonClick += (_,_) => tag.Finish(false);
+            dialog.ShowAsync();
         }
-        public TagEditDialog(ContentDialog dialog, UiTag tag)
+        public TagEditDialog(ContentDialog dialog, Operation<UiTag> tag)
         {
             InitializeComponent();
             this.dialog = dialog;
-            this.target = tag;
+            this.target = tag.target;
             ColorPickerRing.Color = ColorsScheme.AccentColors.BaseColor.asWinColor;
             Action<string> buttonEnabled = (s) =>
             {
-                dialog.IsPrimaryButtonEnabled = s != String.Empty;
+                dialog.IsPrimaryButtonEnabled = s != string.Empty;
             };
             target.TextChanged += buttonEnabled;
-            buttonEnabled(tag.DisplayName);
+            buttonEnabled(tag.target.DisplayName);
         }
 
         private ContentDialog dialog;

@@ -1,17 +1,18 @@
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using WinUi3Test.Datatypes.Serializing;
 
-namespace WinUi3Test.Storage;
+namespace WinUi3Test.Datatypes;
 
 public class AppSettings
 {
-    public List<string> storageHistory { get; set; }
+    public List<SaveLoader> storageHistory { get; set; }
     public AppSettings()
     {
-        storageHistory = new List<string>();
+        storageHistory = new List<SaveLoader>();
         settings = this;
     }
 
@@ -21,19 +22,21 @@ public class AppSettings
     {
         if (File.Exists("global_settings.json"))
         {
-            settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText("global_settings.json"));
+            settings = JsonTools.Deserialize<AppSettings>(File.ReadAllText("global_settings.json"));
         }
         else
         {
             settings = new AppSettings();
-            settings.storageHistory = new List<string>(settings.storageHistory.Distinct().ToList());
-            Save();
         }
-        settings.storageHistory = new List<string>(settings.storageHistory.Distinct().ToList());
+        settings.storageHistory = new List<SaveLoader>(settings.storageHistory
+            .GroupBy(s => s.DisplayPath)
+            .Select(s => s.First())
+            .ToList());
+        Save();
     }
     public static void Save()
     {
-        settings.storageHistory = new List<string>(settings.storageHistory.Distinct().ToList());
-        File.WriteAllText("global_settings.json", JsonSerializer.Serialize(settings));
+        settings.storageHistory = new List<SaveLoader>(settings.storageHistory.Distinct().ToList());
+        File.WriteAllText("global_settings.json", JsonTools.Serialize(settings));
     }
 }

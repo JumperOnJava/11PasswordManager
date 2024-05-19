@@ -9,7 +9,6 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Windows.Foundation;
 using Windows.Security.Isolation;
-using WinUi3Test.src.Storage;
 using WinUi3Test.src.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,

@@ -12,12 +12,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Appointments.DataProvider;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using WinUi3Test.src.Storage;
+using WinUi3Test.Datatypes;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
@@ -69,15 +70,12 @@ namespace WinUi3Test
 
         private async void CreateTag(object sender, RoutedEventArgs e)
         {
-            ContentDialog dialog = new ContentDialog();
-
-            // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
-            var newTag = new UiTag(new TagBasic("").Identifier);
-            var result = await TagEditDialog.ShowEditDialog(this.XamlRoot,newTag);
-            if(result == ContentDialogResult.Primary)
+            var operation = new Operation<UiTag>(new UiTag(new TagBasic().Identifier));
+            TagEditDialog.ShowEditDialog(XamlRoot,operation);
+            operation.onFinished += (result) =>
             {
-                model.Tags.Add(newTag);
-            }
+                if (result != null) model.Tags.Add(result);
+            };
         }
 
         private void ClearSelection(object sender, RoutedEventArgs e)
@@ -88,12 +86,7 @@ namespace WinUi3Test
             }
         }
 
-        private void AppBarButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private async void CreateAccount(object sender, RoutedEventArgs e)
+        private void CreateAccount(object sender, RoutedEventArgs e)
         {
             var dialog = new ContentDialog();
             dialog.XamlRoot = this.XamlRoot;
@@ -114,15 +107,26 @@ namespace WinUi3Test
             model.FilterAccounts();
         }
 
-        private void SaveButton(object sender, RoutedEventArgs e)
-        {
-            model.Save();
-        }
-
         private void ExitButton(object sender, RoutedEventArgs e)
         {
-            model.ExitNoSave();
+            model.Exit();
         }
 
+        private void EditTag(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button control)
+            {
+                var tag = control.CommandParameter as UiTag;
+                var operation = new Operation<UiTag>(tag);
+                
+                TagEditDialog.ShowEditDialog(this.XamlRoot, operation);
+                operation.onFinished += (result) =>
+                {
+                    if (result == null) return;
+                    var index = model.Tags.IndexOf(tag);
+                    model.Tags[index] = result;
+                };
+            }
+        }
     }
 }

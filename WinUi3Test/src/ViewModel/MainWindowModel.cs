@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using WinUi3Test;
 using WinUi3Test.Datatypes;
-using WinUi3Test.src.Storage;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
 using WinUi3Test.ViewModel;
@@ -34,7 +33,7 @@ public class MainWindowModel : PropertyChangable
         get => filteredAccounts;
     }
 
-    public ObservableCollection<UiAccountModel> DispayAccounts => NoTagsSelected ? Accounts : FilteredAccounts; 
+    public ObservableCollection<UiAccountModel> DispayAccounts => FilteredAccounts; 
 
     public bool isPaneOpen = true;
 
@@ -50,15 +49,19 @@ public class MainWindowModel : PropertyChangable
 
     public bool NoTagsSelected => !Tags.Any(t => t.Selected);
     
-    private readonly Operation<Storage> operation;
+    private readonly StorageManager storageManager;
+    public readonly Action onClose;
 
-    public MainWindowModel(Operation<Storage> storage, Frame navigator)
+    public MainWindowModel(StorageManager storageManager, Action closeCallback, Frame navigator)
     {
-        operation = storage;
-        TagManager.Instance.tags = storage.target.Tags;
+        this.onClose = closeCallback;
+        this.storageManager = storageManager;
+        this.storageManager.UpdateFromStorage();
         this.navigator = navigator;
 
-        accounts = new(storage.target.Accounts.Map(a => new UiAccountModel(this.navigator, AccountOperation.Start(a))));
+        TagManager.Instance.tags = storageManager.Data.Tags;
+
+        accounts = new(storageManager.Data.Accounts.Map(a => new UiAccountModel(this.navigator, AccountOperation.Start(a))));
         filteredAccounts = new ObservableCollection<UiAccountModel>();
         tags = new ObservableCollection<UiTag>();
         Tags.CollectionChanged += (_, _) =>
@@ -70,30 +73,28 @@ public class MainWindowModel : PropertyChangable
             {
                 uiTag.PropertyChanged += (_,_) => onPropertyChanged(nameof(NoTagsSelected));
             }
+            Save();
         };
         
-        storage.target.TagsOrder.Map(r => new UiTag(r)).ForEach(Tags.Add);
+        storageManager.Data.TagsOrder.Map(r => new UiTag(r)).ForEach(Tags.Add);
         Accounts.CollectionChanged += (_, _) =>
         {
             FilterAccounts();
+            Save();
         };
         FilterAccounts();
     }
 
-    public void Save()
+    public void Save()  
     {
-        var newStorage = new StaticStorage();
+        var newStorage = new StorageData();
         newStorage.Accounts = new List<Account>(Accounts.Map(a=>a.Target.target));
         newStorage.TagsOrder = new List<TagRef>(Tags.Map(t => t.Target.Identifier));
         newStorage.TagsOrder.ForEach(element => newStorage.Tags[element.innerId] = element);
         newStorage.Tags = new Dictionary<long, Tag>(TagManager.Instance.tags);
-        operation.target = newStorage;
-        operation.Finish(true);
-    }
 
-    public void Cancel()
-    {
-        operation.Finish(false);
+        storageManager.Data = newStorage;
+        storageManager.SaveToStorage();
     }
 
     internal void FilterAccounts()
@@ -136,8 +137,8 @@ public class MainWindowModel : PropertyChangable
         return true;
     }
 
-    internal void ExitNoSave()
+    internal void Exit()
     {
-        operation.Finish(false);
+        navigator.GoBack();
     }
 }

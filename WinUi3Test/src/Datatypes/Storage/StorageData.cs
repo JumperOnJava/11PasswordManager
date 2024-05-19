@@ -1,45 +1,38 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using WinUi3Test.src.Storage;
+using Newtonsoft.Json;
+using WinUi3Test.Datatypes.Serializing;
 
 namespace WinUi3Test.Datatypes
 {
-    public class FileStorage : Storage
+    public class StorageData : Clonable<StorageData>
     {
-        [JsonInclude]
+        [JsonRequired]
         public Dictionary<long, Tag> Tags { get; set; }
-        [JsonInclude]
+        [JsonRequired]
         public List<TagRef> TagsOrder { get; set; }
-        [JsonInclude]
+        [JsonRequired]
         public List<Account> Accounts { get;  set; }
-        [JsonInclude]
+        [JsonRequired]
         public StorageSettings StorageSettings { get; set; }
-
-        public FileStorage()
+        public StorageData()
         {
             Tags = new();
             TagsOrder = new();
             Accounts = new();
             StorageSettings = new();
         }
-        public Storage Clone()
+        public StorageData Clone()
         {
-            var staticStorage = new FileStorage();
+            var staticStorage = new StorageData();
             staticStorage.StorageSettings = StorageSettings;
             staticStorage.Accounts = new List<Account>(Accounts);
             staticStorage.TagsOrder = new List<TagRef>(TagsOrder);
             staticStorage.Tags = new Dictionary<long, Tag>(Tags);
             return staticStorage;
         }
-
-        public void Save()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Load()
-        {
-            throw new System.NotImplementedException();
-        }
     }
+    
+    public class StorageSettings
+    {}
 }

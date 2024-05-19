@@ -12,7 +12,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Security.Isolation;
-using WinUi3Test.src.Storage;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 using WinUi3Test.ViewModel;

@@ -22,18 +22,19 @@ namespace WinUi3Test
     public sealed partial class PasswordInputDialog : Page
     {
         public PasswordInputDialogModel model = new();
-        public PasswordInputDialog(ContentDialog dialog, bool isDouble)
+        public PasswordInputDialog(ContentDialog dialog, bool hasSecondField)
         {
-            model.isDouble = isDouble;
+            model.HasSecondField = hasSecondField;
             model.PropertyChanged += (_, _) =>
             {
-                dialog.IsPrimaryButtonEnabled = model.SamePasswordTextVisible == Visibility.Collapsed;
+                dialog.IsPrimaryButtonEnabled = model.SamePasswordTextVisible == Visibility.Collapsed && !string.IsNullOrEmpty(model.Password);
             };
+            model.onPropertyChanged();
             this.InitializeComponent();
         }
         public class PasswordInputDialogModel : PropertyChangable
         {
-            public String password;
+            private String password;
             public String Password
             {
                 get => password; set
@@ -43,26 +44,26 @@ namespace WinUi3Test
                     onPropertyChanged(nameof(SamePasswordTextVisible));
                 }
             }
-            public String passwordrepeat;
-            public bool isDouble;
+            public String passwordRepeat;
+            public bool HasSecondField;
 
             public String PasswordRepeat
             {
-                get => passwordrepeat; set
+                get => passwordRepeat; set
                 {
-                    passwordrepeat = value;
+                    passwordRepeat = value;
                     onPropertyChanged();
                     onPropertyChanged(nameof(SamePasswordTextVisible));
                 }
             }
-            public Visibility isDoubleInput => isDouble ? Visibility.Visible : Visibility.Collapsed;
+            public Visibility isDoubleInput => HasSecondField ? Visibility.Visible : Visibility.Collapsed;
             public Visibility SamePasswordTextVisible
             {
                 get
                 {
-                    if(!isDouble)
+                    if(!HasSecondField)
                         return Visibility.Collapsed;
-                    if (password == passwordrepeat)
+                    if (password == passwordRepeat)
                         return Visibility.Collapsed;
                     return Visibility.Visible;
                 }
