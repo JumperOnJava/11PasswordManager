@@ -8,6 +8,7 @@ using Windows.ApplicationModel.DataTransfer;
 using WinUi3Test.Datatypes;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
+using WinUi3Test.Util;
 using WinUi3Test.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -63,15 +64,6 @@ namespace WinUi3Test
                 if (ok) model.Tags.Add(result);
             };
         }
-
-        private void ClearSelection(object sender, RoutedEventArgs e)
-        {
-            foreach (var tag in model.Tags)
-            {
-                tag.Selected = false;
-            }
-        }
-
         private void CreateAccount(object sender, RoutedEventArgs e)
         {
             var dialog = new ContentDialog();
@@ -131,24 +123,38 @@ namespace WinUi3Test
             DeleteButton.Visibility = Visibility.Collapsed;
         }
 
-        private void DeleteButton_OnDrop(object sender, DragEventArgs e)
+        private async void DeleteButton_OnDrop(object sender, DragEventArgs e) 
         {
             if (e.DataView.Contains(StandardDataFormats.Text))
             {
-                Console.WriteLine(e.DataView.GetTextAsync().GetResults());
-                
+                var result = await e.DataView.GetTextAsync();
+                Console.WriteLine(result);
+                long id = long.Parse(await e.DataView.GetTextAsync());
+                model.Accounts.ToList().ForEach(e=>Console.WriteLine("list>"+e.Identifier.id));
+                foreach (var account in model.Accounts)
+                {
+                    if (account.Identifier.id == id)
+                    {
+                        var dialogOperation = new DialogOperation(this.XamlRoot,"Delete Account","Delete","Cancel","Are you sure you want to delete account?");
+                        dialogOperation.OnFinished += (ok) =>
+                        {
+                            if (ok)
+                                model.Accounts.Remove(account);
+                        };  
+                        break;
+                    }
+                }
             }
         }
 
-        private void DeleteButton_OnDragEnter(object sender, DragEventArgs e)
+        private async void DeleteButton_OnDragEnter(object sender, DragEventArgs e)
         {
             long data=-1;
-            e.AcceptedOperation =  e.DataView.Contains(StandardDataFormats.Text) && long.TryParse(e.DataView.GetTextAsync().GetResults(), out data) ? DataPackageOperation.Move : DataPackageOperation.None;
+            e.AcceptedOperation =  e.DataView.Contains(StandardDataFormats.Text) && long.TryParse(await e.DataView.GetTextAsync(), out data) ? DataPackageOperation.Move : DataPackageOperation.None;
             e.DragUIOverride.Caption = "Delete element";
             e.DragUIOverride.IsGlyphVisible = false;
             
-            Console.WriteLine($"Received tag: {e.DataView.GetTextAsync().GetResults()}");
-            
+            Console.WriteLine($"Received tag: {await e.DataView.GetTextAsync()}");
         }
     }
 }

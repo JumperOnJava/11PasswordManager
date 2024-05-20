@@ -11,7 +11,7 @@ namespace WinUi3Test.src.Util
     public class UniqueId : Identifiable
     {
         [JsonRequired]
-        public long id;
+        public long id { get; set; }
 
         public UniqueId(long id)
         {

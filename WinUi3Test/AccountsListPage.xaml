@@ -38,7 +38,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <SplitView Grid.Row="0" x:Name="PanelView" DisplayMode="Overlay" IsPaneOpen="{Binding IsPaneOpen, UpdateSourceTrigger=PropertyChanged}" PaneBackground="Transparent" CornerRadius="8">
                 <SplitView.Pane>
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -46,7 +46,6 @@
                         <StackPanel Orientation="Vertical">
                             <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
                                 <AppBarButton Icon="Add" Label="Add" Click="CreateTag"/>
-                                <AppBarButton Icon="ClearSelection" Label="Reset" Click="ClearSelection"  ToolTipService.ToolTip="Clear selection"/>
                             </CommandBar>
                             <ListView Width="300"
                                   CanDragItems="True" 
@@ -94,7 +93,18 @@
                     <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
                         <AppBarButton x:Name="ShowPane" Icon="OpenPane" Label="Add" Visibility="Visible" Click="ShowPane_Click"/>
                         <AppBarButton Icon="Add" Label="Add" Click="CreateAccount"/>
-                        </CommandBar>
+                        <AppBarButton 
+                            Background="OrangeRed" 
+                            AllowDrop="True" 
+                            DragEnter="DeleteButton_OnDragEnter" 
+                            Drop="DeleteButton_OnDrop"
+                            Width="60" 
+                            Name="DeleteButton" 
+                            BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}" 
+                            Visibility="Collapsed" 
+                            Icon="Delete" />
+
+                    </CommandBar>
 
                     <Grid x:Name="AccountsList" Margin="0,48,0,0" Padding="8,8,8,8" CornerRadius="16">
                         <ListView
@@ -103,6 +113,7 @@
                     Height="Auto"
                     CornerRadius="8"
                     Padding="-16,-4,-16,-4"
+                    Background="Transparent"
                     CanDragItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
                     CanReorderItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
                     AllowDrop="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}"
@@ -113,7 +124,7 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="viewModel:UiAccount">
                                     <Grid
-                                Background="{ThemeResource CardBackgroundFillColorDefault}" 
+                                Background="Transparent"
                                 BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}"
                                 CornerRadius="8"
                                 Margin="0,4,4,4">
@@ -127,11 +138,12 @@
                                             <Rectangle Fill="{Binding Colors.BaseColor.asBrush, UpdateSourceTrigger=PropertyChanged}"/>
                                         </Grid>
 
-                                        <Grid DataContext="{Binding Target, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" VerticalAlignment="Center" Height="45" Margin="5,-3,0,0" HorizontalAlignment="Left">
-                                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding TargetApp,UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Grid Grid.Column="1" VerticalAlignment="Center" Height="45" Margin="5,-3,0,0" HorizontalAlignment="Left">
+                                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding Target.TargetApp,UpdateSourceTrigger=PropertyChanged}"/>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Username,UpdateSourceTrigger=PropertyChanged}"/>
-                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="5,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Email,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBlock Visibility="{Binding UsernameVisibility}" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,5,0"  VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Target.Username,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBlock Visibility="{Binding EmailVisibility}" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Target.Email,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10,0,10,0" Text="{Binding Target.Identifier.id,UpdateSourceTrigger=PropertyChanged}"/>
                                             </StackPanel>
                                         </Grid>
                                         <ScrollView Grid.Column="2">
@@ -163,24 +175,6 @@
                     </Grid>
                 </Grid>
             </SplitView>
-        </Grid>
-        
-        
-        <Grid 
-            Name="DeleteButton" 
-            AllowDrop="True" 
-            DragEnter="DeleteButton_OnDragEnter" 
-            Drop="DeleteButton_OnDrop"
-            Height="60" 
-            Width="160"
-            Margin="10" 
-            HorizontalAlignment="Center" 
-            VerticalAlignment="Bottom"
-            Visibility="Collapsed" 
-            CornerRadius="12"
-            BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}">
-            <Rectangle Fill="OrangeRed" />
-            <TextBlock Text="Delete" Style="{StaticResource TitleTextBlockStyle}" Margin="0,-4,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
     </Grid>
 </Page>

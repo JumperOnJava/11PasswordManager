@@ -54,9 +54,11 @@ namespace WinUi3Test.src.ViewModel
         public Action EditThisAccount_ => EditThisAccount;
         public void EditThisAccount() => Navigate();
         public bool EmailVisible => target.Email.Replace(" ", "").Length > 0;
+        public Visibility EmailVisibility => EmailVisible ? Visibility.Visible : Visibility.Collapsed;
         public bool UsernameVisible => target.Username.Replace(" ", "").Length > 0;
+        public Visibility UsernameVisibility => UsernameVisible ? Visibility.Visible : Visibility.Collapsed;
         public bool AppLinkButtonVisible => target.AppLink.Replace(" ", "").Length > 0;
-
+        public Visibility AppLinkButtonVisibility => AppLinkButtonVisible ? Visibility.Visible : Visibility.Collapsed;
         public void CallEntryMethod(object sender, RoutedEventArgs args)
         {
             if(sender is ButtonBase)
@@ -77,12 +79,12 @@ namespace WinUi3Test.src.ViewModel
                 target.Finish(true);
                 navigator.GoBack();
             };
-            navigator.Navigate(this.Target.target.AccountEditor, operation, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+            navigator.Navigate(this.Target.target.AccountEditor, operation, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
-        public Account Clone()
+        public UiAccount Clone()
         {
-            return ((Clonable<Account>)Target).Clone();
+            return new UiAccount(this.navigator, this.Target);
         }
 
         public UniqueId Identifier => target.Identifier;

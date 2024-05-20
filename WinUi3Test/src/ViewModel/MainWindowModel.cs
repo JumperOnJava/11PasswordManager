@@ -21,18 +21,10 @@ public class MainWindowModel : PropertyChangable
 
     private ObservableCollection<UiAccount> accounts;
 
-    public ObservableCollection<UiAccount> Accounts
-    {
-        get => accounts;
-    }
+    public ObservableCollection<UiAccount> Accounts => accounts;
 
     public ObservableCollection<UiAccount> filteredAccounts;
-
-    public ObservableCollection<UiAccount> FilteredAccounts
-    {
-        get => filteredAccounts;
-    }
-
+    public ObservableCollection<UiAccount> FilteredAccounts => filteredAccounts;
     public ObservableCollection<UiAccount> DispayAccounts => FilteredAccounts; 
 
     public bool isPaneOpen = true;
@@ -110,7 +102,6 @@ public class MainWindowModel : PropertyChangable
             {
                 if (acc != null)
                 {
-                    //Console.WriteLine("ok");
                     Accounts[indexRef.index] = new UiAccount(navigator,AccountOperation.Start(acc));
                 }
             };

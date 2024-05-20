@@ -48,6 +48,7 @@ public class AccountImpl : Account
         newAccount.Email = Email.Clone() as String;
         newAccount.Colors = Colors;
         newAccount.AppLink = AppLink.Clone() as String;
+        newAccount.identifier = this.identifier;
         return newAccount;
     }
     public Color BaseColorBindable
