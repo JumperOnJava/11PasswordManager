@@ -1,19 +1,24 @@
-﻿using Microsoft.UI.Xaml;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using WinUi3Test.Datatypes;
+﻿using Newtonsoft.Json;
 
 namespace WinUi3Test.src.Util
 {
     public interface Identifiable
     {
         [JsonRequired]
-        public TagRef Identifier { get; }
-
+        public UniqueId Identifier { get; }
     }
+    
+    public class UniqueId : Identifiable
+    {
+        [JsonRequired]
+        public long id;
+
+        public UniqueId(long id)
+        {
+            this.id = id;
+        }
+        [JsonIgnore]
+        public UniqueId Identifier => this;
+    }
+
 }

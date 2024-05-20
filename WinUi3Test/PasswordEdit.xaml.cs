@@ -10,6 +10,7 @@ using WinUi3Test.Datatypes;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
+using WinUi3Test.Util;
 using WinUi3Test.ViewModel;
 
 namespace WinUi3Test
@@ -23,8 +24,8 @@ namespace WinUi3Test
             try
             {
                 model.Target = e.Parameter as AccountOperation;
-                var allTags = AccountsListPage.Model.Tags.Map(t=>t.Target);
-                model.SelectedTags = new ObservableCollection<TagRef>(model.Target.Tags);
+                var allTags = AccountsListPage.Model.Tags.Select(t=>t.Target).ToList();
+                model.SelectedTags = new ObservableCollection<UniqueTagId>(model.Target.Tags);
                 foreach (var tag in model.SelectedTags)
                 {
                     for (var index = 0; index < allTags.Count; index++)
@@ -38,7 +39,7 @@ namespace WinUi3Test
                     }
                 }
 
-                model.UnselectedTags = new ObservableCollection<TagRef>(allTags);
+                model.UnselectedTags = new ObservableCollection<UniqueTagId>(allTags);
                 ColorPickerRing.Color = model.Target.Colors.BaseColor.asWinColor;
             }
             catch (InvalidCastException ex)
@@ -52,34 +53,28 @@ namespace WinUi3Test
             InitializeComponent();
         }
 
-        private async void Save(object sender, RoutedEventArgs e)
+        private void Save(object sender, RoutedEventArgs e)
         {
-            var dialog = new ContentDialog();
-            dialog.XamlRoot = this.XamlRoot;
-            dialog.Title = "Save changes?";
-            dialog.PrimaryButtonText = "Save";
-            dialog.SecondaryButtonText = "Cancel";
-
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
+            var dialog = new DialogOperation(XamlRoot,"Save changes?","Save","Cancel");
+            dialog.OnFinished += (ok) =>
             {
-                model.Target.Tags = new List<TagRef>(model.SelectedTags);
-                model.Target.Finish(true);
-            }
+                if (ok)
+                {
+                    model.Target.Tags = new List<UniqueTagId>(model.SelectedTags);
+                    model.Target.Finish(true);
+                }
+            };
         }
-        private async void Cancel(object sender, RoutedEventArgs e)
+        private void Cancel(object sender, RoutedEventArgs e)
         {
-            var dialog = new ContentDialog();
-            dialog.XamlRoot = this.XamlRoot;
-            dialog.Title = "Cancel changes?";
-            dialog.PrimaryButtonText = "Confirm";
-            dialog.SecondaryButtonText = "Cancel";
-
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
+            var dialog = new DialogOperation(XamlRoot,"Undo changes?","Confirm","Cancel");
+            dialog.OnFinished += (ok) =>
             {
-                model.Target.Finish(false);
-            }
+                if (ok)
+                {
+                    model.Target.Finish(false);
+                }
+            };
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -94,7 +89,7 @@ namespace WinUi3Test
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            TagRef r = (TagRef)(sender as ButtonBase).CommandParameter;
+            UniqueTagId r = (UniqueTagId)(sender as ButtonBase).CommandParameter;
             try
             {
                 var tag = model.SelectedTags.First(e => e == r);
@@ -113,8 +108,8 @@ namespace WinUi3Test
     internal class PasswordEditModel : PropertyChangable
     {
         private AccountOperation target;
-        public ObservableCollection<TagRef> SelectedTags { get; set; }
-        public ObservableCollection<TagRef> UnselectedTags {  get; set; }
+        public ObservableCollection<UniqueTagId> SelectedTags { get; set; }
+        public ObservableCollection<UniqueTagId> UnselectedTags {  get; set; }
 
         private PasswordRevealMode passwordRevealMode;
 

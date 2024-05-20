@@ -33,7 +33,6 @@
                     <MenuFlyoutItem Text="Close storage" Click="ExitButton"/>
                 </MenuBarItem>
             </MenuBar>
-            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Margin="10,10,10,10">11Password manager</TextBlock>
         </Grid>
         <Grid DataContext="{x:Bind model}" Padding="0,0,8,8" >
             <Grid.RowDefinitions>
@@ -107,9 +106,12 @@
                     CanDragItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
                     CanReorderItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
                     AllowDrop="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}"
-                    ItemsSource="{Binding DispayAccounts,UpdateSourceTrigger=PropertyChanged}">
+                    ItemsSource="{Binding DispayAccounts,UpdateSourceTrigger=PropertyChanged}"
+                    DragItemsStarting="ElementOnDragStarting"
+                    DragItemsCompleted="ElementOnDragOver"
+                    >
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="viewModel:UiAccountModel">
+                                <DataTemplate x:DataType="viewModel:UiAccount">
                                     <Grid
                                 Background="{ThemeResource CardBackgroundFillColorDefault}" 
                                 BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}"
@@ -161,6 +163,24 @@
                     </Grid>
                 </Grid>
             </SplitView>
+        </Grid>
+        
+        
+        <Grid 
+            Name="DeleteButton" 
+            AllowDrop="True" 
+            DragEnter="DeleteButton_OnDragEnter" 
+            Drop="DeleteButton_OnDrop"
+            Height="60" 
+            Width="160"
+            Margin="10" 
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Bottom"
+            Visibility="Collapsed" 
+            CornerRadius="12"
+            BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}">
+            <Rectangle Fill="OrangeRed" />
+            <TextBlock Text="Delete" Style="{StaticResource TitleTextBlockStyle}" Margin="0,-4,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
     </Grid>
 </Page>

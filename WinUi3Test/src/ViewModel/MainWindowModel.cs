@@ -19,21 +19,21 @@ public class MainWindowModel : PropertyChangable
         get => tags;
     }
 
-    private ObservableCollection<UiAccountModel> accounts;
+    private ObservableCollection<UiAccount> accounts;
 
-    public ObservableCollection<UiAccountModel> Accounts
+    public ObservableCollection<UiAccount> Accounts
     {
         get => accounts;
     }
 
-    public ObservableCollection<UiAccountModel> filteredAccounts;
+    public ObservableCollection<UiAccount> filteredAccounts;
 
-    public ObservableCollection<UiAccountModel> FilteredAccounts
+    public ObservableCollection<UiAccount> FilteredAccounts
     {
         get => filteredAccounts;
     }
 
-    public ObservableCollection<UiAccountModel> DispayAccounts => FilteredAccounts; 
+    public ObservableCollection<UiAccount> DispayAccounts => FilteredAccounts; 
 
     public bool isPaneOpen = true;
 
@@ -61,8 +61,8 @@ public class MainWindowModel : PropertyChangable
 
         TagManager.Instance.tags = storageManager.Data.Tags;
 
-        accounts = new(storageManager.Data.Accounts.Map(a => new UiAccountModel(this.navigator, AccountOperation.Start(a))));
-        filteredAccounts = new ObservableCollection<UiAccountModel>();
+        accounts = new(storageManager.Data.Accounts.Select((Func<Account, UiAccount>)(a => new UiAccount(this.navigator, AccountOperation.Start(a)))));
+        filteredAccounts = new ObservableCollection<UiAccount>();
         tags = new ObservableCollection<UiTag>();
         Tags.CollectionChanged += (_, _) =>
         {
@@ -76,7 +76,7 @@ public class MainWindowModel : PropertyChangable
             Save();
         };
         
-        storageManager.Data.TagsOrder.Map(r => new UiTag(r)).ForEach(Tags.Add);
+        storageManager.Data.TagsOrder.Select(r => new UiTag(r)).ToList().ForEach(Tags.Add);
         Accounts.CollectionChanged += (_, _) =>
         {
             FilterAccounts();
@@ -88,9 +88,10 @@ public class MainWindowModel : PropertyChangable
     public void Save()  
     {
         var newStorage = new StorageData();
-        newStorage.Accounts = new List<Account>(Accounts.Map(a=>a.Target.target));
-        newStorage.TagsOrder = new List<TagRef>(Tags.Map(t => t.Target.Identifier));
-        newStorage.TagsOrder.ForEach(element => newStorage.Tags[element.innerId] = element);
+        newStorage.Accounts = new List<Account>(Accounts.Select(a=>a.Target.target));
+        var order = Tags.Select(t => new UniqueTagId(t.Target.id));
+        newStorage.TagsOrder = new List<UniqueTagId>(order);
+        newStorage.TagsOrder.ForEach(element => newStorage.Tags[element.id] = element);
         newStorage.Tags = new Dictionary<long, Tag>(TagManager.Instance.tags);
 
         storageManager.Data = newStorage;
@@ -110,12 +111,12 @@ public class MainWindowModel : PropertyChangable
                 if (acc != null)
                 {
                     //Console.WriteLine("ok");
-                    Accounts[indexRef.index] = new UiAccountModel(navigator,AccountOperation.Start(acc));
+                    Accounts[indexRef.index] = new UiAccount(navigator,AccountOperation.Start(acc));
                 }
             };
             if (isFiltered(account.Target))
             {
-                FilteredAccounts.Add(new UiAccountModel(navigator, operation));
+                FilteredAccounts.Add(new UiAccount(navigator, operation));
             }
         }
 

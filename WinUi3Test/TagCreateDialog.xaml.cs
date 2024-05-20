@@ -36,14 +36,14 @@ namespace WinUi3Test.src.ViewModel
         {
             InitializeComponent();
             this.dialog = dialog;
-            this.target = tag.target;
-            ColorPickerRing.Color = ColorsScheme.AccentColors.BaseColor.asWinColor;
+            this.target = tag.Target;
+            ColorPickerRing.Color = target.TagColors.BaseColor.asWinColor;
             Action<string> buttonEnabled = (s) =>
             {
                 dialog.IsPrimaryButtonEnabled = s != string.Empty;
             };
             target.TextChanged += buttonEnabled;
-            buttonEnabled(tag.target.DisplayName);
+            buttonEnabled(tag.Target.DisplayName);
         }
 
         private ContentDialog dialog;

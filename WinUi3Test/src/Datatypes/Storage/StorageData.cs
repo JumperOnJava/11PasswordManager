@@ -10,7 +10,7 @@ namespace WinUi3Test.Datatypes
         [JsonRequired]
         public Dictionary<long, Tag> Tags { get; set; }
         [JsonRequired]
-        public List<TagRef> TagsOrder { get; set; }
+        public List<UniqueTagId> TagsOrder { get; set; }
         [JsonRequired]
         public List<Account> Accounts { get;  set; }
         [JsonRequired]
@@ -27,7 +27,7 @@ namespace WinUi3Test.Datatypes
             var staticStorage = new StorageData();
             staticStorage.StorageSettings = StorageSettings;
             staticStorage.Accounts = new List<Account>(Accounts);
-            staticStorage.TagsOrder = new List<TagRef>(TagsOrder);
+            staticStorage.TagsOrder = new List<UniqueTagId>(TagsOrder);
             staticStorage.Tags = new Dictionary<long, Tag>(Tags);
             return staticStorage;
         }

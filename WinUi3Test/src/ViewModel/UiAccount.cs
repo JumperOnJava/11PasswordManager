@@ -12,13 +12,16 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Security.Isolation;
+using Windows.UI;
+using WinUi3Test.Datatypes;
+using WinUi3Test.Datatypes.Serializing;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 using WinUi3Test.ViewModel;
 
 namespace WinUi3Test.src.ViewModel
 {
-    public class UiAccountModel : PropertyChangable
+    public class UiAccount : PropertyChangable, Identifiable
     {
         protected Frame navigator;
         private AccountOperation target;
@@ -31,7 +34,7 @@ namespace WinUi3Test.src.ViewModel
             }
         }
 
-        public UiAccountModel(Frame navigator, AccountOperation target) 
+        public UiAccount(Frame navigator, AccountOperation target) 
         {
             this.navigator = navigator;
             this.Target = target;
@@ -52,7 +55,7 @@ namespace WinUi3Test.src.ViewModel
         public void EditThisAccount() => Navigate();
         public bool EmailVisible => target.Email.Replace(" ", "").Length > 0;
         public bool UsernameVisible => target.Username.Replace(" ", "").Length > 0;
-        public bool AppLinkBottonVisible => target.AppLink.Replace(" ", "").Length > 0;
+        public bool AppLinkButtonVisible => target.AppLink.Replace(" ", "").Length > 0;
 
         public void CallEntryMethod(object sender, RoutedEventArgs args)
         {
@@ -62,7 +65,6 @@ namespace WinUi3Test.src.ViewModel
                 ((sender as ButtonBase).CommandParameter as Action).Invoke();
             }
         }
-        private Frame Navigator { get; set; }
         public void Navigate()
         {
             var operation = AccountOperation.Start(Target.target);
@@ -77,5 +79,12 @@ namespace WinUi3Test.src.ViewModel
             };
             navigator.Navigate(this.Target.target.AccountEditor, operation, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         }
+
+        public Account Clone()
+        {
+            return ((Clonable<Account>)Target).Clone();
+        }
+
+        public UniqueId Identifier => target.Identifier;
     }
 }

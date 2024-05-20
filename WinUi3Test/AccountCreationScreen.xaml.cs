@@ -31,7 +31,7 @@ namespace WinUi3Test
     {
 
         private AccountCreationModel model;
-        public AccountCreationScreen(ContentDialog dialog, AccountOperation account, IList<TagRef> tags)
+        public AccountCreationScreen(ContentDialog dialog, AccountOperation account, IList<UniqueTagId> tags)
         {
             dialog.Content = this;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -45,7 +45,7 @@ namespace WinUi3Test
             dialog.IsPrimaryButtonEnabled = false;
             dialog.PrimaryButtonClick += (a, b) =>
             {
-                account.Tags = new List<TagRef>(model.SelectedTags);
+                account.Tags = new List<UniqueTagId>(model.SelectedTags);
                 account.Finish(true);
                 a.Hide();
             };
@@ -56,7 +56,7 @@ namespace WinUi3Test
             };
             model = new AccountCreationModel(account);
             model.Account.PropertyChanged += (_, _) => UpdateSaveButton();
-            model.UnselectedTags = new ObservableCollection<TagRef>(tags);
+            model.UnselectedTags = new ObservableCollection<UniqueTagId>(tags);
         }
 
         private void UpdateSaveButton()
@@ -76,7 +76,7 @@ namespace WinUi3Test
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            TagRef r = (TagRef)((sender as ButtonBase).CommandParameter);
+            UniqueTagId r = (UniqueTagId)((sender as ButtonBase).CommandParameter);
             try
             {
                 var tag = model.SelectedTags.First(e => e == r);
@@ -95,14 +95,14 @@ namespace WinUi3Test
     internal class AccountCreationModel : PropertyChangable
     {
         public AccountOperation Account { get; }
-        public ObservableCollection<TagRef> SelectedTags { get; set; }
-        public ObservableCollection<TagRef> UnselectedTags {  get; set; }
+        public ObservableCollection<UniqueTagId> SelectedTags { get; set; }
+        public ObservableCollection<UniqueTagId> UnselectedTags {  get; set; }
 
         public AccountCreationModel(AccountOperation account)
         {
             this.Account = account;
-            SelectedTags = new ObservableCollection<TagRef>(Account.Tags);
-            UnselectedTags = new ObservableCollection<TagRef>(Account.Tags);
+            SelectedTags = new ObservableCollection<UniqueTagId>(Account.Tags);
+            UnselectedTags = new ObservableCollection<UniqueTagId>(Account.Tags);
         }
     }
 }

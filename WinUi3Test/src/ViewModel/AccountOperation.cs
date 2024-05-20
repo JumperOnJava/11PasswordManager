@@ -96,6 +96,12 @@ namespace WinUi3Test.ViewModel
             }
         }
 
+        public Dictionary<string, FieldData> AdditionalData
+        {
+            get => target.AdditionalData;
+            set => target.AdditionalData = value;
+        }
+
         public ColorsScheme Colors
         {
             get => target.Colors;
@@ -108,7 +114,7 @@ namespace WinUi3Test.ViewModel
             }
         }
 
-        public List<TagRef> Tags
+        public List<UniqueTagId> Tags
         {
             get => target.Tags;
             set
@@ -140,6 +146,8 @@ namespace WinUi3Test.ViewModel
                 onPropertyChanged();
             }
         }
+
+        public UniqueId Identifier => target.Identifier;
 
         public Account Clone()
         {

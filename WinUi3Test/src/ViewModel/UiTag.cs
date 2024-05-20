@@ -9,7 +9,7 @@ using WinUi3Test.Datatypes.Serializing;
 
 namespace WinUi3Test.src.ViewModel
 {
-    public class UiTag : PropertyChangable, Clonable<UiTag>
+    public class UiTag : PropertyChangable, Clonable<UiTag>, Identifiable
     {
         private bool selected;
         public event Action<bool> SelectedChanged;
@@ -27,7 +27,7 @@ namespace WinUi3Test.src.ViewModel
             }
         }
 
-        public TagRef Target { get; set; }
+        public UniqueTagId Target { get; set; }
         public string DisplayName
         {
             get => Target.DisplayName; set
@@ -41,7 +41,7 @@ namespace WinUi3Test.src.ViewModel
             }
         }
 
-        public TagRef Identifier => Target.Identifier;
+        public UniqueId Identifier => Target.Identifier;
         public UiTag Self { get => this; }
         public ColorsScheme TagColors
         {
@@ -73,9 +73,9 @@ namespace WinUi3Test.src.ViewModel
         [JsonIgnore]
         public Brush SymbolColorBrush => Target.SymbolColorBrush;
 
-        public UiTag(TagRef target)
+        public UiTag(UniqueTagId target)
         {
-            this.Target = target;
+            this.Target = new UniqueTagId(target.id);
         }
 
         public bool matches(Taggable tag)
@@ -83,10 +83,10 @@ namespace WinUi3Test.src.ViewModel
             return Target.matches(tag);
         }
 
+
         public UiTag Clone()
         {
-            return new UiTag(Target.Clone().Identifier);
+            return new UiTag(new UniqueTagId(Target.Identifier.id));
         }
-
     }
 }

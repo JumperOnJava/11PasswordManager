@@ -1,25 +1,11 @@
-using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Appointments.DataProvider;
-using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using WinUi3Test.Datatypes;
-using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
 using WinUi3Test.ViewModel;
@@ -68,13 +54,13 @@ namespace WinUi3Test
         }
 
 
-        private async void CreateTag(object sender, RoutedEventArgs e)
+        private void CreateTag(object sender, RoutedEventArgs e)
         {
-            var operation = new Operation<UiTag>(new UiTag(new TagBasic().Identifier));
+            var operation = new Operation<UiTag>(new UiTag(new TagBasic().IdentifierTagId));
             TagEditDialog.ShowEditDialog(XamlRoot,operation);
-            operation.onFinished += (result) =>
+            operation.OnResult += (ok, result) =>
             {
-                if (result != null) model.Tags.Add(result);
+                if (ok) model.Tags.Add(result);
             };
         }
 
@@ -91,11 +77,12 @@ namespace WinUi3Test
             var dialog = new ContentDialog();
             dialog.XamlRoot = this.XamlRoot;
             var newAccount = AccountOperation.Start();
-            var screen = new AccountCreationScreen(dialog,newAccount,new List<TagRef>(model.Tags.Map(e=>e.Identifier)));
+            var select = model.Tags.Select(e => new UniqueTagId(e.Identifier.id));
+            var screen = new AccountCreationScreen(dialog,newAccount,new List<UniqueTagId>(select));
             newAccount.OnFinished += (account) =>
             {
                     if (account != null) 
-                        model.Accounts.Add(new UiAccountModel(model.navigator,AccountOperation.Start(account)));
+                        model.Accounts.Add(new UiAccount(model.navigator,AccountOperation.Start(account)));
             };
         }
         private void ShowPane_Click(object sender, RoutedEventArgs e)
@@ -120,13 +107,48 @@ namespace WinUi3Test
                 var operation = new Operation<UiTag>(tag);
                 
                 TagEditDialog.ShowEditDialog(this.XamlRoot, operation);
-                operation.onFinished += (result) =>
+                operation.OnResult += (ok,result) =>
                 {
-                    if (result == null) return;
+                    if (!ok) return;
                     var index = model.Tags.IndexOf(tag);
                     model.Tags[index] = result;
                 };
             }
+        }
+
+        private void ElementOnDragStarting(object o, DragItemsStartingEventArgs drag)
+        {
+            DeleteButton.Visibility = Visibility.Visible;
+            var item = drag.Items[0] as Identifiable;
+            if(item==null)
+                return;
+            Console.WriteLine(item.Identifier.id.ToString());
+            drag.Data.SetText(item.Identifier.id.ToString());
+        }
+
+        private void ElementOnDragOver(ListViewBase listViewBase, DragItemsCompletedEventArgs drag)
+        {
+            DeleteButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void DeleteButton_OnDrop(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.Text))
+            {
+                Console.WriteLine(e.DataView.GetTextAsync().GetResults());
+                
+            }
+        }
+
+        private void DeleteButton_OnDragEnter(object sender, DragEventArgs e)
+        {
+            long data=-1;
+            e.AcceptedOperation =  e.DataView.Contains(StandardDataFormats.Text) && long.TryParse(e.DataView.GetTextAsync().GetResults(), out data) ? DataPackageOperation.Move : DataPackageOperation.None;
+            e.DragUIOverride.Caption = "Delete element";
+            e.DragUIOverride.IsGlyphVisible = false;
+            
+            Console.WriteLine($"Received tag: {e.DataView.GetTextAsync().GetResults()}");
+            
         }
     }
 }

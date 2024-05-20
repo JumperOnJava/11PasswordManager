@@ -12,15 +12,6 @@ namespace WinUi3Test.src.Util
 {
     static class Extensions
     {
-        public static List<O> Map<I, O>(this IList<I> collection,Func<I,O> function)
-        {
-            List<O> list = new List<O>(collection.Count);
-            for(int i=0;i<collection.Count;i++) {
-                list.Add(function(collection[i]));
-            }
-            return list;
-        }
-
         public static SaveLoader AesEncryptedStorage(this SaveLoader target, string key)
         {
             return new EncryptedSaveLoader(target, key);

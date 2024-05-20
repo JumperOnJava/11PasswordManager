@@ -1,33 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using Microsoft.UI.Xaml.Media;
-using Newtonsoft.Json;
 using WinUi3Test.Datatypes.Serializing;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
 
 namespace WinUi3Test.Datatypes;
 
-public class TagRef : Tag
+public class UniqueTagId : UniqueId, Tag
 {
-    [JsonRequired]
-    public long innerId;
-        
-    public TagRef(long innerId)
+    public UniqueTagId(long id) : base(id)
     {
-        this.innerId = innerId;   
     }
+
     public override int GetHashCode()
     {
-        return (int)innerId;
+        return (int)id;
     }
-    public static bool operator ==(TagRef a, TagRef b)
+    public static bool operator ==(UniqueTagId a, UniqueTagId b)
     {
-        return a.innerId == b.innerId;
+        return a.id == b.id;
     }
-    public static bool operator !=(TagRef a, TagRef b)
+    public static bool operator !=(UniqueTagId a, UniqueTagId b)
     {
         return !(a == b);
     }
@@ -62,18 +57,15 @@ public class TagRef : Tag
     [Newtonsoft.Json.JsonIgnore]
     public Brush SymbolColorBrush => TagManager.Instance.getTag(this).SymbolColorBrush;
 
+    public Tag Clone() => Clone();
+
     [Newtonsoft.Json.JsonIgnore]
-    public TagRef Identifier => this;
-
-    public Tag Clone()
-    {
-        return this;
-    }
-
+    public UniqueTagId IdentifierTagId => this;
     public bool matches(Taggable tag)
     {
         return TagManager.Instance.getTag(this).matches(tag);
     }
+
 }
 
 public class TagManager
@@ -85,14 +77,14 @@ public class TagManager
     {
     }
 
-    public Tag getTag(TagRef tagRef)
+    public Tag getTag(UniqueTagId uniqueTagId)
     {
-        return tags[tagRef.innerId];
+        return tags[uniqueTagId.id];
     }
 
-    public void setTag(TagRef tagRef, Tag tag)
+    public void setTag(UniqueTagId uniqueTagId, Tag tag)
     {
-        tags[tagRef.innerId] = tag;
+        tags[uniqueTagId.id] = tag;
     }
 }
 
@@ -100,6 +92,7 @@ public interface Tag : Identifiable, Clonable<Tag>
 {
     ColorsScheme TagColors { get; set; }
     string DisplayName { get; set; }
+    public UniqueTagId IdentifierTagId { get;}
     bool matches(Taggable tag);
     [Newtonsoft.Json.JsonIgnore]
     public Brush BaseColorBrush { get; }
@@ -111,7 +104,9 @@ public interface Tag : Identifiable, Clonable<Tag>
 public struct TagBasic : Tag
 {
     public string DisplayName { get; set; }
-    public TagRef Identifier { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
+    public UniqueId Identifier => IdentifierTagId;
+    public UniqueTagId IdentifierTagId { get; set; }
     public ColorsScheme TagColors { get; set; }
 
     [Newtonsoft.Json.JsonIgnore]
@@ -123,9 +118,8 @@ public struct TagBasic : Tag
 
     public bool matches(Taggable account)
     {
-        var whereBasic = account.Tags.Where(a => a is Identifiable).ToList();
         var r = new { this.Identifier };
-        var whereIdentifier = whereBasic.Where((a) => a == r.Identifier).ToList();
+        var whereIdentifier = account.Tags.Where((a) => a.Identifier.id == r.Identifier.id).ToList();
         var count = whereIdentifier.Count();
         if (count > 0)
             return true;
@@ -134,9 +128,9 @@ public struct TagBasic : Tag
     public TagBasic(string displayName, ColorsScheme tagColor)
     {
         DisplayName = displayName;
-        Identifier = new TagRef(Random.Shared.NextInt64());
+        IdentifierTagId = new UniqueTagId(Random.Shared.NextInt64());
         TagColors = tagColor;
-        TagManager.Instance.setTag(Identifier,this);
+        TagManager.Instance.setTag((UniqueTagId)Identifier, this);
     }
     public TagBasic(string displayName) : this(displayName, ColorsScheme.AccentColors) { }
 
@@ -146,4 +140,5 @@ public struct TagBasic : Tag
     {
         return this;
     }
+
 }
