@@ -5,7 +5,7 @@ using WinUi3Test.Datatypes.Serializing;
 
 namespace WinUi3Test.Datatypes
 {
-    public class StorageData : Clonable<StorageData>
+    public class StorageData : RefClonable<StorageData>
     {
         [JsonRequired]
         public Dictionary<long, Tag> Tags { get; set; }

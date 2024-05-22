@@ -48,7 +48,6 @@ public class MainWindowModel : PropertyChangable
     {
         this.onClose = closeCallback;
         this.storageManager = storageManager;
-        this.storageManager.UpdateFromStorage();
         this.navigator = navigator;
 
         TagManager.Instance.tags = storageManager.Data.Tags;
@@ -87,7 +86,6 @@ public class MainWindowModel : PropertyChangable
         newStorage.Tags = new Dictionary<long, Tag>(TagManager.Instance.tags);
 
         storageManager.Data = newStorage;
-        storageManager.SaveToStorage();
     }
 
     internal void FilterAccounts()

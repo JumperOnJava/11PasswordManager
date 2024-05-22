@@ -1,6 +1,6 @@
 namespace WinUi3Test.Datatypes.Serializing;
 
-public interface Clonable<T>
+public interface RefClonable<T>
 {
     T Clone();
 }

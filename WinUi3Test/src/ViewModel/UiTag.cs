@@ -9,7 +9,7 @@ using WinUi3Test.Datatypes.Serializing;
 
 namespace WinUi3Test.src.ViewModel
 {
-    public class UiTag : PropertyChangable, Clonable<UiTag>, Identifiable
+    public class UiTag : PropertyChangable, RefClonable<UiTag>, Identifiable
     {
         private bool selected;
         public event Action<bool> SelectedChanged;

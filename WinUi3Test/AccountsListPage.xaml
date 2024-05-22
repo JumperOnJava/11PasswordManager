@@ -124,7 +124,7 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="viewModel:UiAccount">
                                     <Grid
-                                Background="Transparent"
+                                Background="{ThemeResource CardBackgroundFillColorDefault}" 
                                 BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}"
                                 CornerRadius="8"
                                 Margin="0,4,4,4">
@@ -159,8 +159,9 @@
                                 Orientation="Horizontal">
                                             <Grid>
                                                 <StackPanel Orientation="Horizontal" Visibility="{Binding CopyMenuVisible, UpdateSourceTrigger=PropertyChanged}">
-                                                    <AppBarButton Icon="Copy" Height="60" Label="Username"/>
-                                                    <AppBarButton Icon="Copy" Height="60" Label="Password"/>
+                                                    <AppBarButton Click="Copy" CommandParameter="{Binding Target.Email}" Visibility="{Binding EmailVisibility}" Icon="Copy" Height="60" Label="Email" />
+                                                    <AppBarButton Click="Copy" CommandParameter="{Binding Target.Username}" Visibility="{Binding UsernameVisibility}" Icon="Copy" Height="60" Label="Username" />
+                                                    <AppBarButton Click="Copy" CommandParameter="{Binding Target.Password}" Icon="Copy" Height="60" Label="Password" />
                                                     <AppBarSeparator/>
                                                     <AppBarButton Icon="Edit" Height="60" Label="Edit" Click="{x:Bind CallEntryMethod}" CommandParameter="{Binding EditThisAccount_}"/>
                                                     <AppBarSeparator/>

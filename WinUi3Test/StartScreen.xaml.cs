@@ -42,101 +42,28 @@ namespace WinUi3Test
         {
             this.InitializeComponent();
         }
-        private async void CreateNew(object sender, RoutedEventArgs e)
+
+
+        private void OpenStorage(StorageManager storageManager)
         {
-            if (_opening) return;
-            _opening = true;
-            try
-            {
-                var saveFIleDialog = new FileSavePicker();
-                var window = App.MainWindow;
-
-                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-
-                WinRT.Interop.InitializeWithWindow.Initialize(saveFIleDialog, hWnd);
-
-                saveFIleDialog.FileTypeChoices.Add("Password storage", new List<string> { ".pwdb" });
-
-                var file = await saveFIleDialog.PickSaveFileAsync();
-                if (file != null)
-                {
-                    var pw = await AskPassword(true);
-                    Extensions.ShowExceptionOnFail( (() =>
-                    {
-                        var saveLoader = new FileSaveLoader(file.Path).AesEncryptedStorage(pw);
-                        OpenStorage(new StorageManager(saveLoader,new StorageData()));
-                    }), XamlRoot);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
-            _opening = false;
-        }
-
-        private static bool _opening;
-        private async void OpenStorageDialog(object sender, RoutedEventArgs e)
-        {
-            if (_opening) return;
-            _opening = true;
-            try
-            {
-                var openFileDialog = new FileOpenPicker();
-
-                var window = App.MainWindow;
-
-                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-
-                WinRT.Interop.InitializeWithWindow.Initialize(openFileDialog, hWnd);
-
-                openFileDialog.FileTypeFilter.Add(".pwdb");
-                openFileDialog.FileTypeFilter.Add("*");
-
-                var file = await openFileDialog.PickSingleFileAsync();
-                if (file != null)
-                {
-                    OpenStorage(file.Path);
-                }
-                else
-                {
-                    Console.WriteLine("Operation cancelled.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            _opening = false;
-        }
-
-        public async void OpenStorage(string path)
-        {
-            
-            var pw = await AskPassword(false);
-            if (pw == null) return;
-            Extensions.ShowExceptionOnFail( (() =>
-            {
-                OpenStorage(new StorageManager(new FileSaveLoader(path).AesEncryptedStorage(pw)));
-            }), XamlRoot);
-        }
-
-        private void OpenStorage(StorageManager saveableStorage)
-        {
-                navigator.Navigate(typeof(AccountsListPage),
-                    new MainWindowModel(
-                        saveableStorage,
-                        () => model.History.Add(new StartScreenModelStoragePath(saveableStorage.DataLoader)),
-                        navigator
-                        ),
-                    new DrillInNavigationTransitionInfo());
+            model.History.Add(new StartScreenModelStoragePath(storageManager));
+            navigator.Navigate(typeof(AccountsListPage),
+                new MainWindowModel(
+                    storageManager,
+                    () => { },
+                    navigator
+                ),
+                new DrillInNavigationTransitionInfo());
         }
 
         private void OpenRecentStorage(object sender, RoutedEventArgs e)
         {
-            OpenStorage(((ButtonBase)sender).CommandParameter as string);
+            //throw new NotImplementedException();
+            OpenStorage(((ButtonBase)sender).CommandParameter as StorageManager);
         }
+        
+
+        
         public class StartScreenModel
         {
             public static AppSettings AppSettings => AppSettings.settings;
@@ -152,8 +79,8 @@ namespace WinUi3Test
                 }
                 AppSettings.storageHistory.Sort((a, b) =>
                 {
-                    if (a.LastAccessTime == b.LastAccessTime) return 0;
-                    return a.LastAccessTime > b.LastAccessTime ? 1 : -1;
+                    if (a.DisplayInfo.LastAccessTime == b.DisplayInfo.LastAccessTime) return 0;
+                    return a.DisplayInfo.LastAccessTime > b.DisplayInfo.LastAccessTime ? 1 : -1;
                 });
                 NotifyCollectionChangedEventHandler action = (a, e) =>
                 {
@@ -169,35 +96,27 @@ namespace WinUi3Test
             }
         }
 
-        public async Task<string> AskPassword(bool hasSecondField)
+
+
+        private void OpenDialog(object sender, RoutedEventArgs e)
         {
-            var dialog = new ContentDialog();
-            dialog.Title = "Enter password:";
-            dialog.PrimaryButtonText = "Confirm";
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.SecondaryButtonText = "Cancel";
-            dialog.XamlRoot = this.XamlRoot;
-            dialog.Content = new PasswordInputDialog(dialog,hasSecondField);
-            var result = await dialog.ShowAsync();
-            if(result == ContentDialogResult.Primary)
-            {
-                return ((PasswordInputDialog)dialog.Content).model.Password;
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
-        
+        private void CreateDialog(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class StartScreenModelStoragePath
     {
-        public SaveLoader Manager { get; set; } 
-        public string Name { get; set; }
-        public StartScreenModelStoragePath(SaveLoader manager)
+        public StorageManager Manager { get; } 
+        public string Name { get; }
+        public StartScreenModelStoragePath(StorageManager manager)
         {
             this.Manager = manager;
-            this.Name = System.IO.Path.GetFileNameWithoutExtension(manager.DisplayPath);
+            this.Name = manager.DisplayInfo.DisplayPath;
         }
-
-        public string Path => Manager.DisplayPath;
+        public string Path => Manager.DisplayInfo.DisplayPath;
     }
 }

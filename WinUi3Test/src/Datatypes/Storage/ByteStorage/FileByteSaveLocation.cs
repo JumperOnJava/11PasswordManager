@@ -5,12 +5,12 @@ using Newtonsoft.Json;
 
 namespace WinUi3Test.Datatypes;
 
-public class FileSaveLoader : SaveLoader
+public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
 {
     [JsonRequired]
     private string path;
 
-    public FileSaveLoader(string filePath)
+    public FileByteLocation(string filePath)
     {
         this.Path = filePath;
     }
@@ -27,7 +27,7 @@ public class FileSaveLoader : SaveLoader
         set => path = value;
     }
 
-    public string DisplayPath => Path;
+    public string DisplayPath => System.IO.Path.GetFileNameWithoutExtension(Path);
     private void RequestPath()
     {
         
@@ -54,5 +54,5 @@ public class FileSaveLoader : SaveLoader
     [JsonIgnore]
     public DateTime LastAccessTime => File.GetLastAccessTime(path);
     public bool IsValid() => File.Exists(path);
-
+    public LocationDisplayModel Model => this;
 }

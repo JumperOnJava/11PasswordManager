@@ -88,7 +88,7 @@ public class TagManager
     }
 }
 
-public interface Tag : Identifiable, Clonable<Tag>
+public interface Tag : Identifiable, RefClonable<Tag>
 {
     ColorsScheme TagColors { get; set; }
     string DisplayName { get; set; }

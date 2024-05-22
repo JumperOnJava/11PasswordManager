@@ -12,9 +12,9 @@ namespace WinUi3Test.src.Util
 {
     static class Extensions
     {
-        public static SaveLoader AesEncryptedStorage(this SaveLoader target, string key)
+        public static ByteSaveLocation AesEncryptedStorage(this ByteSaveLocation target, string key)
         {
-            return new EncryptedSaveLoader(target, key);
+            return new EncryptedByteLocationDisplay(target, key);
         }
 
         public static byte[] EncodeUtf8(this string s) => Encoding.UTF8.GetBytes(s);

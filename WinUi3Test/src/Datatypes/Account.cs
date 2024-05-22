@@ -8,7 +8,7 @@ using WinUi3Test.src.Util;
 
 namespace WinUi3Test.Datatypes;
 
-public interface Account : Taggable, Clonable<Account>, Identifiable
+public interface Account : Taggable, RefClonable<Account>, Identifiable
 {
     public string TargetApp { get; set; }
     public string DisplayName { get; set; }

@@ -9,10 +9,10 @@ namespace WinUi3Test.Datatypes;
 
 public class AppSettings
 {
-    public List<SaveLoader> storageHistory { get; set; }
+    public List<StorageManager> storageHistory { get; set; }
     public AppSettings()
     {
-        storageHistory = new List<SaveLoader>();
+        storageHistory = new List<StorageManager>();
         settings = this;
     }
 
@@ -28,15 +28,15 @@ public class AppSettings
         {
             settings = new AppSettings();
         }
-        settings.storageHistory = new List<SaveLoader>(settings.storageHistory
-            .GroupBy(s => s.DisplayPath)
+        settings.storageHistory = new List<StorageManager>(settings.storageHistory
+            .GroupBy(s => s.DisplayInfo.DisplayPath)
             .Select(s => s.First())
             .ToList());
         Save();
     }
     public static void Save()
     {
-        settings.storageHistory = new List<SaveLoader>(settings.storageHistory.Distinct().ToList());
+        settings.storageHistory = new List<StorageManager>(settings.storageHistory.Distinct().ToList());
         File.WriteAllText("global_settings.json", JsonTools.Serialize(settings));
     }
 }

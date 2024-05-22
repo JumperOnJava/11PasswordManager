@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using WinUi3Test.Datatypes;
 using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
@@ -155,6 +156,15 @@ namespace WinUi3Test
             e.DragUIOverride.IsGlyphVisible = false;
             
             Console.WriteLine($"Received tag: {await e.DataView.GetTextAsync()}");
+        }
+
+        private void Copy(object sender, RoutedEventArgs e)
+        {
+            var button = (ButtonBase)sender;
+            var data = new DataPackage();
+            data.SetText((string)button.CommandParameter);
+            Clipboard.SetContent(data);
+
         }
     }
 }

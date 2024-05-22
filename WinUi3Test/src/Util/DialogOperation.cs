@@ -7,7 +7,6 @@ namespace WinUi3Test.Util;
 
 public class DialogOperation : Operation
 {
-
     public DialogOperation(XamlRoot xamlRoot, string title, string primaryText, string secondaryText = null, string content = null)
     {
         var dialog = new ContentDialog();
