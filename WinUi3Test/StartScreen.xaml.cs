@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using WinUi3Test.Datatypes;
 using WinUi3Test.Datatypes.Serializing;
 using WinUi3Test.src.Util;
+using WinUi3Test.StorageDialogs.GlobalCreate;
+using WinUi3Test.Util;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -61,9 +63,9 @@ namespace WinUi3Test
             //throw new NotImplementedException();
             OpenStorage(((ButtonBase)sender).CommandParameter as StorageManager);
         }
-        
 
-        
+
+
         public class StartScreenModel
         {
             public static AppSettings AppSettings => AppSettings.settings;
@@ -74,7 +76,7 @@ namespace WinUi3Test
                 History = new ObservableCollection<StartScreenModelStoragePath>();
                 foreach (var item in AppSettings.storageHistory)
                 {
-                    if(item.IsValid())
+                    if (item.IsValid())
                         History.Add(new StartScreenModelStoragePath(item));
                 }
                 AppSettings.storageHistory.Sort((a, b) =>
@@ -92,7 +94,7 @@ namespace WinUi3Test
                     AppSettings.Save();
                 };
                 History.CollectionChanged += action;
-                action.Invoke(null,null);
+                action.Invoke(null, null);
             }
         }
 
@@ -100,17 +102,34 @@ namespace WinUi3Test
 
         private void OpenDialog(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            BeginDialog((a, b) => new OpenStorageDialog(a, b));
         }
 
         private void CreateDialog(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            BeginDialog((a, b) => new CreateStorageDialog(a, b));
+        }
+        public void BeginDialog(Func<EmptyOperation<DialogPage>, EmptyOperation<StorageManager>, DialogPage> page)
+        {
+            var dialogCreator = new EmptyOperation<DialogPage>();
+            var managerCreator = new EmptyOperation<StorageManager>();
+            page.Invoke(dialogCreator, managerCreator).StartDialog(XamlRoot);
+            dialogCreator.OnResult += (success, result) =>
+            {
+                result.StartDialog(XamlRoot);
+            };
+            managerCreator.OnResult += (success, result) =>
+            {
+                if (success)
+                {
+                    OpenStorage(result);
+                }
+            };
         }
     }
     public class StartScreenModelStoragePath
     {
-        public StorageManager Manager { get; } 
+        public StorageManager Manager { get; }
         public string Name { get; }
         public StartScreenModelStoragePath(StorageManager manager)
         {

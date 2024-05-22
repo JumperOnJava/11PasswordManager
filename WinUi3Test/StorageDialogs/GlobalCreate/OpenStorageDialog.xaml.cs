@@ -12,17 +12,39 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using WinUi3Test.Datatypes;
+using WinUi3Test.src.Util;
+using WinUi3Test.StorageDialogs.FileStorage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace WinUi3Test.StorageDialogs.GlobalCreate
 {
-    public sealed partial class OpenStorageDialog : Page
+    public sealed partial class OpenStorageDialog : Page, DialogPage
     {
-        public OpenStorageDialog()
+        private EmptyOperation<DialogPage> operation;
+        private EmptyOperation<StorageManager> managerOperation;
+
+
+        public OpenStorageDialog(EmptyOperation<DialogPage> a, EmptyOperation<StorageManager> b)
         {
+            this.operation = a;
+            this.managerOperation = b;
             this.InitializeComponent();
+            operation.OnFinished += (_) => onClose.Invoke();
         }
+        private void StartDatabase(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+            //operation.FinishSuccess(new FileCreateDialog(new EmptyOperation<StorageManager>()));
+        }
+
+        private void StartFile(object sender, RoutedEventArgs e)
+        {
+            operation.FinishSuccess(new FileOpenDialog(managerOperation));
+        }
+
+        public event Action onClose;
     }
 }
