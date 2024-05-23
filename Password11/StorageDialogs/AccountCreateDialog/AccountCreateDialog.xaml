@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Password11.AccountCreateDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Password11"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:datatypes="using:Password11.Datatypes"
+    mc:Ignorable="d"
+
+    Background="Transparent">
+    <Grid>
+        <Grid Margin="0,-40,0,0" DataContext="{x:Bind model}" Background="Transparent" CornerRadius="8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="256"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,40,0,0" Width="220" DataContext="{Binding Account}">
+                    <TextBlock>App</TextBlock>
+                    <AppBarSeparator Height="5"/>
+                    <TextBox PlaceholderText="" Text="{Binding TargetApp,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                    <AppBarSeparator/>
+                    <TextBlock>Username</TextBlock>
+                    <AppBarSeparator Height="5"/>
+                    <TextBox PlaceholderText="" Text="{Binding Username,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                    <AppBarSeparator/>
+                    <TextBlock>Email</TextBlock>
+                    <AppBarSeparator Height="5"/>
+                    <TextBox PlaceholderText="" Text="{Binding Email,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                    <AppBarSeparator/>
+                    <TextBlock>Password</TextBlock>
+                    <AppBarSeparator Height="5"/>
+                    <PasswordBox Password="{Binding Password,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" DataContext="{Binding Account}">
+                    <ColorPicker
+                    x:Name="ColorPickerRing"
+                    ColorChanged="ColorPickerRing_ColorChanged"
+      ColorSpectrumShape="Ring"
+      IsMoreButtonVisible="False"
+      IsColorSliderVisible="False"
+      IsColorChannelTextInputVisible="False"
+      IsHexInputVisible="False"
+      IsAlphaEnabled="False"
+      IsAlphaSliderVisible="True"
+      IsAlphaTextInputVisible="True" />
+                    <Grid CornerRadius="4" Width="256" Margin="0,-20,0,0" Height="40">
+                        <Rectangle Fill="{Binding BaseColorBrush,UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+            <Grid Margin="0,325,0,0" Height="350" HorizontalAlignment="Stretch" Padding="2,6,2,3" Background="{StaticResource CardBackgroundFillColorDefault}" BorderBrush="{StaticResource CardStrokeColorDefault}" CornerRadius="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="10"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" TextAlignment="Center" Text="Tags"/>
+                <ListView Grid.Column="0" Margin="0,24,0,0" SelectionMode="None" ItemsSource="{Binding UnselectedTags}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="datatypes:Tag">
+                            <Grid>
+                                <Button Content="{Binding DisplayName}" Click="Button_Click" CommandParameter="{Binding }">
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.asWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.asWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.asWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/>
+                                    </Button.Resources>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <AppBarSeparator Grid.Column="1" HorizontalAlignment="Center"></AppBarSeparator>
+                <TextBlock Grid.Column="2" TextAlignment="Center" Text="Selected"/>
+                <ListView Grid.Column="2" Margin="0,24,0,0" SelectionMode="None" ItemsSource="{Binding SelectedTags }">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="datatypes:Tag">
+                            <Grid>
+                                <Button Content="{Binding DisplayName}" Click="Button_Click" CommandParameter="{Binding }">
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.asWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.asWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.asWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/>
+                                    </Button.Resources>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+            </Grid>
+        </Grid>
+    </Grid>
+    <Page.Resources>
+    </Page.Resources>
+</Page>

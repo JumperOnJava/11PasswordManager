@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Password11 (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Password11 (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

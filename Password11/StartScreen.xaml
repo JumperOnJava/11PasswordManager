@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Password11.StartScreen"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Password11"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent">
+    <Grid DataContext="{x:Bind model}" Margin="0,0,0,40" MaxWidth="600" MaxHeight="800" Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}" BorderThickness="1" CornerRadius="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <TextBlock Margin="30,20,0,0" HorizontalAlignment="Left" Text="Recent" Style="{StaticResource TitleTextBlockStyle}"/>
+        <ListView Margin="10,60,10,0" ItemsSource="{Binding History}" SelectionMode="None" CornerRadius="4" Padding="-16,0,-16,0">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:StartScreenModelStoragePath">
+                    <Grid Background="Transparent" Margin="0,5,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="6,-5,0,0" Padding="5,5,5,5">
+                            <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}"/>
+                            <TextBlock Text="{Binding Path}"/>
+                        </StackPanel>
+                        <Button Margin="0,0,5,0" Click="OpenRecentStorage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CommandParameter="{Binding Manager}">
+                        </Button>
+
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">
+                <Button Content="Add storage" Click="CreateDialog"></Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
