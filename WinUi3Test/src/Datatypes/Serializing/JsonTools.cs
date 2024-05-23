@@ -5,6 +5,7 @@ public class JsonTools
     private static readonly JsonSerializerSettings Settings = new()
     {
         TypeNameHandling = TypeNameHandling.Auto,
+        PreserveReferencesHandling = PreserveReferencesHandling.All
     };
     public static string Serialize(object value)
     {

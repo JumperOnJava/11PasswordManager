@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="WinUi3Test.PasswordEdit"
+    x:Class="WinUi3Test.AccountEdit"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:WinUi3Test"
@@ -80,7 +80,7 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="datatypes:Tag">
                                     <Grid>
-                                        <Button Content="{Binding DisplayName}" Click="ButtonBase_OnClick" CommandParameter="{Binding Identifier}">
+                                        <Button Content="{Binding DisplayName}" Click="ButtonBase_OnClick" CommandParameter="{Binding}">
                                             <Button.Resources>
                                                 <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.asWinColor}"/>
                                                 <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.asWinColor}"/>
@@ -98,7 +98,7 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="datatypes:Tag">
                                     <Grid>
-                                        <Button Content="{Binding DisplayName}" HorizontalAlignment="Right" Click="ButtonBase_OnClick" CommandParameter="{Binding Identifier}">
+                                        <Button Content="{Binding DisplayName}" HorizontalAlignment="Right" Click="ButtonBase_OnClick" CommandParameter="{Binding}">
                                             <Button.Resources>
                                                 <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.asWinColor}"/>
                                                 <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.asWinColor}"/>

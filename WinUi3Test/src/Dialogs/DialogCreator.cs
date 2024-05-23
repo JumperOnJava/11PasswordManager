@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WinUi3Test.StorageDialogs.GlobalCreate;
+using WinUi3Test.Util;
+using Page = Microsoft.UI.Xaml.Controls.Page;
 
 namespace WinUi3Test.src.Util
 {
@@ -13,9 +15,12 @@ namespace WinUi3Test.src.Util
     {
         public static void StartDialog(this DialogPage page, XamlRoot xamlRoot, string title = null)
         {
-            var dialog = new ContentDialog();
-            dialog.Content = page;
-            dialog.XamlRoot = xamlRoot;
+            var dialog = new DialogBuilder(xamlRoot)
+                .Content(page)
+                .SecondaryButtonText("Cancel")
+                .AddSecondaryClickAction(page.Cancel)
+                .Build();
+            page.Dialog = dialog;
             page.onClose += dialog.Hide;
             dialog.ShowAsync();
         }
@@ -24,5 +29,7 @@ namespace WinUi3Test.src.Util
     public interface DialogPage
     {
         event Action onClose;
+        ContentDialog Dialog { set; }
+        void Cancel();
     }
 }

@@ -15,34 +15,36 @@ namespace WinUi3Test.ViewModel
     /// call Finish() function to get return
     /// make sure object is not used after calling Finish, otherwise undefined behaviour can happen
     /// </summary>
-    public class AccountOperation : PropertyChangable, Account
+    public class AccountEditor : PropertyChangable
     {
-        public static AccountOperation Start()
+        public static AccountEditor Start(IEnumerable<Tag> tagsList)
         {
-            return Start(new AccountImpl());
+            return Start(new AccountImpl(),tagsList);
         }
 
-        public static AccountOperation Start(Account account)
+        public static AccountEditor Start(Account account, IEnumerable<Tag> tagsList)
         {
-            return new AccountOperation(account);
+            return new AccountEditor(account,tagsList);
         }
 
-        public Account target;
+        private Account target;
+        private readonly IEnumerable<Tag> tagsList;
 
         public static readonly DependencyProperty BaseColorBrushProperty =
-            DependencyProperty.Register(nameof(BaseColorBrush), typeof(object), typeof(AccountOperation),
+            DependencyProperty.Register(nameof(BaseColorBrush), typeof(object), typeof(AccountEditor),
                 new PropertyMetadata(default(object)));
+
 
         public event Action<Account?> OnFinished;
 
-        private AccountOperation(Account target)
+        private AccountEditor(Account target, IEnumerable<Tag> tagsList)
         {
-            this.target = target.Clone();
+            this.target = target.CloneRef();
+            this.tagsList = tagsList;
         }
 
         public void Finish(bool successful)
         {
-            if (OnFinished != null)
             OnFinished.Invoke(successful ? target : null);
         }
 
@@ -96,10 +98,10 @@ namespace WinUi3Test.ViewModel
             }
         }
 
-        public Dictionary<string, FieldData> AdditionalData
+        public Dictionary<string, FieldData> Fields
         {
-            get => target.AdditionalData;
-            set => target.AdditionalData = value;
+            get => target.Fields;
+            set => target.Fields = value;
         }
 
         public ColorsScheme Colors
@@ -114,7 +116,7 @@ namespace WinUi3Test.ViewModel
             }
         }
 
-        public List<UniqueTagId> Tags
+        public List<UniqueId<Tag>> Tags
         {
             get => target.Tags;
             set
@@ -147,11 +149,16 @@ namespace WinUi3Test.ViewModel
             }
         }
 
-        public UniqueId Identifier => target.Identifier;
+        public UniqueId<Account> Identifier => target.Identifier;
 
-        public Account Clone()
+        public Account CloneRef()
         {
-            return target.Clone();
+            return target.CloneRef();
+        }
+
+        public void Restore(Account state)
+        {
+            target.Restore(state);
         }
     }
 }

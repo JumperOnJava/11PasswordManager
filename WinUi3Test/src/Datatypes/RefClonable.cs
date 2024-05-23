@@ -2,5 +2,7 @@ namespace WinUi3Test.Datatypes.Serializing;
 
 public interface RefClonable<T>
 {
-    T Clone();
+    T CloneRef();
+
+    void Restore(T state);
 }

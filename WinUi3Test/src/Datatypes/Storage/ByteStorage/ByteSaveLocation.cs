@@ -10,7 +10,6 @@ public interface ByteSaveLocation
     public bool Save(byte[] data);
     public byte[] Load();
     public LocationDisplayModel Model { get; }
-    
     public bool IsValid();
 }
 

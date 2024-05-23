@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using WinUi3Test.src.Util;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,11 +22,20 @@ namespace WinUi3Test.StorageDialogs.Database
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class DatabaseOpenDialog : Page
+    public sealed partial class DatabaseOpenDialog : Page, DialogPage
     {
-        public DatabaseOpenDialog()
+        public DatabaseOpenDialog(Datatypes.EmptyOperation<Datatypes.StorageManager> emptyOperation)
         {
             this.InitializeComponent();
+        }
+
+        public ContentDialog Dialog { set => throw new NotImplementedException(); }
+
+        public event Action onClose;
+
+        public void Cancel()
+        {
+            throw new NotImplementedException();
         }
     }
 }

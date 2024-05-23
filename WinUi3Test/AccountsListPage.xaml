@@ -7,6 +7,7 @@
     xmlns:viewModel="using:WinUi3Test.src.ViewModel"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel1="using:WinUi3Test.ViewModel"
     mc:Ignorable="d"
     Background="Transparent">
     <Grid>
@@ -55,7 +56,7 @@
                                   SelectionMode="None"
                                   ItemsSource="{Binding Tags}">
                                 <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="viewModel:UiTag">
+                                    <DataTemplate x:DataType="viewModel1:UiTag">
                                         <Grid Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="8">
 
                                             <Grid Width="20" Height="20" Margin="-16,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" CornerRadius="4">

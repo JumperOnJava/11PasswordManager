@@ -3,6 +3,8 @@ using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.ApplicationModel.Activation;
+using Windows.Security.Isolation;
 using WinUi3Test;
 using WinUi3Test.Datatypes;
 using WinUi3Test.src.Util;
@@ -12,20 +14,19 @@ using WinUi3Test.ViewModel;
 public class MainWindowModel : PropertyChangable
 {
     public readonly Frame navigator;
-    private ObservableCollection<UiTag> tags;
+    private readonly ObservableCollection<UiTag> tags = new();
 
     public ObservableCollection<UiTag> Tags
     {
         get => tags;
     }
 
-    private ObservableCollection<UiAccount> accounts;
+    private readonly ObservableCollection<UiAccount> accounts = new();
 
     public ObservableCollection<UiAccount> Accounts => accounts;
 
-    public ObservableCollection<UiAccount> filteredAccounts;
-    public ObservableCollection<UiAccount> FilteredAccounts => filteredAccounts;
-    public ObservableCollection<UiAccount> DispayAccounts => FilteredAccounts; 
+    public ObservableCollection<UiAccount> displayAccounts = new();
+    public ObservableCollection<UiAccount> DispayAccounts => displayAccounts; 
 
     public bool isPaneOpen = true;
 
@@ -43,31 +44,31 @@ public class MainWindowModel : PropertyChangable
     
     private readonly StorageManager storageManager;
     public readonly Action onClose;
-
+    
     public MainWindowModel(StorageManager storageManager, Action closeCallback, Frame navigator)
     {
         this.onClose = closeCallback;
         this.storageManager = storageManager;
         this.navigator = navigator;
-
-        TagManager.Instance.tags = storageManager.Data.Tags;
-
-        accounts = new(storageManager.Data.Accounts.Select((Func<Account, UiAccount>)(a => new UiAccount(this.navigator, AccountOperation.Start(a)))));
-        filteredAccounts = new ObservableCollection<UiAccount>();
-        tags = new ObservableCollection<UiTag>();
+        
+        this.storageManager.Data.TagsList().Select(tag => new UiTag(tag)).ToList().ForEach(Tags.Add);
+        this.storageManager.Data.AccountsList().Select(account => new UiAccount(this.navigator, account, RawTags)).ToList().ForEach(Accounts.Add);
+        
         Tags.CollectionChanged += (_, _) =>
         {
             onPropertyChanged(nameof(NoTagsSelected));
             onPropertyChanged(nameof(DispayAccounts));
             onPropertyChanged(nameof(Tags));
+            RawTags.Clear();
             foreach (var uiTag in Tags)
             {
                 uiTag.PropertyChanged += (_,_) => onPropertyChanged(nameof(NoTagsSelected));
+                RawTags.Add(uiTag.Target);
             }
+            
             Save();
         };
         
-        storageManager.Data.TagsOrder.Select(r => new UiTag(r)).ToList().ForEach(Tags.Add);
         Accounts.CollectionChanged += (_, _) =>
         {
             FilterAccounts();
@@ -76,36 +77,37 @@ public class MainWindowModel : PropertyChangable
         FilterAccounts();
     }
 
+    public List<Tag> RawTags { get; set; } = new();
+
     public void Save()  
     {
         var newStorage = new StorageData();
-        newStorage.Accounts = new List<Account>(Accounts.Select(a=>a.Target.target));
-        var order = Tags.Select(t => new UniqueTagId(t.Target.id));
-        newStorage.TagsOrder = new List<UniqueTagId>(order);
-        newStorage.TagsOrder.ForEach(element => newStorage.Tags[element.id] = element);
-        newStorage.Tags = new Dictionary<long, Tag>(TagManager.Instance.tags);
+        newStorage.Accounts = new Dictionary<long, Account>();
+        foreach (var uiAccount in Accounts)
+        {
+            newStorage.Accounts[uiAccount.Identifier.id] = uiAccount.Target;
+        }
+        newStorage.Tags = new Dictionary<long, Tag>();
+        foreach (var uiTag in Tags)
+        {
+            newStorage.Tags[uiTag.Identifier.id] = uiTag.Target;
+        }
 
+        newStorage.AccountsOrder = Accounts.Select(a => a.Target.Identifier.id).ToList();
+        newStorage.TagsOrder = Tags.Select(a => a.Target.Identifier.id).ToList();
         storageManager.Data = newStorage;
     }
 
     internal void FilterAccounts()
     {
-        FilteredAccounts.Clear();
+        DispayAccounts.Clear();
         for (var index = 0; index < Accounts.Count; index++)
         {
             var indexRef = new { index };
             var account = Accounts[index];
-            var operation = AccountOperation.Start(account.Target);
-            operation.OnFinished += acc =>
-            {
-                if (acc != null)
-                {
-                    Accounts[indexRef.index] = new UiAccount(navigator,AccountOperation.Start(acc));
-                }
-            };
             if (isFiltered(account.Target))
             {
-                FilteredAccounts.Add(new UiAccount(navigator, operation));
+                DispayAccounts.Add(new UiAccount(navigator, account.Target,this.RawTags));
             }
         }
 

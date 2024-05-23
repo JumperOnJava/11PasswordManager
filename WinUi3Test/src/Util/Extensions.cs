@@ -12,14 +12,17 @@ namespace WinUi3Test.src.Util
 {
     static class Extensions
     {
-        public static ByteSaveLocation AesEncryptedStorage(this ByteSaveLocation target, string key)
+        public static StorageManager AesEncryptedManager(this StorageManager manager, string key)
         {
-            return new EncryptedByteLocationDisplay(target, key);
+            return new AesStorageManager(manager,key);
         }
 
         public static byte[] EncodeUtf8(this string s) => Encoding.UTF8.GetBytes(s);
         public static string DecodeUtf8(this byte[] s) => Encoding.UTF8.GetString(s);
-        public static void ShowExceptionOnFail(Action action,XamlRoot xamlRoot)
+        
+        public static byte[] DecodeBase64(this string s) => Convert.FromBase64String(s);
+        public static string EncodeBase64(this byte[] s) => Convert.ToBase64String(s);
+        public static void ShowExceptionOnFail(Page page,Action action)
         {
             try
             {
@@ -32,7 +35,7 @@ namespace WinUi3Test.src.Util
                     PrimaryButtonText = "Ok",
                     Title = e.Title,
                     Content = e.Content,
-                    XamlRoot = xamlRoot
+                    XamlRoot = page.XamlRoot
                 };
                 dialog.ShowAsync();
             }
@@ -43,13 +46,12 @@ namespace WinUi3Test.src.Util
                     PrimaryButtonText = "Ok",
                     Title = "Error while executing operation",
                     Content = e.Message+"\n"+e.StackTrace,
-                    XamlRoot = xamlRoot
+                    XamlRoot = page.XamlRoot
                 };
                 dialog.ShowAsync();
             }
         }
     }
-    
 }
 class DialogException : Exception
 {

@@ -25,6 +25,5 @@
                   IsAlphaSliderVisible="True"
                   IsAlphaTextInputVisible="True" /> 
         </StackPanel>
-
     </Grid>
 </Page>

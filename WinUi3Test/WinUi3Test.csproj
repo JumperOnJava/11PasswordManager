@@ -22,6 +22,7 @@
 		<AppxPackage>false</AppxPackage>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<UserSecretsId>46ff89f3-13e4-4428-86f4-a30884e9a978</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="NewFolder1\**" />
@@ -36,7 +37,13 @@
 		<Page Remove="NewFolder1\**" />
 		<Page Remove="NewFolder\**" />
 		<Page Remove="src\ViewModel\NewFolder\**" />
-		<Page Update="TagCreateDialog.xaml">
+		<Page Update="StorageDialogs\Tag\TagEditDialog.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="StorageDialogs\AccountCreateDialog\AccountCreateDialog.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="StorageDialogs\Password\PasswordInputDialog.xaml">
 		  <SubType>Designer</SubType>
 		</Page>
 	</ItemGroup>
@@ -53,12 +60,19 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.0.240109" />
 		<PackageReference Include="Google.Apis.Drive.v3" Version="1.68.0.3373" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.30" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.30">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.30" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240428000" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
 		<Manifest Include="$(ApplicationManifest)" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" />
 	</ItemGroup>
 
 	<!-- 
@@ -109,22 +123,12 @@
 		<Page Remove="src\ViewModel\BlankPage1.xaml" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="StorageDialogs\GlobalCreate\OpenStorageDialog.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
 	  <Page Update="StorageDialogs\Database\DatabaseOpenDialog.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="StorageDialogs\FileStorage\FileOpenDialog.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="PasswordInputDialog.xaml">
+	  <Page Update="StorageDialogs\FileStorage\FileOpenDialog">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
@@ -134,12 +138,7 @@
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="AccountCreationScreen.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="PasswordEdit.xaml">
+		<Page Update="AccountEdit.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>
@@ -154,7 +153,7 @@
 		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="StorageDialogs\FileStorage\FileCreateDialog.xaml">
+	  <Page Update="StorageDialogs\FileStorage\FileCreateDialog">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
@@ -167,5 +166,8 @@
 	  <Page Update="StorageDialogs\GlobalCreate\CreateStorageDialog.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
 	</ItemGroup>
 </Project>

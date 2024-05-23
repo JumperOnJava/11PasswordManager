@@ -58,7 +58,7 @@ namespace WinUi3Test
 
         private void CreateTag(object sender, RoutedEventArgs e)
         {
-            var operation = new Operation<UiTag>(new UiTag(new TagBasic().IdentifierTagId));
+            var operation = new Operation<UiTag>(new UiTag(new TagBasic()));
             TagEditDialog.ShowEditDialog(XamlRoot,operation);
             operation.OnResult += (ok, result) =>
             {
@@ -69,13 +69,12 @@ namespace WinUi3Test
         {
             var dialog = new ContentDialog();
             dialog.XamlRoot = this.XamlRoot;
-            var newAccount = AccountOperation.Start();
-            var select = model.Tags.Select(e => new UniqueTagId(e.Identifier.id));
-            var screen = new AccountCreationScreen(dialog,newAccount,new List<UniqueTagId>(select));
+            var newAccount = AccountEditor.Start(Model.RawTags);
+            var screen = new AccountCreateDialog(dialog,newAccount,new List<Tag>(model.Tags.Select(uitag => uitag.Target)));
             newAccount.OnFinished += (account) =>
             {
-                    if (account != null) 
-                        model.Accounts.Add(new UiAccount(model.navigator,AccountOperation.Start(account)));
+                if (account != null)
+                    model.Accounts.Add(new UiAccount(model.navigator, account, Model.RawTags));
             };
         }
         private void ShowPane_Click(object sender, RoutedEventArgs e)
@@ -96,7 +95,7 @@ namespace WinUi3Test
         {
             if (sender is Button control)
             {
-                var tag = control.CommandParameter as UiTag;
+                var tag = (UiTag)control.CommandParameter;
                 var operation = new Operation<UiTag>(tag);
                 
                 TagEditDialog.ShowEditDialog(this.XamlRoot, operation);
@@ -105,6 +104,7 @@ namespace WinUi3Test
                     if (!ok) return;
                     var index = model.Tags.IndexOf(tag);
                     model.Tags[index] = result;
+                    tag.onPropertyChanged("Target");
                 };
             }
         }
@@ -112,7 +112,7 @@ namespace WinUi3Test
         private void ElementOnDragStarting(object o, DragItemsStartingEventArgs drag)
         {
             DeleteButton.Visibility = Visibility.Visible;
-            var item = drag.Items[0] as Identifiable;
+            var item = drag.Items[0] as Identifiable<Account>;
             if(item==null)
                 return;
             Console.WriteLine(item.Identifier.id.ToString());
@@ -136,7 +136,7 @@ namespace WinUi3Test
                 {
                     if (account.Identifier.id == id)
                     {
-                        var dialogOperation = new DialogOperation(this.XamlRoot,"Delete Account","Delete","Cancel","Are you sure you want to delete account?");
+                        var dialogOperation = new AskDialogOperation(this.XamlRoot,"Delete Account","Delete","Cancel","Are you sure you want to delete account?");
                         dialogOperation.OnFinished += (ok) =>
                         {
                             if (ok)

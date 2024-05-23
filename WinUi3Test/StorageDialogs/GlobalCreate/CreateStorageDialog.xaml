@@ -10,7 +10,17 @@
     Background="Transparent">
 
     <Grid>
-        <AppBarButton Click="StartDatabase" Icon="Account" Content="In database" ToolTipService.ToolTip="Creates storage in database, with data encrypted/decrypted on your computer"/>
-        <AppBarButton Click="StartFile" Icon="OpenFile" Content="In file" ToolTipService.ToolTip="Creates storage in separate encrypted file"/>
+        <StackPanel>
+            <TextBlock Text="Create new storage"/>
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <AppBarButton Click="StartDatabase" Icon="OtherUser" Label="In database"></AppBarButton>
+                <AppBarButton Click="StartFile" Icon="OpenFile" Label="In file"></AppBarButton>
+            </StackPanel>
+            <TextBlock Text="Open existing storage"/>
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <AppBarButton Click="OpenDatabase" Icon="OtherUser" Label="From database"></AppBarButton>
+                <AppBarButton Click="OpenFile" Icon="OpenFile" Label="From file"></AppBarButton>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Page>

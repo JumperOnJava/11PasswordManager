@@ -27,6 +27,7 @@ public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
         set => path = value;
     }
 
+    [JsonIgnore]
     public string DisplayPath => System.IO.Path.GetFileNameWithoutExtension(Path);
     private void RequestPath()
     {
@@ -54,5 +55,7 @@ public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
     [JsonIgnore]
     public DateTime LastAccessTime => File.GetLastAccessTime(path);
     public bool IsValid() => File.Exists(path);
+    
+    [JsonIgnore]
     public LocationDisplayModel Model => this;
 }

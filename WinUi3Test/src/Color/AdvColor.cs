@@ -239,7 +239,30 @@ namespace WinUi3Test.src.Ui
 
         public override string ToString()
         {
-            return $"{R:X}{G:X}{B:X}";
+            return $"{R}-{G}-{B}";
+        }
+
+        public static AdvColor FromString(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                throw new ArgumentException("Input string cannot be null or empty", nameof(s));
+            }
+
+            var parts = s.Split('-');
+            if (parts.Length != 3)
+            {
+                throw new FormatException("Input string must be in the format 'R-G-B'");
+            }
+
+            if (!int.TryParse(parts[0], out int r) ||
+                !int.TryParse(parts[1], out int g) ||
+                !int.TryParse(parts[2], out int b))
+            {
+                throw new FormatException("Each component must be a valid integer");
+            }
+
+            return new AdvColor { R = r, G = g, B = b };
         }
     }
 

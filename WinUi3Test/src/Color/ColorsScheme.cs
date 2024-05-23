@@ -59,6 +59,31 @@ namespace WinUi3Test.src.Ui
                 return new ColorsScheme(baseColor, hoverColor, new AdvColor(0, 0, 0));
             }
         }
+        public override string ToString()
+        {
+            return $"{BaseColor.ToString()}|{HoverColor.ToString()}|{SymbolColor.ToString()}";
+        }
+
+        public static ColorsScheme FromString(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                return AccentColors;
+            }
+
+            var parts = s.Split('|');
+            if (parts.Length != 3)
+            {
+                return AccentColors;
+            }
+
+            return new ColorsScheme
+            {
+                BaseColor = AdvColor.FromString(parts[0]),
+                HoverColor = AdvColor.FromString(parts[1]),
+                SymbolColor = AdvColor.FromString(parts[2])
+            };
+        }
     }
 
 }

@@ -1,14 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace WinUi3Test.src.Util
 {
-    public interface Identifiable
+    public interface Identifiable<T>
     {
         [JsonRequired]
-        public UniqueId Identifier { get; }
+        public UniqueId<T> Identifier { get; }
     }
     
-    public class UniqueId : Identifiable
+    public struct UniqueId<T>
     {
         [JsonRequired]
         public long id { get; set; }
@@ -17,8 +19,10 @@ namespace WinUi3Test.src.Util
         {
             this.id = id;
         }
-        [JsonIgnore]
-        public UniqueId Identifier => this;
+        public UniqueId()
+        {
+            this.id = Random.Shared.NextInt64();
+        }
     }
 
 }

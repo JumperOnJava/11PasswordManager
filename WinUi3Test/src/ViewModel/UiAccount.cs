@@ -21,11 +21,11 @@ using WinUi3Test.ViewModel;
 
 namespace WinUi3Test.src.ViewModel
 {
-    public class UiAccount : PropertyChangable, Identifiable
+    public class UiAccount : PropertyChangable, Identifiable<Account>
     {
         protected Frame navigator;
-        private AccountOperation target;
-        public AccountOperation Target
+        private Account target;
+        public Account Target
         {
             get => target; set
             {
@@ -34,13 +34,16 @@ namespace WinUi3Test.src.ViewModel
             }
         }
 
-        public UiAccount(Frame navigator, AccountOperation target) 
+        public UiAccount(Frame navigator, Account target,IEnumerable<Tag> tags) 
         {
             this.navigator = navigator;
             this.Target = target;
+            this.tags = tags;
         }
 
         private bool copyMenuVisible;
+        private readonly IEnumerable<Tag> tags;
+
         public bool CopyMenuVisible { 
             get => copyMenuVisible;
             set {
@@ -69,24 +72,24 @@ namespace WinUi3Test.src.ViewModel
         }
         public void Navigate()
         {
-            var operation = AccountOperation.Start(Target.target);
+            var operation = AccountEditor.Start(Target,tags);
             operation.OnFinished += result =>
             {
                 if (result != null)
                 {
-                    this.Target.target = result;
+                    Target.Restore(result);
+                    onPropertyChanged("Target");
                 }
-                target.Finish(true);
                 navigator.GoBack();
             };
-            navigator.Navigate(this.Target.target.AccountEditor, operation, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+            navigator.Navigate(this.Target.AccountEditor, operation, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
         public UiAccount Clone()
         {
-            return new UiAccount(this.navigator, this.Target);
+            return new UiAccount(this.navigator, this.Target,tags);
         }
 
-        public UniqueId Identifier => target.Identifier;
+        public UniqueId<Account> Identifier => target.Identifier;
     }
 }

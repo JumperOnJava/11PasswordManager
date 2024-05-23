@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using WinUi3Test.Datatypes;
 using WinUi3Test.src.Ui;
+using WinUi3Test.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,13 +30,12 @@ namespace WinUi3Test.src.ViewModel
             var editDialog = new TagEditDialog(dialog, tag);
             dialog.Content = editDialog;
             dialog.PrimaryButtonClick += (_,_) => tag.Finish(true);
-            dialog.PrimaryButtonClick += (_,_) => tag.Finish(false);
+            dialog.SecondaryButtonClick += (_,_) => tag.Finish(false);
             dialog.ShowAsync();
         }
         public TagEditDialog(ContentDialog dialog, Operation<UiTag> tag)
         {
             InitializeComponent();
-            this.dialog = dialog;
             this.target = tag.Target;
             ColorPickerRing.Color = target.TagColors.BaseColor.asWinColor;
             Action<string> buttonEnabled = (s) =>
@@ -46,7 +46,6 @@ namespace WinUi3Test.src.ViewModel
             buttonEnabled(tag.Target.DisplayName);
         }
 
-        private ContentDialog dialog;
         private UiTag target;
 
         private void ColorPickerRing_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)

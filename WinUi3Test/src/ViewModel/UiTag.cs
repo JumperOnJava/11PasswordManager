@@ -1,15 +1,15 @@
-﻿using Microsoft.UI.Xaml.Media;
-using System;
+﻿using System;
 using Windows.UI;
+using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
 using WinUi3Test.Datatypes;
+using WinUi3Test.Datatypes.Serializing;
 using WinUi3Test.src.Ui;
 using WinUi3Test.src.Util;
-using WinUi3Test.Datatypes.Serializing;
 
-namespace WinUi3Test.src.ViewModel
+namespace WinUi3Test.ViewModel
 {
-    public class UiTag : PropertyChangable, RefClonable<UiTag>, Identifiable
+    public class UiTag : PropertyChangable, RefClonable<UiTag>, Identifiable<Tag>
     {
         private bool selected;
         public event Action<bool> SelectedChanged;
@@ -23,11 +23,11 @@ namespace WinUi3Test.src.ViewModel
                     SelectedChanged?.Invoke(value);
                 }
                 selected = value;
-                onPropertyChanged("Selected");
+                onPropertyChanged();
             }
         }
 
-        public UniqueTagId Target { get; set; }
+        public Tag Target { get; set; }
         public string DisplayName
         {
             get => Target.DisplayName; set
@@ -37,11 +37,11 @@ namespace WinUi3Test.src.ViewModel
                     TextChanged?.Invoke(value);
                 }
                 Target.DisplayName = value;
-                onPropertyChanged("DisplayName");
+                onPropertyChanged();
             }
         }
 
-        public UniqueId Identifier => Target.Identifier;
+        public UniqueId<Tag> Identifier => Target.Identifier;
         public UiTag Self { get => this; }
         public ColorsScheme TagColors
         {
@@ -73,9 +73,9 @@ namespace WinUi3Test.src.ViewModel
         [JsonIgnore]
         public Brush SymbolColorBrush => Target.SymbolColorBrush;
 
-        public UiTag(UniqueTagId target)
+        public UiTag(Tag target)
         {
-            this.Target = new UniqueTagId(target.id);
+            this.Target = target;
         }
 
         public bool matches(Taggable tag)
@@ -83,10 +83,14 @@ namespace WinUi3Test.src.ViewModel
             return Target.matches(tag);
         }
 
-
-        public UiTag Clone()
+        public UiTag CloneRef()
         {
-            return new UiTag(new UniqueTagId(Target.Identifier.id));
+            return new UiTag(Target.CloneRef());
+        }
+
+        public void Restore(UiTag state)
+        {
+            this.Target = state.Target;
         }
     }
 }

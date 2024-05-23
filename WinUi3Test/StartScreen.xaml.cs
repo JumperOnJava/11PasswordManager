@@ -3,22 +3,14 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using Windows.Storage.Pickers;
 using Microsoft.UI.Xaml.Media.Animation;
 using System.Collections.Specialized;
-using System.Threading.Tasks;
+using System.Threading;
 using WinUi3Test.Datatypes;
-using WinUi3Test.Datatypes.Serializing;
 using WinUi3Test.src.Util;
 using WinUi3Test.StorageDialogs.GlobalCreate;
-using WinUi3Test.Util;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace WinUi3Test
 {
@@ -46,16 +38,22 @@ namespace WinUi3Test
         }
 
 
-        private void OpenStorage(StorageManager storageManager)
+        private async void OpenStorage(StorageManager storageManager)
         {
-            model.History.Add(new StartScreenModelStoragePath(storageManager));
-            navigator.Navigate(typeof(AccountsListPage),
-                new MainWindowModel(
-                    storageManager,
-                    () => { },
-                    navigator
-                ),
-                new DrillInNavigationTransitionInfo());
+                if (!await storageManager.SetupManagerInGui(this))
+                {
+                    storageManager.Fail();
+                    return;
+                }
+
+                model.History.Add(new StartScreenModelStoragePath(storageManager));
+                navigator.Navigate(typeof(AccountsListPage),
+                    new MainWindowModel(
+                        storageManager,
+                        () => { },
+                        navigator
+                    ),
+                    new DrillInNavigationTransitionInfo());
         }
 
         private void OpenRecentStorage(object sender, RoutedEventArgs e)
@@ -97,26 +95,17 @@ namespace WinUi3Test
                 action.Invoke(null, null);
             }
         }
-
-
-
-        private void OpenDialog(object sender, RoutedEventArgs e)
-        {
-            BeginDialog((a, b) => new OpenStorageDialog(a, b));
-        }
-
+        
         private void CreateDialog(object sender, RoutedEventArgs e)
         {
-            BeginDialog((a, b) => new CreateStorageDialog(a, b));
-        }
-        public void BeginDialog(Func<EmptyOperation<DialogPage>, EmptyOperation<StorageManager>, DialogPage> page)
-        {
-            var dialogCreator = new EmptyOperation<DialogPage>();
+            var dialogCreator = new EmptyOperation<DialogManager>();
             var managerCreator = new EmptyOperation<StorageManager>();
-            page.Invoke(dialogCreator, managerCreator).StartDialog(XamlRoot);
             dialogCreator.OnResult += (success, result) =>
             {
-                result.StartDialog(XamlRoot);
+                if (success)
+                {
+                    result.Start(this);
+                }
             };
             managerCreator.OnResult += (success, result) =>
             {
@@ -125,6 +114,9 @@ namespace WinUi3Test
                     OpenStorage(result);
                 }
             };
+            
+            var dialog = new CreateStorageDialog(dialogCreator, managerCreator);
+            dialog.StartDialog(XamlRoot);
         }
     }
     public class StartScreenModelStoragePath

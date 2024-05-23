@@ -3,27 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
+using Microsoft.VisualBasic;
 using WinUi3Test.Datatypes;
 using WinUi3Test.Dialogs;
 using WinUi3Test.src.Util;
 
 namespace WinUi3Test.StorageDialogs.FileStorage
 {
-    public sealed partial class FileOpenDialog : Page, DialogPage
+    public sealed class FileOpenDialog : EmptyOperation<StorageManager>
     {
         private readonly Operation<StorageManager> operation;
         public static bool _opening;
-
-        public event Action onClose;
-
-        public FileOpenDialog(Operation<StorageManager> operation)
+        public FileOpenDialog()
         {
-            this.operation = operation;
-            InitializeComponent();
-            OpenStorageDialog().Wait();
-            onClose?.Invoke();
+            OpenStorageDialog();
+            OnFinished += _ =>
+            {
+                _opening = false;
+            };
         }
-        
+
         private async Task OpenStorageDialog()
         {
             if (_opening) return;
@@ -44,20 +43,12 @@ namespace WinUi3Test.StorageDialogs.FileStorage
                 var file = await openFileDialog.PickSingleFileAsync();
                 if (file != null)
                 {
-                    operation.FinishSuccess
-                    (
-                        new ByteStorageManager
-                        (
-                            new FileByteLocation(file.Path)
-                                .AesEncryptedStorage
-                                (
-                                    await PasswordDialog.AskPassword(XamlRoot,false)
-                                )
-                        )
-                    );
+                    FinishSuccess(new JsonFileStorageManager(new FileByteLocation(file.Path)));
+                    return;
                 }
                 else
                 {
+                    Finish(false);
                     Console.WriteLine("Operation cancelled.");
                 }
             }
@@ -65,8 +56,11 @@ namespace WinUi3Test.StorageDialogs.FileStorage
             {
                 throw new Exception("Failed to open file", ex);
             }
-            operation.Finish(false);
+            Finish(false);
+
             _opening = false;
         }
+
+        public JsonFileStorageManager Manager { get; set; }
     }
 }

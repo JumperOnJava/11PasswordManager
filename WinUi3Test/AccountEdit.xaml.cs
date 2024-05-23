@@ -15,7 +15,7 @@ using WinUi3Test.ViewModel;
 
 namespace WinUi3Test
 {
-    public sealed partial class PasswordEdit : Page
+    public sealed partial class AccountEdit : Page
     {
         private PasswordEditModel model;
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -23,31 +23,22 @@ namespace WinUi3Test
             base.OnNavigatedTo(e);
             try
             {
-                model.Target = e.Parameter as AccountOperation;
-                var allTags = AccountsListPage.Model.Tags.Select(t=>t.Target).ToList();
-                model.SelectedTags = new ObservableCollection<UniqueTagId>(model.Target.Tags);
-                foreach (var tag in model.SelectedTags)
-                {
-                    for (var index = 0; index < allTags.Count; index++)
-                    {
-                        var tag2 = allTags[index];
-                        if (tag == tag2)
-                        {
-                            allTags.RemoveAt(index);
-                            continue;
-                        }
-                    }
-                }
-
-                model.UnselectedTags = new ObservableCollection<UniqueTagId>(allTags);
+                model.Target = (AccountEditor)e.Parameter;
+                var allTags = new ObservableCollection<Tag>(AccountsListPage.Model.RawTags);
+                model.SelectedTags = new ObservableCollection<Tag>(allTags.Where(e => model.Target.Tags.Contains(e.Identifier)));
+                model.UnselectedTags = new ObservableCollection<Tag>(allTags.Where(e => !model.Target.Tags.Contains(e.Identifier)));   
                 ColorPickerRing.Color = model.Target.Colors.BaseColor.asWinColor;
+                model.SelectedTags.CollectionChanged += (_, _) =>
+                {
+                    model.Target.Tags = new List<Tag>(model.SelectedTags).Select(e=>e.Identifier).ToList();
+                };
             }
             catch (InvalidCastException ex)
             {
                 throw new InvalidCastException("Passed wrong class as page parameter", ex);
             }
         }
-        public PasswordEdit()
+        public AccountEdit()
         {
             model = new PasswordEditModel();
             InitializeComponent();
@@ -55,19 +46,18 @@ namespace WinUi3Test
 
         private void Save(object sender, RoutedEventArgs e)
         {
-            var dialog = new DialogOperation(XamlRoot,"Save changes?","Save","Cancel");
+            var dialog = new AskDialogOperation(XamlRoot,"Save changes?","Save","Cancel");
             dialog.OnFinished += (ok) =>
             {
                 if (ok)
                 {
-                    model.Target.Tags = new List<UniqueTagId>(model.SelectedTags);
                     model.Target.Finish(true);
                 }
             };
         }
         private void Cancel(object sender, RoutedEventArgs e)
         {
-            var dialog = new DialogOperation(XamlRoot,"Undo changes?","Confirm","Cancel");
+            var dialog = new AskDialogOperation(XamlRoot,"Undo changes?","Confirm","Cancel");
             dialog.OnFinished += (ok) =>
             {
                 if (ok)
@@ -89,7 +79,7 @@ namespace WinUi3Test
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            UniqueTagId r = (UniqueTagId)(sender as ButtonBase).CommandParameter;
+            Tag r = (Tag)(sender as ButtonBase).CommandParameter;
             try
             {
                 var tag = model.SelectedTags.First(e => e == r);
@@ -107,12 +97,11 @@ namespace WinUi3Test
 
     internal class PasswordEditModel : PropertyChangable
     {
-        private AccountOperation target;
-        public ObservableCollection<UniqueTagId> SelectedTags { get; set; }
-        public ObservableCollection<UniqueTagId> UnselectedTags {  get; set; }
+        private AccountEditor target;
+        public ObservableCollection<Tag> SelectedTags { get; set; }
+        public ObservableCollection<Tag> UnselectedTags {  get; set; }
 
         private PasswordRevealMode passwordRevealMode;
-
         public PasswordEditModel()
         {
             SelectedTags = new();
@@ -126,7 +115,7 @@ namespace WinUi3Test
                 onPropertyChanged("PasswordRevealMode");
             }
         }
-        public AccountOperation Target
+        public AccountEditor Target
         {
             get => target; set
             {

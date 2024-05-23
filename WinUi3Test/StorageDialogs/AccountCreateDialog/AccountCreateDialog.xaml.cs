@@ -19,19 +19,13 @@ using WinUi3Test.src.Util;
 using WinUi3Test.src.ViewModel;
 using WinUi3Test.ViewModel;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace WinUi3Test
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class AccountCreationScreen : Page
+    public sealed partial class AccountCreateDialog : Page
     {
 
         private AccountCreationModel model;
-        public AccountCreationScreen(ContentDialog dialog, AccountOperation account, IList<UniqueTagId> tags)
+        public AccountCreateDialog(ContentDialog dialog, AccountEditor account, IList<Tag> tags)
         {
             dialog.Content = this;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -45,7 +39,7 @@ namespace WinUi3Test
             dialog.IsPrimaryButtonEnabled = false;
             dialog.PrimaryButtonClick += (a, b) =>
             {
-                account.Tags = new List<UniqueTagId>(model.SelectedTags);
+                account.Tags = new List<Tag>(model.SelectedTags).Select(e=>e.Identifier).ToList();
                 account.Finish(true);
                 a.Hide();
             };
@@ -56,7 +50,9 @@ namespace WinUi3Test
             };
             model = new AccountCreationModel(account);
             model.Account.PropertyChanged += (_, _) => UpdateSaveButton();
-            model.UnselectedTags = new ObservableCollection<UniqueTagId>(tags);
+            model.UnselectedTags = new ObservableCollection<Tag>(tags);
+            model.SelectedTags = new ObservableCollection<Tag>();
+            ColorPickerRing.Color = model.Account.BaseColorBindable;
         }
 
         private void UpdateSaveButton()
@@ -76,7 +72,7 @@ namespace WinUi3Test
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            UniqueTagId r = (UniqueTagId)((sender as ButtonBase).CommandParameter);
+            Tag r = (Tag)((ButtonBase)sender).CommandParameter;
             try
             {
                 var tag = model.SelectedTags.First(e => e == r);
@@ -94,15 +90,13 @@ namespace WinUi3Test
 
     internal class AccountCreationModel : PropertyChangable
     {
-        public AccountOperation Account { get; }
-        public ObservableCollection<UniqueTagId> SelectedTags { get; set; }
-        public ObservableCollection<UniqueTagId> UnselectedTags {  get; set; }
+        public AccountEditor Account { get; }
+        public ObservableCollection<Tag> SelectedTags { get; set; }
+        public ObservableCollection<Tag> UnselectedTags { get; set; }
 
-        public AccountCreationModel(AccountOperation account)
+        public AccountCreationModel(AccountEditor account)
         {
             this.Account = account;
-            SelectedTags = new ObservableCollection<UniqueTagId>(Account.Tags);
-            UnselectedTags = new ObservableCollection<UniqueTagId>(Account.Tags);
         }
     }
 }
