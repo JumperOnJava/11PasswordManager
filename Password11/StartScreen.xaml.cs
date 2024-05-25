@@ -8,9 +8,12 @@ using System.Linq;
 using Microsoft.UI.Xaml.Media.Animation;
 using System.Collections.Specialized;
 using System.Threading;
+using System.Threading.Tasks;
 using Password11.Datatypes;
 using Password11.StorageDialogs.GlobalCreate;
 using Password11.src.Util;
+using Password11.Util;
+using Password11.ViewModel;
 
 namespace Password11
 {
@@ -40,20 +43,60 @@ namespace Password11
 
         private async void OpenStorage(StorageManager storageManager)
         {
-                if (!await storageManager.SetupManagerInGui(this))
-                {
-                    storageManager.Fail();
-                    return;
-                }
+            if (!await storageManager.SetupManagerInGui(this))
+            {
+                return;
+            }
 
-                model.History.Add(new StartScreenModelStoragePath(storageManager));
-                navigator.Navigate(typeof(AccountsListPage),
-                    new MainWindowModel(
-                        storageManager,
-                        () => { },
-                        navigator
-                    ),
-                    new DrillInNavigationTransitionInfo());
+
+            var tcs = new TaskCompletionSource<StorageData>();
+
+            ContentDialog dialog=null;
+            dialog = new DialogBuilder(this).Title($"Loading data from {storageManager.DisplayInfo.DisplayPath}").SecondaryButtonText("Cancel").AddSecondaryClickAction(
+                () =>
+                {
+                    tcs.SetCanceled();
+                    dialog.Hide();
+                }).Build();
+            dialog.ShowAsync();
+            var dataTask = storageManager.GetData();
+            dataTask.ContinueWith(t =>
+            {
+                if (t.IsCompletedSuccessfully)
+                {
+                    tcs.SetResult(t.Result);
+                    return;                    
+                }
+                if (t.IsFaulted)
+                {
+                    tcs.SetResult(null);
+                    return;                    
+                }
+                throw new Exception("Should not be here");
+            });
+            
+            await tcs.Task;
+            dialog.Hide();
+
+            if (tcs.Task.IsFaulted || tcs.Task.Result == null)
+            {
+                new DialogBuilder(this).Title("Failed to load data from storage").Content(dataTask.Exception?.Message).PrimaryButtonText("Ok").Build().ShowAsync();
+                return;
+            }
+            if (tcs.Task.IsCanceled)
+            {
+                return;
+            }
+            var data = tcs.Task.Result;
+            model.History.Add(new StartScreenModelStoragePath(storageManager));
+            navigator.Navigate(typeof(AccountsListPage),
+                new MainWindowModel(
+                    storageManager,
+                    data,
+                    () => { },
+                    navigator
+                ),
+                new DrillInNavigationTransitionInfo());
         }
 
         private void OpenRecentStorage(object sender, RoutedEventArgs e)
@@ -116,18 +159,21 @@ namespace Password11
             };
             
             var dialog = new CreateStorageDialog(dialogCreator, managerCreator);
-            dialog.StartDialog(XamlRoot);
+            dialog.StartDialog(this);
         }
     }
     public class StartScreenModelStoragePath
     {
         public StorageManager Manager { get; }
         public string Name { get; }
+        public string DisplayTime { get; set; }
+        public string Path => Manager.DisplayInfo.DisplayPath;
+        
         public StartScreenModelStoragePath(StorageManager manager)
         {
             this.Manager = manager;
-            this.Name = manager.DisplayInfo.DisplayPath;
+            this.Name = manager.DisplayInfo.DisplayName;
+            this.DisplayTime = manager.DisplayInfo.LastAccessTime.ToString("hh:mm dd/MM/yy");
         }
-        public string Path => Manager.DisplayInfo.DisplayPath;
     }
 }

@@ -8,9 +8,9 @@ public class DialogBuilder
 {
     private ContentDialog dialog = new();
 
-    public DialogBuilder(XamlRoot root)
+    public DialogBuilder(Page page)
     {
-        dialog.XamlRoot = root;
+        dialog.XamlRoot = page.XamlRoot;
         dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
     }
     public DialogBuilder Title(string title)

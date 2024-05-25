@@ -64,10 +64,10 @@ public static class Encryption
         }
         catch
         {
-            throw new DialogException("Error","File corrupted or wrong password is entered");
+            throw new CryptographicException("Data corrupted or wrong password is entered");
         }
     }
-    public static byte[] Sha256(byte[] bytes)
+    public static byte[] Sha256(this byte[] bytes)
     {
         using SHA256 hash = SHA256.Create();
         return hash.ComputeHash(bytes);

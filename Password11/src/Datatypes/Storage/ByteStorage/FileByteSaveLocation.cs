@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
+
 namespace Password11.Datatypes;
 
 public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
@@ -28,7 +29,10 @@ public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
     }
 
     [JsonIgnore]
-    public string DisplayPath => System.IO.Path.GetFileNameWithoutExtension(Path);
+    public string DisplayPath => path;
+
+    public string DisplayName => System.IO.Path.GetFileNameWithoutExtension(Path);
+
     private void RequestPath()
     {
         

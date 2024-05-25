@@ -1,29 +1,12 @@
 ﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Security.Isolation;
-using Windows.UI;
 using Password11.Datatypes;
 using Password11.src.Util;
-using Password11.ViewModel;
-using Password11.Datatypes.Serializing;
-using Password11.src.Ui;
+using Password11Lib.Util;
 
-namespace Password11.src.ViewModel
+namespace Password11.ViewModel
 {
     public class UiAccount : PropertyChangable, Identifiable<Account>
     {
-        protected Frame navigator;
         private Account target;
         public Account Target
         {
@@ -34,62 +17,26 @@ namespace Password11.src.ViewModel
             }
         }
 
-        public UiAccount(Frame navigator, Account target,IEnumerable<Tag> tags) 
+        public UiAccount(Account target) 
         {
-            this.navigator = navigator;
-            this.Target = target;
-            this.tags = tags;
+            Target = target;
         }
 
         private bool copyMenuVisible;
-        private readonly IEnumerable<Tag> tags;
 
         public bool CopyMenuVisible { 
             get => copyMenuVisible;
             set {
-                this.copyMenuVisible = value;
-                onPropertyChanged("CopyMenuVisible");
+                copyMenuVisible = value;
+                onPropertyChanged();
             }
         }
-        public Action InvertVisibility_ => InvertVisibility;
-        public void InvertVisibility() => CopyMenuVisible = !CopyMenuVisible;
-
-        public Action EditThisAccount_ => EditThisAccount;
-        public void EditThisAccount() => Navigate();
         public bool EmailVisible => target.Email.Replace(" ", "").Length > 0;
         public Visibility EmailVisibility => EmailVisible ? Visibility.Visible : Visibility.Collapsed;
         public bool UsernameVisible => target.Username.Replace(" ", "").Length > 0;
         public Visibility UsernameVisibility => UsernameVisible ? Visibility.Visible : Visibility.Collapsed;
         public bool AppLinkButtonVisible => target.AppLink.Replace(" ", "").Length > 0;
         public Visibility AppLinkButtonVisibility => AppLinkButtonVisible ? Visibility.Visible : Visibility.Collapsed;
-        public void CallEntryMethod(object sender, RoutedEventArgs args)
-        {
-            if(sender is ButtonBase)
-            {
-                
-                ((sender as ButtonBase).CommandParameter as Action).Invoke();
-            }
-        }
-        public void Navigate()
-        {
-            var operation = AccountEditor.Start(Target,tags);
-            operation.OnFinished += result =>
-            {
-                if (result != null)
-                {
-                    Target.Restore(result);
-                    onPropertyChanged("Target");
-                }
-                navigator.GoBack();
-            };
-            navigator.Navigate(this.Target.AccountEditor, operation, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-        }
-
-        public UiAccount Clone()
-        {
-            return new UiAccount(this.navigator, this.Target,tags);
-        }
-
         public UniqueId<Account> Identifier => target.Identifier;
     }
 }

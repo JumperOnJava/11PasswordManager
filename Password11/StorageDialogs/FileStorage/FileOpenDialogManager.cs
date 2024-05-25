@@ -33,10 +33,9 @@ internal class FileOpenDialogManager : DialogManager
         
         var tcs = new TaskCompletionSource<Tuple<bool,string>>();
         var passwordResult = await PasswordDialog.AskPassword(parent, false).GetResult();
-
+        
         if (!passwordResult.Item1)
         {
-            result.Fail();
             return;
         }
 

@@ -6,11 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media.Animation;
 using Password11.Datatypes;
 using Password11.src.Util;
 using Password11.src.ViewModel;
 using Password11.Util;
 using Password11.ViewModel;
+using Password11Lib.Util;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -74,7 +76,7 @@ namespace Password11
             newAccount.OnFinished += (account) =>
             {
                 if (account != null)
-                    model.Accounts.Add(new UiAccount(model.navigator, account, Model.RawTags));
+                    model.Accounts.Add(new UiAccount(account));
             };
         }
         private void ShowPane_Click(object sender, RoutedEventArgs e)
@@ -136,7 +138,7 @@ namespace Password11
                 {
                     if (account.Identifier.id == id)
                     {
-                        var dialogOperation = new AskDialogOperation(this.XamlRoot,"Delete Account","Delete","Cancel","Are you sure you want to delete account?");
+                        var dialogOperation = new AskDialogOperation(this,"Delete Account","Delete","Cancel","Are you sure you want to delete account?");
                         dialogOperation.OnFinished += (ok) =>
                         {
                             if (ok)
@@ -165,6 +167,29 @@ namespace Password11
             data.SetText((string)button.CommandParameter);
             Clipboard.SetContent(data);
 
+        }
+
+        private void StartEditAccount(object sender, RoutedEventArgs e)
+        {
+            var uiAccount = (UiAccount)((ButtonBase)sender).CommandParameter;
+            var operation = AccountEditor.Start(uiAccount.Target,model.RawTags);
+            operation.OnFinished += result =>
+            {
+                if (result != null)
+                {
+                    uiAccount.Target.Restore(result);
+                    uiAccount.onPropertyChanged("Target");
+                    model.Save();
+                }
+                model.Navigator.GoBack();
+            };
+            model.Navigator.Navigate(uiAccount.Target.AccountEditor, operation, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+        }
+
+        private void InvertVisibility(object sender, RoutedEventArgs e)
+        {
+            var uiAccount = (UiAccount)((ButtonBase)sender).CommandParameter;
+            uiAccount.CopyMenuVisible = !uiAccount.CopyMenuVisible;
         }
     }
 }

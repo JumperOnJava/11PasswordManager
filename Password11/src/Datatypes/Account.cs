@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Password11.Datatypes.Serializing;
 using Password11.src.Ui;
 using Password11.src.Util;
+using Password11Lib.Util;
 
 namespace Password11.Datatypes;
 
@@ -30,7 +31,7 @@ public class FieldData : Identifiable<FieldData>, RefClonable<FieldData>
     [JsonRequired] public bool Official = false;
     [JsonRequired] public UniqueId<FieldData> Identifier { get; set; }
 
-    public FieldData(bool isHidden, string name, string data, bool official) : this(isHidden, name, data, official, new UniqueId<FieldData>())
+    public FieldData(bool isHidden, string name, string data, bool official) : this(isHidden, name, data, official, UniqueId<FieldData>.CreateRandom<FieldData>())
     {
     }
 

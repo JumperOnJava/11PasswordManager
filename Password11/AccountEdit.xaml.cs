@@ -46,7 +46,7 @@ namespace Password11
 
         private void Save(object sender, RoutedEventArgs e)
         {
-            var dialog = new AskDialogOperation(XamlRoot,"Save changes?","Save","Cancel");
+            var dialog = new AskDialogOperation(this,"Save changes?","Save","Cancel");
             dialog.OnFinished += (ok) =>
             {
                 if (ok)
@@ -57,7 +57,7 @@ namespace Password11
         }
         private void Cancel(object sender, RoutedEventArgs e)
         {
-            var dialog = new AskDialogOperation(XamlRoot,"Undo changes?","Confirm","Cancel");
+            var dialog = new AskDialogOperation(this,"Undo changes?","Confirm","Cancel");
             dialog.OnFinished += (ok) =>
             {
                 if (ok)

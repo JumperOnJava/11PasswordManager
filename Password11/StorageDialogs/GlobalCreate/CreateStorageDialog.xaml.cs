@@ -36,7 +36,7 @@ namespace Password11.StorageDialogs.GlobalCreate
 
         private void StartDatabase(object sender, RoutedEventArgs e)
         {
-            //operation.FinishSuccess(new DatabaseCreateDialogManager(managerOperation));
+            operation.FinishSuccess(DatabaseDialogManager.CreateRegisterManager(managerOperation));
         }
         private void StartFile(object sender, RoutedEventArgs e)
         {
@@ -44,7 +44,7 @@ namespace Password11.StorageDialogs.GlobalCreate
         }
         private void OpenDatabase(object sender, RoutedEventArgs e)
         {
-            //operation.FinishSuccess(new DatabaseOpenDialogManager(managerOperation));
+            operation.FinishSuccess(DatabaseDialogManager.CreateOpenManager(managerOperation));
         }
 
         private void OpenFile(object sender, RoutedEventArgs e)

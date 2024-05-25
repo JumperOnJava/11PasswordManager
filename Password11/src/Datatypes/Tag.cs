@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Media;
 using Password11.Datatypes.Serializing;
 using Password11.src.Ui;
 using Password11.src.Util;
+using Password11Lib.Util;
 
 namespace Password11.Datatypes;
 

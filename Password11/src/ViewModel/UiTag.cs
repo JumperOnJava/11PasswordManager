@@ -6,6 +6,7 @@ using Password11.Datatypes;
 using Password11.Datatypes.Serializing;
 using Password11.src.Ui;
 using Password11.src.Util;
+using Password11Lib.Util;
 
 namespace Password11.ViewModel
 {

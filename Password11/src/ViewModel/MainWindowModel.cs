@@ -1,19 +1,17 @@
 ﻿using System;
-using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
-using Windows.ApplicationModel.Activation;
-using Windows.Security.Isolation;
-using Password11;
+using Microsoft.UI.Xaml.Controls;
 using Password11.Datatypes;
 using Password11.src.Util;
-using Password11.src.ViewModel;
-using Password11.ViewModel;
+
+namespace Password11.ViewModel;
 
 public class MainWindowModel : PropertyChangable
 {
-    public readonly Frame navigator;
+    public readonly Frame Navigator;
     private readonly ObservableCollection<UiTag> tags = new();
 
     public ObservableCollection<UiTag> Tags
@@ -25,8 +23,9 @@ public class MainWindowModel : PropertyChangable
 
     public ObservableCollection<UiAccount> Accounts => accounts;
 
-    public ObservableCollection<UiAccount> displayAccounts = new();
-    public ObservableCollection<UiAccount> DispayAccounts => displayAccounts; 
+    private ObservableCollection<UiAccount> filteredAccounts = new();
+    private ObservableCollection<UiAccount> FilteredAccounts => filteredAccounts ;
+    public ObservableCollection<UiAccount> DispayAccounts => NoTagsSelected ? Accounts : FilteredAccounts; 
 
     public bool isPaneOpen = true;
 
@@ -42,72 +41,69 @@ public class MainWindowModel : PropertyChangable
 
     public bool NoTagsSelected => !Tags.Any(t => t.Selected);
     
-    private readonly StorageManager storageManager;
+    private readonly StorageManager manager;
     public readonly Action onClose;
-    
-    public MainWindowModel(StorageManager storageManager, Action closeCallback, Frame navigator)
+    private readonly bool initialized;
+
+    public MainWindowModel(StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
     {
-        this.onClose = closeCallback;
-        this.storageManager = storageManager;
-        this.navigator = navigator;
-        
-        this.storageManager.Data.TagsList().Select(tag => new UiTag(tag)).ToList().ForEach(Tags.Add);
-        this.storageManager.Data.AccountsList().Select(account => new UiAccount(this.navigator, account, RawTags)).ToList().ForEach(Accounts.Add);
-        
-        Tags.CollectionChanged += (_, _) =>
-        {
-            onPropertyChanged(nameof(NoTagsSelected));
-            onPropertyChanged(nameof(DispayAccounts));
-            onPropertyChanged(nameof(Tags));
-            RawTags.Clear();
-            foreach (var uiTag in Tags)
-            {
-                uiTag.PropertyChanged += (_,_) => onPropertyChanged(nameof(NoTagsSelected));
-                RawTags.Add(uiTag.Target);
-            }
-            
-            Save();
-        };
-        
-        Accounts.CollectionChanged += (_, _) =>
-        {
-            FilterAccounts();
-            Save();
-        };
-        FilterAccounts();
+        onClose = closeCallback;
+        manager = storageManager;
+        Navigator = navigator;
+
+        data.Tags.Select(tag => new UiTag(tag)).ToList().ForEach(Tags.Add);
+        data.Accounts.Select(account => new UiAccount(account)).ToList().ForEach(Accounts.Add);
+
+        Tags.CollectionChanged += (_, _) => UpdateVisualTags();
+        Accounts.CollectionChanged += (_, _) => UpdateVisualAccounts();
+        UpdateVisualTags();
+        UpdateVisualAccounts();
+        initialized = true;
     }
 
-    public List<Tag> RawTags { get; set; } = new();
+    private void UpdateVisualAccounts()
+    {
+        FilterAccounts();
+        Save();
+    }
+
+    private void UpdateVisualTags()
+    {
+        onPropertyChanged(nameof(NoTagsSelected));
+        onPropertyChanged(nameof(DispayAccounts));
+        onPropertyChanged(nameof(Tags));
+        RawTags.Clear();
+        foreach (var uiTag in Tags)
+        {
+            uiTag.PropertyChanged += (_, _) => onPropertyChanged(nameof(NoTagsSelected));
+            RawTags.Add(uiTag.Target);
+        }
+        onPropertyChanged("DisplayAccounts");
+        Save();
+    }
+
+    public List<Tag> RawTags { get; } = new();
 
     public void Save()  
     {
+        if(!initialized)
+            return;
         var newStorage = new StorageData();
-        newStorage.Accounts = new Dictionary<long, Account>();
-        foreach (var uiAccount in Accounts)
-        {
-            newStorage.Accounts[uiAccount.Identifier.id] = uiAccount.Target;
-        }
-        newStorage.Tags = new Dictionary<long, Tag>();
-        foreach (var uiTag in Tags)
-        {
-            newStorage.Tags[uiTag.Identifier.id] = uiTag.Target;
-        }
-
-        newStorage.AccountsOrder = Accounts.Select(a => a.Target.Identifier.id).ToList();
-        newStorage.TagsOrder = Tags.Select(a => a.Target.Identifier.id).ToList();
-        storageManager.Data = newStorage;
+        newStorage.Accounts = Accounts.Select(a => a.Target.CloneRef()).ToList();
+        newStorage.Tags = Tags.Select(a => a.Target.CloneRef()).ToList();
+        manager.SetData(newStorage);
     }
 
     internal void FilterAccounts()
     {
-        DispayAccounts.Clear();
+        FilteredAccounts.Clear();
         for (var index = 0; index < Accounts.Count; index++)
         {
             var indexRef = new { index };
             var account = Accounts[index];
             if (isFiltered(account.Target))
             {
-                DispayAccounts.Add(new UiAccount(navigator, account.Target,this.RawTags));
+                FilteredAccounts.Add(new UiAccount(account.Target));
             }
         }
 
@@ -131,6 +127,6 @@ public class MainWindowModel : PropertyChangable
 
     internal void Exit()
     {
-        navigator.GoBack();
+        Navigator.GoBack();
     }
 }

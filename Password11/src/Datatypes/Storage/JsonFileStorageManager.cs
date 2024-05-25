@@ -30,26 +30,24 @@ public class JsonFileStorageManager : StorageManager
     }
 
     private StorageData data;
-    [Newtonsoft.Json.JsonIgnore]
-    public StorageData Data
+
+    public async Task<StorageData> GetData()
     {
-        get
-        {
-            Restore();
-            return data;
-        }
-        set
-        {
-            DataLoader.Save(JsonTools.Serialize(value).EncodeUtf8());
-            Restore();
-        }
+        Restore();
+        return data;
+    }
+
+    public async Task SetData(StorageData value)
+    {
+        DataLoader.Save(JsonTools.SerializeSmart(value).EncodeUtf8());
+        Restore();
     }
 
     private void Restore()
     {
         var bytes = DataLoader.Load();
         var text = bytes.DecodeUtf8();
-        this.data = JsonTools.Deserialize<StorageData>(text);
+        this.data = JsonTools.DeserializeSmart<StorageData>(text);
     }
     public JsonFileStorageManager(ByteSaveLocation dataLoader)
     {
@@ -61,22 +59,13 @@ public class JsonFileStorageManager : StorageManager
     {
         var manager = new JsonFileStorageManager();
         manager.DataLoader = dataloader;
-        manager.Data = new StorageData();
+        manager.SetData(new StorageData());
         return manager;
     }
 
     public JsonFileStorageManager(ByteSaveLocation dataLoader, StorageData data) : this(dataLoader)
     {
-        this.Data = data;
+        this.SetData(data);
     }
 
-}
-
-public interface StorageManager
-{
-    StorageData Data { get; set; }
-    public bool IsValid();
-    LocationDisplayModel DisplayInfo { get; }
-    Task<bool> SetupManagerInGui(Page parent);
-    void Fail();
 }

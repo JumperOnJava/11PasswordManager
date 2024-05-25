@@ -22,7 +22,7 @@ public class AppSettings
     {
         if (File.Exists("global_settings.json"))
         {
-            settings = JsonTools.Deserialize<AppSettings>(File.ReadAllText("global_settings.json"));
+            settings = JsonTools.DeserializeSmart<AppSettings>(File.ReadAllText("global_settings.json"));
         }
         else
         {
@@ -37,6 +37,6 @@ public class AppSettings
     public static void Save()
     {
         settings.storageHistory = new List<StorageManager>(settings.storageHistory.Distinct().ToList());
-        File.WriteAllText("global_settings.json", JsonTools.Serialize(settings));
+        File.WriteAllText("global_settings.json", JsonTools.SerializeSmart(settings));
     }
 }

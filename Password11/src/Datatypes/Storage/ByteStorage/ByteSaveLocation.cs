@@ -17,4 +17,5 @@ public interface LocationDisplayModel
 {
     public DateTime LastAccessTime { get; }
     public string DisplayPath { get; }
+    public string DisplayName { get; }
 }

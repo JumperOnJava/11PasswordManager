@@ -9,10 +9,10 @@ namespace Password11.Dialogs;
 public class PasswordDialog
 {
     
-    public static EmptyOperation<string> AskPassword(Page parent,bool hasSecondField)
+    public static EmptyOperation<string> AskPassword(Page parent, bool hasSecondField, string title = "Enter password")
     {
         var dialog = new ContentDialog();
-        dialog.Title = "Enter password:";
+        dialog.Title = title;
         dialog.PrimaryButtonText = "Confirm";
         dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
         dialog.SecondaryButtonText = "Cancel";

@@ -123,7 +123,7 @@
                     DragItemsCompleted="ElementOnDragOver"
                     >
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="viewModel:UiAccount">
+                                <DataTemplate x:DataType="viewModel1:UiAccount">
                                     <Grid
                                 Background="{ThemeResource CardBackgroundFillColorDefault}" 
                                 BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}"
@@ -144,7 +144,6 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Visibility="{Binding UsernameVisibility}" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,5,0"  VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Target.Username,UpdateSourceTrigger=PropertyChanged}"/>
                                                 <TextBlock Visibility="{Binding EmailVisibility}" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Target.Email,UpdateSourceTrigger=PropertyChanged}"/>
-                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10,0,10,0" Text="{Binding Target.Identifier.id,UpdateSourceTrigger=PropertyChanged}"/>
                                             </StackPanel>
                                         </Grid>
                                         <ScrollView Grid.Column="2">
@@ -164,11 +163,11 @@
                                                     <AppBarButton Click="Copy" CommandParameter="{Binding Target.Username}" Visibility="{Binding UsernameVisibility}" Icon="Copy" Height="60" Label="Username" />
                                                     <AppBarButton Click="Copy" CommandParameter="{Binding Target.Password}" Icon="Copy" Height="60" Label="Password" />
                                                     <AppBarSeparator/>
-                                                    <AppBarButton Icon="Edit" Height="60" Label="Edit" Click="{x:Bind CallEntryMethod}" CommandParameter="{Binding EditThisAccount_}"/>
+                                                    <AppBarButton Icon="Edit" Height="60" Label="Edit" Click="StartEditAccount" CommandParameter="{Binding }"/>
                                                     <AppBarSeparator/>
                                                 </StackPanel>
                                             </Grid>
-                                            <AppBarButton Icon="AlignRight" Height="60" Label="Info" Click="{x:Bind CallEntryMethod}" CommandParameter="{Binding InvertVisibility_}"/>
+                                            <AppBarButton Icon="AlignRight" Height="60" Label="Info" Click="InvertVisibility" CommandParameter="{Binding }"/>
                                         </StackPanel>
                                     </Grid>
                                 </DataTemplate>

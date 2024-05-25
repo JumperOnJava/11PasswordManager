@@ -6,9 +6,9 @@ namespace Password11.Util;
 
 public class AskDialogOperation : Operation
 {
-    public AskDialogOperation(XamlRoot xamlRoot, string title, string primaryText, string secondaryText = null, string content = null)
+    public AskDialogOperation(Page page, string title, string primaryText, string secondaryText = null, string content = null)
     {
-        new DialogBuilder(xamlRoot)
+        new DialogBuilder(page)
             .Title(title)
             .Content(content)
             .PrimaryButtonText(primaryText)

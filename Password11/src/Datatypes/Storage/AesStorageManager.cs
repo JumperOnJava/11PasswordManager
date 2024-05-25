@@ -1,9 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
 using Password11.Datatypes;
@@ -11,74 +8,81 @@ using Password11.Dialogs;
 
 namespace Password11.src.Util;
 
-internal class AesStorageManager : StorageManager
+public class AesStorageManager : StorageManager
 {
-    [JsonIgnore]
-    private string key;   
-    
-    [JsonRequired]
-    private StorageManager target { get; }
+    [JsonIgnore] private string key;   
+    [JsonRequired] private StorageManager target { get; set; }
 
-    public AesStorageManager(StorageManager target, string key)
+    public AesStorageManager(StorageManager target, string key) : this(target)
     {
         this.key = key;
         this.target = target;
     }
 
-    [JsonIgnore]
-    public StorageData Data
+    [JsonConstructor]
+    private AesStorageManager(StorageManager target)
     {
-        get
+        this.target = target;
+        if (target is KeyReceiver krc)
         {
-            try
+            krc.KeyGetter = () =>
             {
-                var decryptedData = target.Data.CloneRef();
-                decryptedData.Tags = decryptedData.Tags.Select(kvp =>
-                {
-                    kvp.Value.DisplayName = kvp.Value.DisplayName.DecodeBase64().DecryptAes(key).DecodeUtf8();
-                    ;
-                    kvp.Value.TagColorsString = kvp.Value.TagColorsString.DecodeBase64().DecryptAes(key).DecodeUtf8();
-                    return kvp;
-                }).ToDictionary(k => k.Key, k => k.Value);
-                decryptedData.Accounts = decryptedData.Accounts.Select(kvp =>
-                {
-                    kvp.Value.Fields = kvp.Value.Fields.ToList().Select(kvp =>
-                    {
-                        kvp.Value.Name = kvp.Value.Name.DecodeBase64().DecryptAes(key).DecodeUtf8();
-                        kvp.Value.Data = kvp.Value.Data.DecodeBase64().DecryptAes(key).DecodeUtf8();
-                        return kvp.Value;
-                    }).ToDictionary(k => k.Name, k => k);
-                    return kvp;
-                }).ToDictionary(k => k.Key, k => k.Value);
-                return decryptedData;
-            }
-            catch (Exception e)
-            {
-                this.key = null;
-                throw new Exception("Wrong key or data",e);
-            }
+                return this.key;
+            };
         }
-        set
+    }
+    public async Task<StorageData> GetData()
+    {
+        try
         {
-            var encryptedData = value.CloneRef();
-            encryptedData.Tags = encryptedData.Tags.Select(kvp =>
+            var decryptedData = (await target.GetData()).CloneRef();
+            decryptedData.Tags = decryptedData.Tags.Select(tag =>
             {
-                kvp.Value.DisplayName = kvp.Value.DisplayName.EncodeUtf8().EncryptAes(key).EncodeBase64();
-                kvp.Value.TagColorsString = kvp.Value.TagColorsString.EncodeUtf8().EncryptAes(key).EncodeBase64();
-                return kvp;
-            }).ToDictionary(k => k.Key, k => k.Value);
-            encryptedData.Accounts = encryptedData.Accounts.Select(kvp =>
+                tag.DisplayName = tag.DisplayName.DecodeBase64().DecryptAes(key).DecodeUtf8();
+                ;
+                tag.TagColorsString = tag.TagColorsString.DecodeBase64().DecryptAes(key).DecodeUtf8();
+                return tag;
+            }).ToList();
+            decryptedData.Accounts = decryptedData.Accounts.Select(account =>
             {
-                kvp.Value.Fields = kvp.Value.Fields.ToList().Select(kvp =>
+                account.Fields = account.Fields.ToList().Select(kvp =>
                 {
-                    kvp.Value.Name = kvp.Value.Name.EncodeUtf8().EncryptAes(key).EncodeBase64();
-                    kvp.Value.Data = kvp.Value.Data.EncodeUtf8().EncryptAes(key).EncodeBase64();
+                    kvp.Value.Name = kvp.Value.Name.DecodeBase64().DecryptAes(key).DecodeUtf8();
+                    kvp.Value.Data = kvp.Value.Data.DecodeBase64().DecryptAes(key).DecodeUtf8();
                     return kvp.Value;
                 }).ToDictionary(k => k.Name, k => k);
-                return kvp;
-            }).ToDictionary(k => k.Key, k => k.Value);
-            target.Data = encryptedData;
+                return account;
+            }).ToList();
+            return decryptedData;
         }
+        catch (Exception e)
+        {
+            this.key = null;
+            throw new Exception("Wrong key or data", e);
+        }
+    }
+
+    public Task SetData(StorageData value)
+    {
+        var encryptedData = value.CloneRef();
+        encryptedData.Tags = encryptedData.Tags.Select(tag =>
+        {
+            tag.DisplayName = tag.DisplayName.EncodeUtf8().EncryptAes(key).EncodeBase64();
+            tag.TagColorsString = tag.TagColorsString.EncodeUtf8().EncryptAes(key).EncodeBase64();
+            return tag;
+        }).ToList();
+        encryptedData.Accounts = encryptedData.Accounts.Select(Account =>
+        {
+            Account.Fields = Account.Fields.ToList().Select(kvp =>
+            {
+                kvp.Value.Name = kvp.Value.Name.EncodeUtf8().EncryptAes(key).EncodeBase64();
+                kvp.Value.Data = kvp.Value.Data.EncodeUtf8().EncryptAes(key).EncodeBase64();
+                return kvp.Value;
+            }).ToDictionary(k => k.Name, k => k);
+            return Account;
+        }).ToList();
+        target.SetData(encryptedData);
+        return Task.CompletedTask;
     }
 
     public bool IsValid()
@@ -86,24 +90,23 @@ internal class AesStorageManager : StorageManager
         return target.IsValid();
     }
 
-    public LocationDisplayModel DisplayInfo => target.DisplayInfo;
+    [JsonIgnore] public LocationDisplayModel DisplayInfo => target.DisplayInfo ;
     public async Task<bool> SetupManagerInGui(Page parent)
     {
         if (await target.SetupManagerInGui(parent))
         {
             if (key == null)
             {
-                var r = await PasswordDialog.AskPassword(parent, false).GetResult();
-
+                var r = await PasswordDialog.AskPassword(parent, false,title:"Enter encryption key").GetResult();
                 if (r.Item1)
                 {
                     key = r.Item2;
                     var src = new TaskCompletionSource<bool>();
-                    Extensions.ShowExceptionOnFail(parent, () =>
+                    ExceptionDialog.ShowExceptionOnFail(parent, async () =>
                     {
                         try
                         {
-                            Data.CloneRef();
+                            (await GetData()).CloneRef();
                         }
                         catch (Exception e)
                         {
@@ -127,5 +130,18 @@ internal class AesStorageManager : StorageManager
     public void Fail()
     {
         this.key = null;
+    }
+}
+
+internal interface KeyReceiver
+{
+    Func<string> KeyGetter { set; }
+}
+
+public static class AesStorageExtension
+{
+    public static StorageManager AesEncryptedManager(this StorageManager manager, string key)
+    {
+        return new AesStorageManager(manager,key);
     }
 }

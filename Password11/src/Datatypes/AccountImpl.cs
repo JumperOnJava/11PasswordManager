@@ -5,6 +5,7 @@ using Windows.UI;
 using Newtonsoft.Json;
 using Password11.src.Ui;
 using Password11.src.Util;
+using Password11Lib.Util;
 
 namespace Password11.Datatypes;
 
@@ -12,10 +13,10 @@ public class AccountImpl : Account
 {
     public AccountImpl()
     {
-        Identifier = new UniqueId<Account>(Random.Shared.NextInt64());
+        Identifier = UniqueId<Account>.CreateRandom<Account>();
     }
 
-    [JsonRequired] public UniqueId<Account> Identifier { get; }
+    [JsonRequired] public UniqueId<Account> Identifier { get; set; }
     [JsonRequired] public List<UniqueId<Tag>> Tags { get; set; } = new();
     [JsonRequired] public Dictionary<string, FieldData> Fields { get; set; } = new();
 
@@ -104,11 +105,13 @@ public class AccountImpl : Account
             .Select(kvp=>new KeyValuePair<string,FieldData>(kvp.Key,kvp.Value.CloneRef()))
             .ToDictionary(k=>k.Key,k=>k.Value);;
         account.Tags = new List<UniqueId<Tag>>(Tags);
+        account.Identifier = Identifier;
         return account;
     }
 
     public void Restore(Account state)
     {
+        Identifier = state.Identifier;
         Fields = state.Fields;
         Tags = state.Tags;
     }

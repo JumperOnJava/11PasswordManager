@@ -13,15 +13,15 @@ namespace Password11.src.Util
 {
     static class DialogCreator
     {
-        public static void StartDialog(this DialogPage page, XamlRoot xamlRoot, string title = null)
+        public static void StartDialog(this DialogPage dialogPage, Page page, string title = null)
         {
-            var dialog = new DialogBuilder(xamlRoot)
-                .Content(page)
+            var dialog = new DialogBuilder(page)
+                .Content(dialogPage)
                 .SecondaryButtonText("Cancel")
-                .AddSecondaryClickAction(page.Cancel)
+                .AddSecondaryClickAction(dialogPage.Cancel)
                 .Build();
-            page.Dialog = dialog;
-            page.onClose += dialog.Hide;
+            dialogPage.Dialog = dialog;
+            dialogPage.onClose += dialog.Hide;
             dialog.ShowAsync();
         }
     }

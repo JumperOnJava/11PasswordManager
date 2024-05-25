@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
 using Password11.src.Ui;
 using Password11.src.Util;
+using Password11Lib.Util;
 
 namespace Password11.Datatypes;
 
@@ -48,13 +49,15 @@ public class TagBasic : Tag
     private TagBasic(string displayName, string tagColorsString)
     {
         DisplayName = displayName;
-        Identifier = new UniqueId<Tag>(Random.Shared.NextInt64());
+        Identifier = UniqueId<Tag>.CreateRandom<Tag>();
         TagColorsString = tagColorsString;
     }
 
     public Tag CloneRef()
     {
-        return new TagBasic(DisplayName.Clone() as string, TagColorsString);
+        var tag = new TagBasic(DisplayName.Clone() as string, TagColorsString);
+        tag.Identifier = this.Identifier;
+        return tag;
     }
 
     public void Restore(Tag state)
@@ -62,6 +65,11 @@ public class TagBasic : Tag
         var stateBasic = (TagBasic)state;
         DisplayName = stateBasic.DisplayName;
         TagColorsString = stateBasic.TagColorsString;
+        Identifier = stateBasic.Identifier;
     }
 
+    public override string ToString()
+    {
+        return $"{DisplayName}:{Identifier}";
+    }
 }

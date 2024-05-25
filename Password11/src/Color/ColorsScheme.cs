@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
+using Newtonsoft.Json;
 
 namespace Password11.src.Ui
 {
@@ -50,6 +51,7 @@ namespace Password11.src.Ui
             hoverColor.V *= 1.07f;
             symbolColor = (baseColor.S<0.5f || (hoverColor.H > 40 && hoverColor.H < 200)) ? new AdvColor(0, 0, 0) : new AdvColor(1,1,1);
         }
+        [JsonIgnore]
         public static ColorsScheme AccentColors
         {
             get

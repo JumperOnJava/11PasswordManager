@@ -15,7 +15,12 @@ public class Operation
     /// Resets after finish
     /// </summary>
     public event Action<bool> OnFinished;
-
+    public async Task<bool> GetFinished()
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        OnFinished += tcs.SetResult;
+        return await tcs.Task;
+    }
     /// <summary>
     /// Triggers operation finish
     /// </summary>
@@ -25,7 +30,6 @@ public class Operation
         OnFinished?.Invoke(successful);
         OnFinished = null;
     }
-    
     
     public void FinishFail()
     {
