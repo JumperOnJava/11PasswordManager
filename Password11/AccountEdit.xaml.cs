@@ -12,6 +12,8 @@ using Password11.src.Util;
 using Password11.Util;
 using Password11.ViewModel;
 using Password11.src.ViewModel;
+using System.Text.RegularExpressions;
+using System.Security.Principal;
 
 namespace Password11
 {
@@ -26,11 +28,11 @@ namespace Password11
                 model.Target = (AccountEditor)e.Parameter;
                 var allTags = new ObservableCollection<Tag>(AccountsListPage.Model.RawTags);
                 model.SelectedTags = new ObservableCollection<Tag>(allTags.Where(e => model.Target.Tags.Contains(e.Identifier)));
-                model.UnselectedTags = new ObservableCollection<Tag>(allTags.Where(e => !model.Target.Tags.Contains(e.Identifier)));   
+                model.UnselectedTags = new ObservableCollection<Tag>(allTags.Where(e => !model.Target.Tags.Contains(e.Identifier)));
                 ColorPickerRing.Color = model.Target.Colors.BaseColor.asWinColor;
                 model.SelectedTags.CollectionChanged += (_, _) =>
                 {
-                    model.Target.Tags = new List<Tag>(model.SelectedTags).Select(e=>e.Identifier).ToList();
+                    model.Target.Tags = new List<Tag>(model.SelectedTags).Select(e => e.Identifier).ToList();
                 };
             }
             catch (InvalidCastException ex)
@@ -46,7 +48,7 @@ namespace Password11
 
         private void Save(object sender, RoutedEventArgs e)
         {
-            var dialog = new AskDialogOperation(this,"Save changes?","Save","Cancel");
+            var dialog = new AskDialogOperation(this, "Save changes?", "Save", "Cancel");
             dialog.OnFinished += (ok) =>
             {
                 if (ok)
@@ -57,7 +59,7 @@ namespace Password11
         }
         private void Cancel(object sender, RoutedEventArgs e)
         {
-            var dialog = new AskDialogOperation(this,"Undo changes?","Confirm","Cancel");
+            var dialog = new AskDialogOperation(this, "Undo changes?", "Confirm", "Cancel");
             dialog.OnFinished += (ok) =>
             {
                 if (ok)
@@ -69,7 +71,7 @@ namespace Password11
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            model.PasswordRevealMode = ((bool)PasswordCheck.IsChecked) ? PasswordRevealMode.Visible : PasswordRevealMode.Hidden; 
+            model.PasswordRevealMode = ((bool)PasswordCheck.IsChecked) ? PasswordRevealMode.Visible : PasswordRevealMode.Hidden;
         }
 
         private void ColorPickerRing_OnColorChanged(ColorPicker sender, ColorChangedEventArgs args)
@@ -99,9 +101,27 @@ namespace Password11
     {
         private AccountEditor target;
         public ObservableCollection<Tag> SelectedTags { get; set; }
-        public ObservableCollection<Tag> UnselectedTags {  get; set; }
+        public ObservableCollection<Tag> UnselectedTags { get; set; }
 
         private PasswordRevealMode passwordRevealMode;
+        public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(target.Email);
+        public Visibility EmailWarningVisibility => EmailCorrect ? Visibility.Collapsed : Visibility.Visible;
+        public bool ButtonEnabled
+        {
+            get
+            {
+                bool isTargetAppFilled = !string.IsNullOrEmpty(target.TargetApp);
+                bool isPasswordFilled = !string.IsNullOrEmpty( target.Password);
+                bool isUsernameFilled = !string.IsNullOrEmpty( target.Username);
+                bool isEmailFilled = !string.IsNullOrEmpty(    target.Email);
+                bool isEmailCorrectOrEmpty = EmailCorrect || !isEmailFilled;
+
+                var enabled = isTargetAppFilled &&
+                              isPasswordFilled &&
+                              (isUsernameFilled || isEmailFilled) && isEmailCorrectOrEmpty;
+                return enabled;
+            }
+        }
         public PasswordEditModel()
         {
             SelectedTags = new();
@@ -121,6 +141,12 @@ namespace Password11
             {
                 target = value;
                 onPropertyChanged("Target");
+                target.PropertyChanged += (_, _) =>
+                {
+                    onPropertyChanged(nameof(EmailCorrect));
+                    onPropertyChanged(nameof(EmailWarningVisibility));
+                    onPropertyChanged(nameof(ButtonEnabled));
+                };
             }
         }
     }

@@ -13,16 +13,11 @@ namespace Password11.ViewModel
     public class UiTag : PropertyChangable, RefClonable<UiTag>, Identifiable<Tag>
     {
         private bool selected;
-        public event Action<bool> SelectedChanged;
         public event Action<string> TextChanged;
         public bool Selected
         {
             get => selected; set
             {
-                if (selected != value)
-                {
-                    SelectedChanged?.Invoke(value);
-                }
                 selected = value;
                 onPropertyChanged();
             }

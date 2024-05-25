@@ -34,7 +34,10 @@
                     <TextBlock>Email</TextBlock>
                     <AppBarSeparator Height="5"/>
                     <TextBox PlaceholderText="" Text="{Binding Target.Email,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                    <AppBarSeparator/>
+                    <Grid DataContext="{x:Bind model}">
+                        <AppBarSeparator Margin="0,0,0,2"/>
+                        <TextBlock Margin="0,-2,0,0" Text="Email is wrong" Foreground="Gray" Visibility="{Binding EmailWarningVisibility, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
                     <TextBlock>Password</TextBlock>
                     <AppBarSeparator Height="5"/>
                     <PasswordBox x:Name="PasswordEditBox" Password="{Binding Target.Password,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" PasswordRevealMode="{Binding PasswordRevealMode, UpdateSourceTrigger=PropertyChanged}"/>
@@ -119,7 +122,7 @@
         
         <Grid Grid.Row="2" Height="Auto">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Style="{StaticResource AccentButtonStyle}" Content="Save" Click="Save" />
+                <Button Style="{StaticResource AccentButtonStyle}" Content="Save" Click="Save" IsEnabled="{Binding ButtonEnabled, UpdateSourceTrigger=PropertyChanged}"/>
                 <AppBarSeparator Width="10" Height="0"></AppBarSeparator>
                 <Button Content="Cancel" Click="Cancel"></Button>
             </StackPanel>

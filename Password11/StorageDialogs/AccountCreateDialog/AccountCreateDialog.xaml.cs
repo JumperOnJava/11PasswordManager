@@ -18,12 +18,13 @@ using Password11.src.Ui;
 using Password11.src.Util;
 using Password11.ViewModel;
 using Password11.src.ViewModel;
+using System.Text.RegularExpressions;
 
 namespace Password11
 {
     public sealed partial class AccountCreateDialog : Page
     {
-
+        public const string EmailPattern = @"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
         private AccountCreationModel model;
         public AccountCreateDialog(ContentDialog dialog, AccountEditor account, IList<Tag> tags)
         {
@@ -50,6 +51,7 @@ namespace Password11
             };
             model = new AccountCreationModel(account);
             model.Account.PropertyChanged += (_, _) => UpdateSaveButton();
+            model.PropertyChanged += (_, _) => UpdateSaveButton();
             model.UnselectedTags = new ObservableCollection<Tag>(tags);
             model.SelectedTags = new ObservableCollection<Tag>();
             ColorPickerRing.Color = model.Account.BaseColorBindable;
@@ -57,7 +59,16 @@ namespace Password11
 
         private void UpdateSaveButton()
         {
-            var enabled = model.Account.TargetApp != String.Empty && model.Account.Password != String.Empty && (model.Account.Username != String.Empty || model.Account.Email != String.Empty);
+            bool isTargetAppFilled = !string.IsNullOrEmpty(model.Account.TargetApp);
+            bool isPasswordFilled = !string.IsNullOrEmpty(model.Account.Password);
+            bool isUsernameFilled = !string.IsNullOrEmpty(model.Account.Username);
+            bool isEmailFilled = !string.IsNullOrEmpty(model.Account.Email);
+            bool isEmailCorrectOrEmpty = model.EmailCorrect || !isEmailFilled;
+
+            var enabled = isTargetAppFilled &&
+                          isPasswordFilled &&
+                          (isUsernameFilled || isEmailFilled) && isEmailCorrectOrEmpty;
+
             dialog.IsPrimaryButtonEnabled = enabled;
         }
 
@@ -93,9 +104,15 @@ namespace Password11
         public AccountEditor Account { get; }
         public ObservableCollection<Tag> SelectedTags { get; set; }
         public ObservableCollection<Tag> UnselectedTags { get; set; }
-
+        public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(Account.Email);
+        public Visibility EmailWarningVisibility => EmailCorrect ? Visibility.Collapsed : Visibility.Visible;
         public AccountCreationModel(AccountEditor account)
         {
+            account.PropertyChanged += (_, _) =>
+            {
+                onPropertyChanged(nameof(EmailCorrect));
+                onPropertyChanged(nameof(EmailWarningVisibility));
+            };
             this.Account = account;
         }
     }

@@ -30,7 +30,10 @@
                     <TextBlock>Email</TextBlock>
                     <AppBarSeparator Height="5"/>
                     <TextBox PlaceholderText="" Text="{Binding Email,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                    <AppBarSeparator/>
+                    <Grid DataContext="{x:Bind model}">
+                        <AppBarSeparator Margin="0,0,0,2"/>
+                        <TextBlock Margin="0,-2,0,0" Text="Email is wrong" Foreground="Gray" Visibility="{Binding EmailWarningVisibility, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
                     <TextBlock>Password</TextBlock>
                     <AppBarSeparator Height="5"/>
                     <PasswordBox Password="{Binding Password,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>

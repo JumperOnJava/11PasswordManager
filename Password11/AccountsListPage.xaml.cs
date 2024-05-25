@@ -111,9 +111,9 @@ namespace Password11
             }
         }
 
-        private void ElementOnDragStarting(object o, DragItemsStartingEventArgs drag)
+        private void AccountOnDragStarting(object o, DragItemsStartingEventArgs drag)
         {
-            DeleteButton.Visibility = Visibility.Visible;
+            AccountDeleteButton.Visibility = Visibility.Visible;
             var item = drag.Items[0] as Identifiable<Account>;
             if(item==null)
                 return;
@@ -121,9 +121,23 @@ namespace Password11
             drag.Data.SetText(item.Identifier.id.ToString());
         }
 
-        private void ElementOnDragOver(ListViewBase listViewBase, DragItemsCompletedEventArgs drag)
+        private void AccountOnDragOver(ListViewBase listViewBase, DragItemsCompletedEventArgs drag)
         {
-            DeleteButton.Visibility = Visibility.Collapsed;
+            AccountDeleteButton.Visibility = Visibility.Collapsed;
+        }
+        private void TagOnDragStarting(object o, DragItemsStartingEventArgs drag)
+        {
+            TagDeleteButton.Visibility = Visibility.Visible;
+            var item = drag.Items[0] as Identifiable<Tag>;
+            if (item == null)
+                return;
+            Console.WriteLine(item.Identifier.id.ToString());
+            drag.Data.SetText(item.Identifier.id.ToString());
+        }
+
+        private void TagOnDragOver(ListViewBase listViewBase, DragItemsCompletedEventArgs drag)
+        {
+            TagDeleteButton.Visibility = Visibility.Collapsed;
         }
 
         private async void DeleteButton_OnDrop(object sender, DragEventArgs e) 
@@ -147,6 +161,20 @@ namespace Password11
                         break;
                     }
                 }
+                foreach (var tag in model.Tags)
+                {
+                    if (tag.Identifier.id == id)
+                    {
+                        var dialogOperation = new AskDialogOperation(this, "Delete tag", "Delete", "Cancel", "Are you sure you want to delete this tag?");
+                        dialogOperation.OnFinished += (ok) =>
+                        {
+                            if (ok)
+                                model.Tags.Remove(tag);
+                        };
+                        break;
+                    }
+                }
+                model.Save();
             }
         }
 

@@ -47,6 +47,16 @@
                         <StackPanel Orientation="Vertical">
                             <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
                                 <AppBarButton Icon="Add" Label="Add" Click="CreateTag"/>
+                                <AppBarButton 
+                                    Background="OrangeRed" 
+                                    AllowDrop="True" 
+                                    DragEnter="DeleteButton_OnDragEnter" 
+                                    Drop="DeleteButton_OnDrop"
+                                    Width="60" 
+                                    Name="TagDeleteButton" 
+                                    BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}" 
+                                    Visibility="Collapsed" 
+                                    Icon="Delete" />
                             </CommandBar>
                             <ListView Width="300"
                                   CanDragItems="True" 
@@ -54,6 +64,8 @@
                                   AllowDrop="True"
                                   x:Name="TagListView"
                                   SelectionMode="None"
+                                  DragItemsStarting="TagOnDragStarting"
+                                  DragItemsCompleted="TagOnDragOver"
                                   ItemsSource="{Binding Tags}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="viewModel1:UiTag">
@@ -100,7 +112,7 @@
                             DragEnter="DeleteButton_OnDragEnter" 
                             Drop="DeleteButton_OnDrop"
                             Width="60" 
-                            Name="DeleteButton" 
+                            Name="AccountDeleteButton" 
                             BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}" 
                             Visibility="Collapsed" 
                             Icon="Delete" />
@@ -118,9 +130,9 @@
                     CanDragItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
                     CanReorderItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
                     AllowDrop="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}"
-                    ItemsSource="{Binding DispayAccounts,UpdateSourceTrigger=PropertyChanged}"
-                    DragItemsStarting="ElementOnDragStarting"
-                    DragItemsCompleted="ElementOnDragOver"
+                    ItemsSource="{Binding DisplayAccounts,UpdateSourceTrigger=PropertyChanged}"
+                    DragItemsStarting="AccountOnDragStarting"
+                    DragItemsCompleted="AccountOnDragOver"
                     >
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="viewModel1:UiAccount">

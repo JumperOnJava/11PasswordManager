@@ -24,8 +24,8 @@ public class MainWindowModel : PropertyChangable
     public ObservableCollection<UiAccount> Accounts => accounts;
 
     private ObservableCollection<UiAccount> filteredAccounts = new();
-    private ObservableCollection<UiAccount> FilteredAccounts => filteredAccounts ;
-    public ObservableCollection<UiAccount> DispayAccounts => NoTagsSelected ? Accounts : FilteredAccounts; 
+    private ObservableCollection<UiAccount> FilteredAccounts => filteredAccounts;
+    public ObservableCollection<UiAccount> DisplayAccounts => NoTagsSelected ? Accounts : FilteredAccounts; 
 
     public bool isPaneOpen = true;
 
@@ -69,16 +69,22 @@ public class MainWindowModel : PropertyChangable
 
     private void UpdateVisualTags()
     {
-        onPropertyChanged(nameof(NoTagsSelected));
-        onPropertyChanged(nameof(DispayAccounts));
-        onPropertyChanged(nameof(Tags));
         RawTags.Clear();
         foreach (var uiTag in Tags)
         {
-            uiTag.PropertyChanged += (_, _) => onPropertyChanged(nameof(NoTagsSelected));
+            uiTag.PropertyChanged += (_, _) =>
+            {
+                onPropertyChanged(nameof(NoTagsSelected));
+                onPropertyChanged(nameof(DisplayAccounts));
+            };
             RawTags.Add(uiTag.Target);
         }
-        onPropertyChanged("DisplayAccounts");
+        FilterAccounts();
+        onPropertyChanged(nameof(NoTagsSelected));
+        onPropertyChanged(nameof(Accounts));
+        onPropertyChanged(nameof(FilteredAccounts));
+        onPropertyChanged(nameof(DisplayAccounts));
+        onPropertyChanged(nameof(Tags));
         Save();
     }
 
