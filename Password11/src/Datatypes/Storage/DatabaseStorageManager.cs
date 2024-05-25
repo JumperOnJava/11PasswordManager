@@ -214,25 +214,31 @@ namespace Password11.src.Datatypes.Storage
 
         public async Task<bool> SetupManagerInGui(Page parent)
         {
-            password = null;
-            var r = await PasswordDialog.AskPassword(parent, false, title: "Enter account password").GetResult();
-            if (!r.Item1)
+            if (password == null)
             {
-                return false;
+                var r = await PasswordDialog.AskPassword(parent, false, title: "Enter account password").GetResult();
+                if (!r.Item1)
+                {
+                    this.password = null;
+                    return false;
+                }
+                this.password = r.Item2;
             }
-            this.password = r.Item2;
+            
             var requestTask =  client.GetAsync(api.Endpoint($"api/checklogin?login={login}&password={password}"));
             requestTask.Wait();
             var result = requestTask.Result;
             if (requestTask.IsFaulted)
             {
                 await ExceptionDialog.ShowExceptionOnFail(parent, () => { throw requestTask.Exception; });
+                this.password = null;
                 return false;
             }
 
             if (result.StatusCode == HttpStatusCode.Unauthorized)
             {
                 await ExceptionDialog.ShowExceptionOnFail(parent, () => { throw new ExceptionDialog.DialogException("Error","Wrong login or password"); });
+                this.password = null;
                 return false;
             }
             
