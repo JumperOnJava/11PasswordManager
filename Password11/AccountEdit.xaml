@@ -61,57 +61,58 @@
                     
                     <TextBlock Width="Auto" Text="Tags" HorizontalAlignment="Stretch" TextAlignment="Center" Style="{StaticResource TitleTextBlockStyle}"/>
                     <Grid Margin="0,40,0,0">
-                        
+                        <Grid Margin="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                                <ColumnDefinition Width="10"></ColumnDefinition>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" TextAlignment="Left" Margin="20,0,20,0"  Text="Tags"/>
+                            <ListView Grid.Column="0" Margin="0,24,0,0" SelectionMode="None" ItemsSource="{Binding UnselectedTags}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="datatypes:Tag">
+                                        <Grid>
+                                            <Button Content="{Binding DisplayName}" Click="ButtonBase_OnClick" CommandParameter="{Binding}">
+                                                <Button.Resources>
+                                                    <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.asWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.asWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.asWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/>
+                                                </Button.Resources>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <AppBarSeparator Grid.Column="1" HorizontalAlignment="Center"></AppBarSeparator>
+                            <TextBlock Grid.Column="2" TextAlignment="Right" Margin="20,0,20,0" Text="Selected"/>
+                            <ListView Grid.Column="2" Margin="0,24,0,0" HorizontalAlignment="Right" SelectionMode="None" ItemsSource="{Binding SelectedTags}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="datatypes:Tag">
+                                        <Grid>
+                                            <Button Content="{Binding DisplayName}" HorizontalAlignment="Right" Click="ButtonBase_OnClick" CommandParameter="{Binding}">
+                                                <Button.Resources>
+                                                    <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.asWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.asWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.asWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/>
+                                                </Button.Resources>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
                     </Grid>
                 </Grid>
+                <!-- 
                 <StackPanel Width="340" Height="375" Padding="0,2,0,0">
                     <Grid Margin="6" Width="330" Height="100" Background="{StaticResource CardBackgroundFillColorDefault}" CornerRadius="10" Padding="8,8,8,4">
                         <TextBlock Text="Quick link" HorizontalAlignment="Stretch" TextAlignment="Center" Style="{StaticResource TitleTextBlockStyle}"/>
                         <TextBox Height="20" Text="{Binding Target.AppLink, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="0,40,0,0"></TextBox>
                     </Grid>
-                    <Grid Margin="6" Width="330" Height="240" Background="{StaticResource CardBackgroundFillColorDefault}" CornerRadius="10" Padding="8,8,8,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"></ColumnDefinition>
-                            <ColumnDefinition Width="10"></ColumnDefinition>
-                            <ColumnDefinition Width="1*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" TextAlignment="Left" Margin="20,0,20,0"  Text="Tags"/>
-                        <ListView Grid.Column="0" Margin="0,24,0,0" SelectionMode="None" ItemsSource="{Binding UnselectedTags}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="datatypes:Tag">
-                                    <Grid>
-                                        <Button Content="{Binding DisplayName}" Click="ButtonBase_OnClick" CommandParameter="{Binding}">
-                                            <Button.Resources>
-                                                <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.asWinColor}"/>
-                                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.asWinColor}"/>
-                                                <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.asWinColor}"/>
-                                                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/>
-                                            </Button.Resources>
-                                        </Button>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                        <AppBarSeparator Grid.Column="1" HorizontalAlignment="Center"></AppBarSeparator>
-                        <TextBlock Grid.Column="2" TextAlignment="Right" Margin="20,0,20,0" Text="Selected"/>
-                        <ListView Grid.Column="2" Margin="0,24,0,0" HorizontalAlignment="Right" SelectionMode="None" ItemsSource="{Binding SelectedTags}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="datatypes:Tag">
-                                    <Grid>
-                                        <Button Content="{Binding DisplayName}" HorizontalAlignment="Right" Click="ButtonBase_OnClick" CommandParameter="{Binding}">
-                                            <Button.Resources>
-                                                <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.asWinColor}"/>
-                                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.asWinColor}"/>
-                                                <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.asWinColor}"/>
-                                                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/>
-                                            </Button.Resources>
-                                        </Button>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
                 </StackPanel>
+                -->
             </VariableSizedWrapGrid>
 
         </ScrollView>
