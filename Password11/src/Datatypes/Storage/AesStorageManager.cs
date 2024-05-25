@@ -93,38 +93,30 @@ public class AesStorageManager : StorageManager
     [JsonIgnore] public LocationDisplayModel DisplayInfo => target.DisplayInfo ;
     public async Task<bool> SetupManagerInGui(Page parent)
     {
-        if (await target.SetupManagerInGui(parent))
+        if (!await target.SetupManagerInGui(parent)) return false;
+        if (key != null) return true;
+        var r = await PasswordDialog.AskPassword(parent, false,title:"Enter encryption key").GetResult();
+        if (!r.Item1)
         {
-            if (key == null)
-            {
-                var r = await PasswordDialog.AskPassword(parent, false,title:"Enter encryption key").GetResult();
-                if (r.Item1)
-                {
-                    key = r.Item2;
-                    var src = new TaskCompletionSource<bool>();
-                    ExceptionDialog.ShowExceptionOnFail(parent, async () =>
-                    {
-                        try
-                        {
-                            (await GetData()).CloneRef();
-                        }
-                        catch (Exception e)
-                        {
-                            src.SetResult(false);
-                            throw e;
-                        }
-                        src.SetResult(true);
-                    });
-                    return await src.Task;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return true;
+            return false;
         }
-        return false;
+
+        key = r.Item2;
+        var src = new TaskCompletionSource<bool>();
+        ExceptionDialog.ShowExceptionOnFail(parent, async () =>
+        {
+            try
+            {
+                (await GetData()).CloneRef();
+            }
+            catch (Exception)
+            {
+                src.SetResult(false);
+                throw;
+            }
+            src.SetResult(true);
+        });
+        return await src.Task;
     }
 
     public void Fail()

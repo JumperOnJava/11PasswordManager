@@ -110,6 +110,8 @@ namespace Password11
         public class StartScreenModel
         {
             public static AppSettings AppSettings => AppSettings.settings;
+            public Visibility HistoryVisibility => History.Any() ? Visibility.Visible : Visibility.Collapsed; 
+            public Visibility CreateVisibility => History.Any() ? Visibility.Collapsed : Visibility.Visible; 
             public ObservableCollection<StartScreenModelStoragePath> History { get; set; }
             public StartScreenModel()
             {
