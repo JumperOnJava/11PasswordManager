@@ -8,85 +8,85 @@ using Password11.src.Ui;
 using Password11.src.Util;
 using Password11Lib.Util;
 
-namespace Password11.ViewModel
+namespace Password11.ViewModel;
+
+public class UiTag : PropertyChangable, RefClonable<UiTag>, Identifiable<Tag>
 {
-    public class UiTag : PropertyChangable, RefClonable<UiTag>, Identifiable<Tag>
+    private bool selected;
+
+    public UiTag(Tag target)
     {
-        private bool selected;
-        public event Action<string> TextChanged;
-        public bool Selected
+        Target = target;
+    }
+
+    public bool Selected
+    {
+        get => selected;
+        set
         {
-            get => selected; set
-            {
-                selected = value;
-                onPropertyChanged();
-            }
+            selected = value;
+            onPropertyChanged();
         }
+    }
 
-        public Tag Target { get; set; }
-        public string DisplayName
+    public Tag Target { get; set; }
+
+    public string DisplayName
+    {
+        get => Target.DisplayName;
+        set
         {
-            get => Target.DisplayName; set
-            {
-                if (Target.DisplayName != value)
-                {
-                    TextChanged?.Invoke(value);
-                }
-                Target.DisplayName = value;
-                onPropertyChanged();
-            }
+            if (Target.DisplayName != value) TextChanged?.Invoke(value);
+            Target.DisplayName = value;
+            onPropertyChanged();
         }
+    }
 
-        public UniqueId<Tag> Identifier => Target.Identifier;
-        public UiTag Self { get => this; }
-        public ColorsScheme TagColors
+    public UiTag Self => this;
+
+    public ColorsScheme TagColors
+    {
+        get => Target.TagColors;
+        set
         {
-            get => Target.TagColors; set
-            {
-                Target.TagColors = value;
-                onPropertyChanged("TagColor");
-                onPropertyChanged("baseColor");
-                onPropertyChanged("hoverColor");
-                onPropertyChanged("symbolColor");
-            }
+            Target.TagColors = value;
+            onPropertyChanged("TagColor");
+            onPropertyChanged("baseColor");
+            onPropertyChanged("hoverColor");
+            onPropertyChanged("symbolColor");
         }
-        
-        [JsonIgnore]
-        public Color baseColor => this.TagColors.BaseColor.asWinColor;
-        [JsonIgnore]
-        public SolidColorBrush baseColorBrush => new SolidColorBrush(this.TagColors.BaseColor.asWinColor);
-        [JsonIgnore]
-        public Color hoverColor => this.TagColors.HoverColor.asWinColor;
-        [JsonIgnore]
-        public Color symbolColor => this.TagColors.SymbolColor.asWinColor;
+    }
 
-        [JsonIgnore]
-        public Brush BaseColorBrush => Target.BaseColorBrush;
+    [JsonIgnore] public Color baseColor => TagColors.BaseColor.asWinColor;
 
-        [JsonIgnore]
-        public Brush HoverColorBrush => Target.HoverColorBrush;
+    [JsonIgnore] public SolidColorBrush baseColorBrush => new(TagColors.BaseColor.asWinColor);
 
-        [JsonIgnore]
-        public Brush SymbolColorBrush => Target.SymbolColorBrush;
+    [JsonIgnore] public Color hoverColor => TagColors.HoverColor.asWinColor;
 
-        public UiTag(Tag target)
-        {
-            this.Target = target;
-        }
+    [JsonIgnore] public Color symbolColor => TagColors.SymbolColor.asWinColor;
 
-        public bool matches(Taggable tag)
-        {
-            return Target.matches(tag);
-        }
+    [JsonIgnore] public Brush BaseColorBrush => Target.BaseColorBrush;
 
-        public UiTag CloneRef()
-        {
-            return new UiTag(Target.CloneRef());
-        }
+    [JsonIgnore] public Brush HoverColorBrush => Target.HoverColorBrush;
 
-        public void Restore(UiTag state)
-        {
-            this.Target = state.Target;
-        }
+    [JsonIgnore] public Brush SymbolColorBrush => Target.SymbolColorBrush;
+
+    public UniqueId<Tag> Identifier => Target.Identifier;
+
+    public UiTag CloneRef()
+    {
+        return new UiTag(Target.CloneRef());
+    }
+
+    public void Restore(UiTag state)
+    {
+        Target = state.Target;
+    }
+
+    public event Action<string> TextChanged;
+
+    public bool matches(Taggable tag)
+    {
+        return Target.matches(tag);
     }
 }

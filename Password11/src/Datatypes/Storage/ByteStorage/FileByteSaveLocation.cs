@@ -1,19 +1,14 @@
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-
 
 namespace Password11.Datatypes;
 
 public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
 {
-    [JsonRequired]
-    private string path;
-
     public FileByteLocation(string filePath)
     {
-        this.Path = filePath;
+        Path = filePath;
     }
 
     [JsonIgnore]
@@ -21,28 +16,18 @@ public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
     {
         get
         {
-            if (path == null)
+            if (DisplayPath == null)
                 RequestPath();
-            return path;
+            return DisplayPath;
         }
-        set => path = value;
-    }
-
-    [JsonIgnore]
-    public string DisplayPath => path;
-
-    public string DisplayName => System.IO.Path.GetFileNameWithoutExtension(Path);
-
-    private void RequestPath()
-    {
-        
+        set => DisplayPath = value;
     }
 
     public bool Save(byte[] data)
     {
         try
         {
-            File.WriteAllBytes(path, data);
+            File.WriteAllBytes(DisplayPath, data);
             return true;
         }
         catch
@@ -53,13 +38,23 @@ public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
 
     public byte[] Load()
     {
-        return File.ReadAllBytes(path);
+        return File.ReadAllBytes(DisplayPath);
     }
 
-    [JsonIgnore]
-    public DateTime LastAccessTime => File.GetLastAccessTime(path);
-    public bool IsValid() => File.Exists(path);
-    
-    [JsonIgnore]
-    public LocationDisplayModel Model => this;
+    public bool IsValid()
+    {
+        return File.Exists(DisplayPath);
+    }
+
+    [JsonIgnore] public LocationDisplayModel Model => this;
+
+    [JsonIgnore] [field: JsonRequired] public string DisplayPath { get; private set; }
+
+    public string DisplayName => System.IO.Path.GetFileNameWithoutExtension(Path);
+
+    [JsonIgnore] public DateTime LastAccessTime => File.GetLastAccessTime(DisplayPath);
+
+    private void RequestPath()
+    {
+    }
 }

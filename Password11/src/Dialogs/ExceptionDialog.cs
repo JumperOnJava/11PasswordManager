@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
-using Password11.Datatypes;
-using Password11.src.Util;
 
 namespace Password11.Dialogs;
 
 public static class ExceptionDialog
 {
-    public static async Task ShowExceptionOnFail(Page page,Action action)
+    private static readonly Queue<Exception> Exceptions = new();
+    private static bool alreadyhandled;
+
+    public static async Task ShowExceptionOnFail(Page page, Action action)
     {
         try
         {
@@ -20,13 +21,12 @@ public static class ExceptionDialog
         {
             await ShowException(page, e);
         }
-        
     }
 
     public static async Task ShowException(Page page, Exception e)
     {
         AddExceptions(e);
-        if(alreadyhandled)
+        if (alreadyhandled)
             return;
         alreadyhandled = true;
         while (Exceptions.Any())
@@ -36,8 +36,7 @@ public static class ExceptionDialog
             {
                 AddExceptions(exception);
             }
-            else
-            if (exception is DialogException dialogException)
+            else if (exception is DialogException dialogException)
             {
                 var dialog = new ContentDialog
                 {
@@ -48,8 +47,7 @@ public static class ExceptionDialog
                 };
                 await dialog.ShowAsync();
             }
-            else
-            if (exception is Exception)
+            else if (exception is Exception)
             {
                 var dialog = new ContentDialog
                 {
@@ -61,11 +59,9 @@ public static class ExceptionDialog
                 await dialog.ShowAsync();
             }
         }
+
         alreadyhandled = false;
     }
-
-    private static Queue<Exception> Exceptions = new();
-    private static bool alreadyhandled;
 
     private static void AddExceptions(Exception exception)
     {
@@ -73,15 +69,14 @@ public static class ExceptionDialog
         {
             Exceptions.Enqueue(dialogExceptiongException);
         }
-        else
-        if (exception is AggregateException aggregateException)
+        else if (exception is AggregateException aggregateException)
         {
-
             bool EnqueueHandle(Exception exc)
             {
                 AddExceptions(exc);
                 return true;
             }
+
             aggregateException.Handle(EnqueueHandle);
         }
         else
@@ -92,8 +87,8 @@ public static class ExceptionDialog
 
     public class DialogException : Exception
     {
-        public readonly string Title;
         public readonly string Content;
+        public readonly string Title;
 
         public DialogException(string title, string content)
         {

@@ -4,7 +4,6 @@ using Windows.UI;
 using Newtonsoft.Json;
 using Password11.Datatypes.Serializing;
 using Password11.src.Ui;
-using Password11.src.Util;
 using Password11Lib.Util;
 
 namespace Password11.Datatypes;
@@ -25,13 +24,13 @@ public interface Account : Taggable, RefClonable<Account>, Identifiable<Account>
 
 public class FieldData : Identifiable<FieldData>, RefClonable<FieldData>
 {
-    [JsonRequired] public bool IsHidden = false;
-    [JsonRequired] public string Name;
     [JsonRequired] public string Data;
-    [JsonRequired] public bool Official = false;
-    [JsonRequired] public UniqueId<FieldData> Identifier { get; set; }
+    [JsonRequired] public bool IsHidden;
+    [JsonRequired] public string Name;
+    [JsonRequired] public bool Official;
 
-    public FieldData(bool isHidden, string name, string data, bool official) : this(isHidden, name, data, official, UniqueId<FieldData>.CreateRandom<FieldData>())
+    public FieldData(bool isHidden, string name, string data, bool official) : this(isHidden, name, data, official,
+        UniqueId<FieldData>.CreateRandom<FieldData>())
     {
     }
 
@@ -41,22 +40,23 @@ public class FieldData : Identifiable<FieldData>, RefClonable<FieldData>
         IsHidden = isHidden;
         Name = name;
         Data = data;
-        this.Official = official;
-        this.Identifier = id;
+        Official = official;
+        Identifier = id;
     }
+
+    [JsonRequired] public UniqueId<FieldData> Identifier { get; set; }
 
     public FieldData CloneRef()
     {
-        return new FieldData(IsHidden,Name,Data,Official,Identifier);
+        return new FieldData(IsHidden, Name, Data, Official, Identifier);
     }
 
     public void Restore(FieldData state)
     {
-        this.Identifier = state.Identifier;
-        this.Official = state.Official;
-        this.Data = state.Data;
-        this.IsHidden = state.IsHidden;
-        this.Name = state.Name;
-
+        Identifier = state.Identifier;
+        Official = state.Official;
+        Data = state.Data;
+        IsHidden = state.IsHidden;
+        Name = state.Name;
     }
 }

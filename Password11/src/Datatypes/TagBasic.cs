@@ -1,21 +1,38 @@
-using System;
 using System.Linq;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
 using Password11.src.Ui;
-using Password11.src.Util;
 using Password11Lib.Util;
 
 namespace Password11.Datatypes;
 
 public class TagBasic : Tag
 {
-    [JsonRequired]
-    public string DisplayName { get; set; }
-    [JsonRequired]
-    public UniqueId<Tag> Identifier { get; set; }
-    [JsonRequired]
-    public string TagColorsString { get; set; }
+    public TagBasic(string displayName, ColorsScheme tagColor) : this(displayName, tagColor.ToString())
+    {
+    }
+
+    public TagBasic(string displayName) : this(displayName, ColorsScheme.AccentColors)
+    {
+    }
+
+    public TagBasic() : this(string.Empty)
+    {
+    }
+
+    private TagBasic(string displayName, string tagColorsString)
+    {
+        DisplayName = displayName;
+        Identifier = UniqueId<Tag>.CreateRandom<Tag>();
+        TagColorsString = tagColorsString;
+    }
+
+    [JsonRequired] public string DisplayName { get; set; }
+
+    [JsonRequired] public UniqueId<Tag> Identifier { get; set; }
+
+    [JsonRequired] public string TagColorsString { get; set; }
+
     [JsonIgnore]
     public ColorsScheme TagColors
     {
@@ -23,12 +40,11 @@ public class TagBasic : Tag
         set => TagColorsString = value.ToString();
     }
 
-    [JsonIgnore]
-    public Brush BaseColorBrush => TagColors.BaseColor.asBrush;
-    [JsonIgnore]
-    public Brush HoverColorBrush => TagColors.HoverColor.asBrush;
-    [JsonIgnore]
-    public Brush SymbolColorBrush => TagColors.SymbolColor.asBrush;
+    [JsonIgnore] public Brush BaseColorBrush => TagColors.BaseColor.asBrush;
+
+    [JsonIgnore] public Brush HoverColorBrush => TagColors.HoverColor.asBrush;
+
+    [JsonIgnore] public Brush SymbolColorBrush => TagColors.SymbolColor.asBrush;
 
     public bool matches(Taggable account)
     {
@@ -39,24 +55,11 @@ public class TagBasic : Tag
             return true;
         return false;
     }
-    public TagBasic(string displayName, ColorsScheme tagColor) : this(displayName,tagColor.ToString())
-    {
-    }
-    public TagBasic(string displayName) : this(displayName, ColorsScheme.AccentColors) { }
-
-    public TagBasic() : this(String.Empty) { }
-
-    private TagBasic(string displayName, string tagColorsString)
-    {
-        DisplayName = displayName;
-        Identifier = UniqueId<Tag>.CreateRandom<Tag>();
-        TagColorsString = tagColorsString;
-    }
 
     public Tag CloneRef()
     {
         var tag = new TagBasic(DisplayName.Clone() as string, TagColorsString);
-        tag.Identifier = this.Identifier;
+        tag.Identifier = Identifier;
         return tag;
     }
 

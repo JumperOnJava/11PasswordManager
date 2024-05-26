@@ -4,21 +4,15 @@ using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Password11.Datatypes.Serializing;
+
 public class JsonTools
 {
     private static readonly JsonSerializerSettings Settings = new()
     {
-        TypeNameHandling = TypeNameHandling.Auto,
+        TypeNameHandling = TypeNameHandling.Auto
     };
-    public static string SerializeSmart(object value)
-    {
-        return JsonConvert.SerializeObject(value, Formatting.Indented, Settings);
-    }
-    public static T DeserializeSmart<T>(string json)
-    {
-        return JsonConvert.DeserializeObject<T>(json, Settings);
-    }
-    private static JsonSerializerOptions options = new JsonSerializerOptions()
+
+    private static readonly JsonSerializerOptions options = new()
     {
         IncludeFields = true,
         WriteIndented = true,
@@ -28,16 +22,28 @@ public class JsonTools
             new TypeMappingConverter<Account, AccountImpl>()
         }
     };
+
+    public static string SerializeSmart(object value)
+    {
+        return JsonConvert.SerializeObject(value, Formatting.Indented, Settings);
+    }
+
+    public static T DeserializeSmart<T>(string json)
+    {
+        return JsonConvert.DeserializeObject<T>(json, Settings);
+    }
+
     public static string Serialize(object value)
     {
-        return JsonSerializer.Serialize(value, value.GetType(),options);
+        return JsonSerializer.Serialize(value, value.GetType(), options);
     }
 
     public static T Deserialize<T>(string json)
     {
-        return JsonSerializer.Deserialize<T>(json,options);
+        return JsonSerializer.Deserialize<T>(json, options);
     }
 }
+
 public class TypeMappingConverter<T, TImplementation> : System.Text.Json.Serialization.JsonConverter<T>
     where TImplementation : T
 {

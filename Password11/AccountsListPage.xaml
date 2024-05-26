@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <Page
     x:Class="Password11.AccountsListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Password11"
-    xmlns:viewModel="using:Password11.src.ViewModel"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModel1="using:Password11.ViewModel"
@@ -15,86 +14,107 @@
             <VisualStateGroup>
                 <VisualState x:Name="WideStateState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="700"/>
+                        <AdaptiveTrigger MinWindowWidth="700" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="PanelView.DisplayMode" Value="Inline"/>
-                        <Setter Target="PanelView.IsPaneOpen" Value="True"/>
-                        <Setter Target="PanelView.PaneBackground" Value="Transparent"/>
-                        <Setter Target="PaneRectangle.Fill" Value="Transparent"/>
-                        <Setter Target="AccountsList.Background" Value="{ThemeResource CardBackgroundFillColorSecondary}"/>
-                        <Setter Target="ShowPane.Visibility" Value="Collapsed"/>
+                        <Setter Target="PanelView.DisplayMode" Value="Inline" />
+                        <Setter Target="PanelView.IsPaneOpen" Value="True" />
+                        <Setter Target="PanelView.PaneBackground" Value="Transparent" />
+                        <Setter Target="PaneRectangle.Fill" Value="Transparent" />
+                        <Setter Target="AccountsList.Background"
+                                Value="{ThemeResource CardBackgroundFillColorSecondary}" />
+                        <Setter Target="ShowPane.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Grid Margin="0,-40,0,0"  x:Name="AppTitleBar" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Grid Margin="0,-40,0,0" x:Name="AppTitleBar" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <MenuBar Name="menuBar_main">
                 <MenuBarItem Title="File">
-                    <MenuFlyoutItem Text="Close storage" Click="ExitButton"/>
+                    <MenuFlyoutItem Text="Close storage" Click="ExitButton" />
                 </MenuBarItem>
             </MenuBar>
         </Grid>
-        <Grid DataContext="{x:Bind model}" Padding="0,0,8,8" >
+        <Grid DataContext="{x:Bind model}" Padding="0,0,8,8">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <SplitView Grid.Row="0" x:Name="PanelView" DisplayMode="Overlay" IsPaneOpen="{Binding IsPaneOpen, UpdateSourceTrigger=PropertyChanged}" PaneBackground="Transparent" CornerRadius="8">
+            <SplitView Grid.Row="0" x:Name="PanelView" DisplayMode="Overlay"
+                       IsPaneOpen="{Binding IsPaneOpen, UpdateSourceTrigger=PropertyChanged}"
+                       PaneBackground="Transparent" CornerRadius="8">
                 <SplitView.Pane>
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Rectangle x:Name="PaneRectangle" Fill="{ThemeResource AcrylicInAppFillColorDefaultBrush}"></Rectangle>
+                        <Rectangle x:Name="PaneRectangle" Fill="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                         <StackPanel Orientation="Vertical">
                             <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
-                                <AppBarButton Icon="Add" Label="Add" Click="CreateTag"/>
-                                <AppBarButton 
-                                    Background="OrangeRed" 
-                                    AllowDrop="True" 
-                                    DragEnter="DeleteButton_OnDragEnter" 
+                                <AppBarButton Icon="Add" Label="Add" Click="CreateTag" />
+                                <AppBarButton
+                                    Background="OrangeRed"
+                                    AllowDrop="True"
+                                    DragEnter="DeleteButton_OnDragEnter"
                                     Drop="DeleteButton_OnDrop"
-                                    Width="60" 
-                                    Name="TagDeleteButton" 
-                                    BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}" 
-                                    Visibility="Collapsed" 
+                                    Width="60"
+                                    Name="TagDeleteButton"
+                                    BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}"
+                                    Visibility="Collapsed"
                                     Icon="Delete" />
-                                
+
                             </CommandBar>
                             <ListView Width="300"
-                                  CanDragItems="True" 
-                                  CanReorderItems="True"
-                                  AllowDrop="True"
-                                  x:Name="TagListView"
-                                  SelectionMode="None"
-                                  DragItemsStarting="TagOnDragStarting"
-                                  DragItemsCompleted="TagOnDragOver"
-                                  ItemsSource="{Binding Tags}">
+                                      CanDragItems="True"
+                                      CanReorderItems="True"
+                                      AllowDrop="True"
+                                      x:Name="TagListView"
+                                      SelectionMode="None"
+                                      DragItemsStarting="TagOnDragStarting"
+                                      DragItemsCompleted="TagOnDragOver"
+                                      ItemsSource="{Binding Tags}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="viewModel1:UiTag">
-                                        <Grid Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="8">
+                                        <Grid Background="{ThemeResource CardBackgroundFillColorDefault}"
+                                              CornerRadius="8">
 
-                                            <Grid Width="20" Height="20" Margin="-16,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" CornerRadius="4">
-                                                <Rectangle Fill="{Binding baseColorBrush, UpdateSourceTrigger=PropertyChanged}">
-                                                </Rectangle>
+                                            <Grid Width="20" Height="20" Margin="-16,0,0,0" VerticalAlignment="Stretch"
+                                                  HorizontalAlignment="Left" CornerRadius="4">
+                                                <Rectangle
+                                                    Fill="{Binding baseColorBrush, UpdateSourceTrigger=PropertyChanged}" />
                                             </Grid>
-                                            <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
-                                            <TextBlock Margin="36,-2,0,0"  VerticalAlignment="Center" Text="{Binding DisplayName}"/>
+                                            <TextBlock Margin="36,-2,0,0" VerticalAlignment="Center"
+                                                       Text="{Binding DisplayName}" />
+                                            <TextBlock Margin="36,-2,0,0" VerticalAlignment="Center"
+                                                       Text="{Binding DisplayName}" />
                                             <Grid>
-                                                <CheckBox x:Name="TagCheckBox" Margin="10,0,0,0" Checked="CheckBox_Changed" Unchecked="CheckBox_Changed" CommandParameter="{Binding Self}">
+                                                <CheckBox x:Name="TagCheckBox" Margin="10,0,0,0"
+                                                          Checked="CheckBox_Changed" Unchecked="CheckBox_Changed"
+                                                          CommandParameter="{Binding Self}">
                                                     <CheckBox.Resources>
-                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillChecked" Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeChecked" Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillChecked"
+                                                                         Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}" />
+                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeChecked"
+                                                                         Color="{Binding baseColor, UpdateSourceTrigger=PropertyChanged}" />
 
-                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        <SolidColorBrush
+                                                            x:Name="CheckBoxCheckBackgroundFillCheckedPointerOver"
+                                                            Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}" />
+                                                        <SolidColorBrush
+                                                            x:Name="CheckBoxCheckBackgroundStrokeCheckedPointerOver"
+                                                            Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}" />
 
-                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundFillCheckedPressed" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        <SolidColorBrush x:Name="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        <SolidColorBrush
+                                                            x:Name="CheckBoxCheckBackgroundFillCheckedPressed"
+                                                            Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}" />
+                                                        <SolidColorBrush
+                                                            x:Name="CheckBoxCheckBackgroundStrokeCheckedPressed"
+                                                            Color="{Binding hoverColor, UpdateSourceTrigger=PropertyChanged}" />
                                                     </CheckBox.Resources>
                                                 </CheckBox>
                                             </Grid>
 
-                                            <FontIcon Glyph="&#xE712;" HorizontalAlignment="Right" Margin="0,0,6,0" Height="20"/>
-                                            <Button Height="24" Width="24" HorizontalAlignment="Right" Margin="0,0,4,0" Click="EditTag" CommandParameter="{Binding}"/>
+                                            <FontIcon Glyph="&#xE712;" HorizontalAlignment="Right" Margin="0,0,6,0"
+                                                      Height="20" />
+                                            <Button Height="24" Width="24" HorizontalAlignment="Right" Margin="0,0,4,0"
+                                                    Click="EditTag" CommandParameter="{Binding}" />
                                         </Grid>
                                     </DataTemplate>
 
@@ -104,92 +124,114 @@
                     </Grid>
                 </SplitView.Pane>
                 <Grid Background="Transparent">
-                    <AppBarButton 
+                    <AppBarButton
                         DataContext="{Binding SaveState, UpdateSourceTrigger=PropertyChanged}"
-                        Background="{Binding Brush}" 
-                        Width="60" 
+                        Background="{Binding Brush}"
+                        Width="60"
                         HorizontalAlignment="Right"
                         x:Name="StatusButton"
-                        BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}" 
+                        BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}"
                         Click="OnErrorButtonClick"
-                        Icon="{Binding Icon}"  Height="48"/>
+                        Icon="{Binding Icon}" Height="48" />
                     <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
-                        <AppBarButton x:Name="ShowPane" Icon="OpenPane" Label="Add" Visibility="Visible" Click="ShowPane_Click"/>
-                        <AppBarButton Icon="Add" Label="Add" Click="CreateAccount"/>
-                        <AppBarButton 
-                            Background="OrangeRed" 
-                            AllowDrop="True" 
-                            DragEnter="DeleteButton_OnDragEnter" 
+                        <AppBarButton x:Name="ShowPane" Icon="OpenPane" Label="Add" Visibility="Visible"
+                                      Click="ShowPane_Click" />
+                        <AppBarButton Icon="Add" Label="Add" Click="CreateAccount" />
+                        <AppBarButton
+                            Background="OrangeRed"
+                            AllowDrop="True"
+                            DragEnter="DeleteButton_OnDragEnter"
                             Drop="DeleteButton_OnDrop"
-                            Width="60" 
-                            Name="AccountDeleteButton" 
-                            BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}" 
-                            Visibility="Collapsed" 
+                            Width="60"
+                            Name="AccountDeleteButton"
+                            BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}"
+                            Visibility="Collapsed"
                             Icon="Delete" />
-                        
+
                     </CommandBar>
 
                     <Grid x:Name="AccountsList" Margin="0,48,0,0" Padding="8,8,8,8" CornerRadius="16">
                         <ListView
-                    x:Name="AccountSelector"
-                    SelectionMode="None"
-                    Height="Auto"
-                    CornerRadius="8"
-                    Padding="-16,-4,-16,-4"
-                    Background="Transparent"
-                    CanDragItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
-                    CanReorderItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}" 
-                    AllowDrop="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}"
-                    ItemsSource="{Binding DisplayAccounts,UpdateSourceTrigger=PropertyChanged}"
-                    DragItemsStarting="AccountOnDragStarting"
-                    DragItemsCompleted="AccountOnDragOver"
-                    >
+                            x:Name="AccountSelector"
+                            SelectionMode="None"
+                            Height="Auto"
+                            CornerRadius="8"
+                            Padding="-16,-4,-16,-4"
+                            Background="Transparent"
+                            CanDragItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}"
+                            CanReorderItems="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}"
+                            AllowDrop="{Binding NoTagsSelected, UpdateSourceTrigger=PropertyChanged}"
+                            ItemsSource="{Binding DisplayAccounts,UpdateSourceTrigger=PropertyChanged}"
+                            DragItemsStarting="AccountOnDragStarting"
+                            DragItemsCompleted="AccountOnDragOver">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="viewModel1:UiAccount">
                                     <Grid
-                                Background="{ThemeResource CardBackgroundFillColorDefault}" 
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}"
-                                CornerRadius="8"
-                                Margin="0,4,4,4">
+                                        Background="{ThemeResource CardBackgroundFillColorDefault}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultSolid}"
+                                        CornerRadius="8"
+                                        Margin="0,4,4,4">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid DataContext="{Binding Target, UpdateSourceTrigger=PropertyChanged}" Margin="-15,10,5,10" Width="20" VerticalAlignment="Stretch" HorizontalAlignment="Left" CornerRadius="4">
-                                            <Rectangle Fill="{Binding Colors.BaseColor.asBrush, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Grid DataContext="{Binding Target, UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="-15,10,5,10" Width="20" VerticalAlignment="Stretch"
+                                              HorizontalAlignment="Left" CornerRadius="4">
+                                            <Rectangle
+                                                Fill="{Binding Colors.BaseColor.asBrush, UpdateSourceTrigger=PropertyChanged}" />
                                         </Grid>
 
-                                        <Grid Grid.Column="1" VerticalAlignment="Center" Height="45" Margin="5,-3,0,0" HorizontalAlignment="Left">
-                                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding Target.TargetApp,UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Grid Grid.Column="1" VerticalAlignment="Center" Height="45" Margin="5,-3,0,0"
+                                              HorizontalAlignment="Left">
+                                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                                       VerticalAlignment="Top" HorizontalAlignment="Left"
+                                                       Text="{Binding Target.TargetApp,UpdateSourceTrigger=PropertyChanged}" />
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Visibility="{Binding UsernameVisibility}" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,5,0"  VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Target.Username,UpdateSourceTrigger=PropertyChanged}"/>
-                                                <TextBlock Visibility="{Binding EmailVisibility}" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Text="{Binding Target.Email,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBlock Visibility="{Binding UsernameVisibility}"
+                                                           Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,5,0"
+                                                           VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                                                           Text="{Binding Target.Username,UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBlock Visibility="{Binding EmailVisibility}"
+                                                           Style="{StaticResource BodyTextBlockStyle}"
+                                                           VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                                                           Text="{Binding Target.Email,UpdateSourceTrigger=PropertyChanged}" />
                                             </StackPanel>
                                         </Grid>
                                         <ScrollView Grid.Column="2">
-                                            <StackPanel>
-
-                                            </StackPanel>
+                                            <StackPanel />
                                         </ScrollView>
-                                        <StackPanel x:Name="Actions" Grid.Row="0" Grid.Column="3" 
-                                Padding="5,0,4,0"
-                                HorizontalAlignment="Right" 
-                                VerticalAlignment="Center"
-                                CornerRadius="8"
-                                Orientation="Horizontal">
+                                        <StackPanel x:Name="Actions" Grid.Row="0" Grid.Column="3"
+                                                    Padding="5,0,4,0"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    CornerRadius="8"
+                                                    Orientation="Horizontal">
                                             <Grid>
-                                                <StackPanel Orientation="Horizontal" Visibility="{Binding CopyMenuVisible, UpdateSourceTrigger=PropertyChanged}">
-                                                    <AppBarButton Click="Copy" CommandParameter="{Binding Target.Email}" Visibility="{Binding EmailVisibility}" Icon="Copy" Height="60" Label="Email" />
-                                                    <AppBarButton Click="Copy" CommandParameter="{Binding Target.Username}" Visibility="{Binding UsernameVisibility}" Icon="Copy" Height="60" Label="Username" />
-                                                    <AppBarButton Click="Copy" CommandParameter="{Binding Target.Password}" Icon="Copy" Height="60" Label="Password" />
-                                                    <AppBarSeparator/>
-                                                    <AppBarButton Icon="Edit" Height="60" Label="Edit" Click="StartEditAccount" CommandParameter="{Binding }"/>
-                                                    <AppBarSeparator/>
+                                                <StackPanel Orientation="Horizontal"
+                                                            Visibility="{Binding CopyMenuVisible, UpdateSourceTrigger=PropertyChanged}">
+                                                    <AppBarButton Click="Copy"
+                                                                  CommandParameter="{Binding Target.Email}"
+                                                                  Visibility="{Binding EmailVisibility}" Icon="Copy"
+                                                                  Height="60" Label="Email" />
+                                                    <AppBarButton Click="Copy"
+                                                                  CommandParameter="{Binding Target.Username}"
+                                                                  Visibility="{Binding UsernameVisibility}" Icon="Copy"
+                                                                  Height="60" Label="Username" />
+                                                    <AppBarButton Click="Copy"
+                                                                  CommandParameter="{Binding Target.Password}"
+                                                                  Icon="Copy" Height="60" Label="Password" />
+                                                    <AppBarSeparator />
+                                                    <AppBarButton Icon="Edit" Height="60" Label="Edit"
+                                                                  Click="StartEditAccount"
+                                                                  CommandParameter="{Binding }" />
+                                                    <AppBarSeparator />
                                                 </StackPanel>
                                             </Grid>
-                                            <AppBarButton Icon="AlignRight" Height="60" Label="Info" Click="InvertVisibility" CommandParameter="{Binding }"/>
+                                            <AppBarButton Icon="AlignRight" Height="60" Label="Info"
+                                                          Click="InvertVisibility" CommandParameter="{Binding }" />
                                         </StackPanel>
                                     </Grid>
                                 </DataTemplate>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Nodes;
 using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
@@ -9,157 +8,158 @@ using Password11.src.Ui;
 using Password11.src.Util;
 using Password11Lib.Util;
 
-namespace Password11.ViewModel
+namespace Password11.ViewModel;
+
+/// <summary>
+///     Takes input account, clones it, and allows to safely do changes
+///     call Finish() function to get return
+///     make sure object is not used after calling Finish, otherwise undefined behaviour can happen
+/// </summary>
+public class AccountEditor : PropertyChangable
 {
-    /// <summary>
-    /// Takes input account, clones it, and allows to safely do changes
-    /// call Finish() function to get return
-    /// make sure object is not used after calling Finish, otherwise undefined behaviour can happen
-    /// </summary>
-    public class AccountEditor : PropertyChangable
+    public static readonly DependencyProperty BaseColorBrushProperty =
+        DependencyProperty.Register(nameof(BaseColorBrush), typeof(object), typeof(AccountEditor),
+            new PropertyMetadata(default));
+
+    private readonly IEnumerable<Tag> tagsList;
+
+    private readonly Account target;
+
+    private AccountEditor(Account target, IEnumerable<Tag> tagsList)
     {
-        public static AccountEditor Start(IEnumerable<Tag> tagsList)
+        this.target = target.CloneRef();
+        this.tagsList = tagsList;
+    }
+
+    public string TargetApp
+    {
+        get => target.TargetApp;
+        set
         {
-            return Start(new AccountImpl(),tagsList);
+            target.TargetApp = value;
+            onPropertyChanged();
         }
+    }
 
-        public static AccountEditor Start(Account account, IEnumerable<Tag> tagsList)
+    public string DisplayName
+    {
+        get => target.DisplayName;
+        set
         {
-            return new AccountEditor(account,tagsList);
+            target.DisplayName = value;
+            onPropertyChanged();
         }
+    }
 
-        private Account target;
-        private readonly IEnumerable<Tag> tagsList;
-
-        public static readonly DependencyProperty BaseColorBrushProperty =
-            DependencyProperty.Register(nameof(BaseColorBrush), typeof(object), typeof(AccountEditor),
-                new PropertyMetadata(default(object)));
-
-
-        public event Action<Account?> OnFinished;
-
-        private AccountEditor(Account target, IEnumerable<Tag> tagsList)
+    public string Username
+    {
+        get => target.Username;
+        set
         {
-            this.target = target.CloneRef();
-            this.tagsList = tagsList;
+            target.Username = value;
+            onPropertyChanged();
         }
+    }
 
-        public void Finish(bool successful)
+    public string Email
+    {
+        get => target.Email;
+        set
         {
-            OnFinished.Invoke(successful ? target : null);
+            target.Email = value;
+            onPropertyChanged();
         }
+    }
 
-        public string TargetApp
+    public string Password
+    {
+        get => target.Password;
+        set
         {
-            get => target.TargetApp;
-            set
-            {
-                target.TargetApp = value;
-                onPropertyChanged();
-            }
+            target.Password = value;
+            onPropertyChanged();
         }
+    }
 
-        public string DisplayName
+    public Dictionary<string, FieldData> Fields
+    {
+        get => target.Fields;
+        set => target.Fields = value;
+    }
+
+    public ColorsScheme Colors
+    {
+        get => target.Colors;
+        set
         {
-            get => target.DisplayName;
-            set
-            {
-                target.DisplayName = value;
-                onPropertyChanged();
-            }
+            target.Colors = value;
+            onPropertyChanged();
+            onPropertyChanged(nameof(BaseColorBindable));
+            onPropertyChanged(nameof(BaseColorBrush));
         }
+    }
 
-        public string Username
+    public List<UniqueId<Tag>> Tags
+    {
+        get => target.Tags;
+        set
         {
-            get => target.Username;
-            set
-            {
-                target.Username = value;
-                onPropertyChanged();
-            }
+            target.Tags = value;
+            onPropertyChanged();
         }
+    }
 
-        public string Email
+    public Color BaseColorBindable
+    {
+        get => target.BaseColorBindable;
+        set
         {
-            get => target.Email;
-            set
-            {
-                target.Email = value;
-                onPropertyChanged();
-            }
+            target.BaseColorBindable = value;
+            onPropertyChanged();
         }
+    }
 
-        public string Password
+    public Brush BaseColorBrush => Colors.BaseColor.asBrush;
+    public Brush HoverColorBrush => Colors.HoverColor.asBrush;
+    public Brush SymbolColoBrush => Colors.SymbolColor.asBrush;
+
+    public string AppLink
+    {
+        get => target.AppLink;
+        set
         {
-            get => target.Password;
-            set
-            {
-                target.Password = value;
-                onPropertyChanged();
-            }
+            target.AppLink = value;
+            onPropertyChanged();
         }
+    }
 
-        public Dictionary<string, FieldData> Fields
-        {
-            get => target.Fields;
-            set => target.Fields = value;
-        }
+    public UniqueId<Account> Identifier => target.Identifier;
 
-        public ColorsScheme Colors
-        {
-            get => target.Colors;
-            set
-            {
-                target.Colors = value;
-                onPropertyChanged();
-                onPropertyChanged(nameof(BaseColorBindable));
-                onPropertyChanged(nameof(BaseColorBrush));
-            }
-        }
+    public static AccountEditor Start(IEnumerable<Tag> tagsList)
+    {
+        return Start(new AccountImpl(), tagsList);
+    }
 
-        public List<UniqueId<Tag>> Tags
-        {
-            get => target.Tags;
-            set
-            {
-                target.Tags = value;
-                onPropertyChanged();
-            }
-        }
-        public Color BaseColorBindable
-        {
-            get => target.BaseColorBindable;
-            set
-            {
-                target.BaseColorBindable = value;
-                onPropertyChanged();
-            }
-        }
+    public static AccountEditor Start(Account account, IEnumerable<Tag> tagsList)
+    {
+        return new AccountEditor(account, tagsList);
+    }
 
-        public Brush BaseColorBrush => Colors.BaseColor.asBrush;
-        public Brush HoverColorBrush => Colors.HoverColor.asBrush;
-        public Brush SymbolColoBrush => Colors.SymbolColor.asBrush;
 
-        public string AppLink
-        {
-            get => target.AppLink;
-            set
-            {
-                target.AppLink = value;
-                onPropertyChanged();
-            }
-        }
+    public event Action<Account?> OnFinished;
 
-        public UniqueId<Account> Identifier => target.Identifier;
+    public void Finish(bool successful)
+    {
+        OnFinished.Invoke(successful ? target : null);
+    }
 
-        public Account CloneRef()
-        {
-            return target.CloneRef();
-        }
+    public Account CloneRef()
+    {
+        return target.CloneRef();
+    }
 
-        public void Restore(Account state)
-        {
-            target.Restore(state);
-        }
+    public void Restore(Account state)
+    {
+        target.Restore(state);
     }
 }

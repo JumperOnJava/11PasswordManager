@@ -1,13 +1,8 @@
-using System;
-using System.Threading.Tasks;
-using Windows.System;
-using Windows.UI.Core;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Password11.Datatypes;
 using Password11.Dialogs;
-using Password11.StorageDialogs.FileStorage;
 using Password11.src.Util;
+using Password11.StorageDialogs.FileStorage;
 
 namespace Password11.StorageDialogs.GlobalCreate;
 
@@ -17,7 +12,7 @@ internal class FileCreateDialogManager : DialogManager
 
     public FileCreateDialogManager(EmptyOperation<StorageManager> managerOperation)
     {
-        this.operation = managerOperation;
+        operation = managerOperation;
     }
 
     public async void Start(Page page)
@@ -26,8 +21,9 @@ internal class FileCreateDialogManager : DialogManager
         if (!fileResult.Item1)
         {
             operation.FinishFail();
-            return;            
+            return;
         }
+
         var fileManager = fileResult.Item2;
         var passwordResult = await PasswordDialog.AskPassword(page, true).GetResult();
         if (!passwordResult.Item1)
@@ -35,6 +31,7 @@ internal class FileCreateDialogManager : DialogManager
             operation.FinishFail();
             return;
         }
+
         var password = passwordResult.Item2;
         operation.FinishSuccess(fileManager.AesEncryptedManager(password));
     }

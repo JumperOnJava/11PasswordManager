@@ -10,8 +10,7 @@ namespace Password11.src.Util;
 
 public class AesStorageManager : StorageManager
 {
-    [JsonIgnore] private string key;   
-    [JsonRequired] private StorageManager target { get; set; }
+    [JsonIgnore] private string key;
 
     public AesStorageManager(StorageManager target, string key) : this(target)
     {
@@ -24,13 +23,11 @@ public class AesStorageManager : StorageManager
     {
         this.target = target;
         if (target is KeyReceiver krc)
-        {
-            krc.KeyGetter = () =>
-            {
-                return this.key;
-            };
-        }
+            krc.KeyGetter = () => { return key; };
     }
+
+    [JsonRequired] private StorageManager target { get; }
+
     public async Task<StorageData> GetData()
     {
         try
@@ -56,7 +53,7 @@ public class AesStorageManager : StorageManager
         }
         catch (Exception e)
         {
-            this.key = null;
+            key = null;
             throw new Exception("Wrong key or data", e);
         }
     }
@@ -88,19 +85,17 @@ public class AesStorageManager : StorageManager
         return target.IsValid();
     }
 
-    [JsonIgnore] public LocationDisplayModel DisplayInfo => target.DisplayInfo ;
+    [JsonIgnore] public LocationDisplayModel DisplayInfo => target.DisplayInfo;
+
     public async Task<bool> SetupManagerInGui(Page parent)
     {
         if (!await target.SetupManagerInGui(parent)) return false;
         key = null;
-        var r = await PasswordDialog.AskPassword(parent, false,title:"Enter encryption key").GetResult();
-        if (!r.Item1)
-        {
-            return false;
-        }
+        var r = await PasswordDialog.AskPassword(parent, false, "Enter encryption key").GetResult();
+        if (!r.Item1) return false;
 
         key = r.Item2;
-        bool result;        
+        bool result;
         try
         {
             (await GetData()).CloneRef();
@@ -108,15 +103,16 @@ public class AesStorageManager : StorageManager
         }
         catch (Exception e)
         {
-            await ExceptionDialog.ShowException(parent,e);
+            await ExceptionDialog.ShowException(parent, e);
             result = false;
         }
+
         return result;
     }
 
     public void ResetOnFail()
     {
-        this.key = null;
+        key = null;
         target.ResetOnFail();
     }
 }
@@ -130,6 +126,6 @@ public static class AesStorageExtension
 {
     public static StorageManager AesEncryptedManager(this StorageManager manager, string key)
     {
-        return new AesStorageManager(manager,key);
+        return new AesStorageManager(manager, key);
     }
 }

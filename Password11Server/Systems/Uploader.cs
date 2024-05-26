@@ -8,8 +8,19 @@ namespace Password11Server;
 public class Uploader
 {
     public static Uploader instance = new();
+
+    private Random localRandom = new(DateTime.Now.Microsecond);
+    private int taskNum;
     private TaskCompletionSource tcs = new();
-    private int taskNum = 0;
+
+    public Uploader()
+    {
+        Queue = new Queue<Task>();
+        WorkerInit();
+    }
+
+    public Queue<Task> Queue { get; set; }
+
     public async Task WorkerInit()
     {
         while (true)
@@ -21,19 +32,12 @@ public class Uploader
                 task.Wait();
                 Console.WriteLine($"Finished task #{++taskNum}");
             }
+
             tcs = new TaskCompletionSource();
             await tcs.Task;
         }
     }
-    public Uploader()
-    {
-        this.Queue = new Queue<Task>();
-        WorkerInit();
-    }
 
-    public Queue<Task> Queue { get; set; }
-
-    Random localRandom = new Random(DateTime.Now.Microsecond);            
     public Operation<IActionResult> Enqueue(JsonUser reqUser)
     {
         var operation = new EmptyOperation<IActionResult>();
@@ -47,7 +51,7 @@ public class Uploader
                     .Include(u => u.Accounts);
                 if (!accountQuery.Any())
                 {
-                    Console.WriteLine($"Failed account");
+                    Console.WriteLine("Failed account");
                     operation.FinishSuccess(new UnauthorizedObjectResult("Account doesnt exist"));
                     return;
                 }
@@ -60,15 +64,13 @@ public class Uploader
                     tag.Id = newId;
                     db.Tags.Add(tag);
                     foreach (var reqAccount in reqUser.Accounts)
-                    {
                         reqAccount.Tags = reqAccount.Tags.Select(t =>
-                        {
-                            if (t == oldid)
-                                return newId;
-                            return t;
-                        }
+                            {
+                                if (t == oldid)
+                                    return newId;
+                                return t;
+                            }
                         ).ToList();
-                    }
                 }
 
 
@@ -88,6 +90,7 @@ public class Uploader
                     reqUser.Fields.ForEach(e => db.Fields.Add(e));
                     db.Accounts.Add(reqAccount);
                 }
+
                 try
                 {
                     accountQuery = db.Users.Where(user => user.Login == reqUser.Login)
@@ -104,20 +107,17 @@ public class Uploader
 
                     db.Update(dbUser);
                     db.SaveChanges();
-                    Console.WriteLine($"Finished ok");
+                    Console.WriteLine("Finished ok");
                     operation.FinishSuccess(new OkObjectResult(dbUser));
-                    return;
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    Console.WriteLine($"Failed - too fast");
+                    Console.WriteLine("Failed - too fast");
                     operation.FinishSuccess(new StatusCodeResult(429));
-                    return;
                 }
             }
         }));
         tcs.TrySetResult();
         return operation;
-    } 
-
+    }
 }

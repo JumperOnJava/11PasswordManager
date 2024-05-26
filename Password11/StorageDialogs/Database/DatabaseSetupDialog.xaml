@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <Page
     x:Class="Password11.StorageDialogs.Database.DatabaseSetupDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Password11.StorageDialogs.Database"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -11,24 +11,31 @@
 
     <Grid DataContext="{x:Bind Model}">
         <StackPanel>
-            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"  Text="Host"/>
+            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Host" />
             <Rectangle Height="5" />
-            <TextBox PlaceholderText="Example.net:5000" Text="{Binding Host,Mode = TwoWay,  UpdateSourceTrigger=PropertyChanged}"/>
-            <Rectangle Height="10"/>
-            <TextBox PlaceholderText="Login" Text="{Binding Login,Mode = TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <Rectangle Height="5" Visibility="{Binding isDoubleInput}"/>
-            <Rectangle Height="10"/>
-            <PasswordBox HorizontalAlignment="Stretch" PlaceholderText="Password" Password="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></PasswordBox>
-            <Rectangle Height="10" Visibility="{Binding isDoubleInput}"/>
-            <PasswordBox Visibility="{Binding isDoubleInput}" PlaceholderText="Repeat password"  HorizontalAlignment="Stretch" Password="{Binding PasswordRepeat, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></PasswordBox>
-            <TextBlock Visibility="{Binding SamePasswordTextVisible }" Text="Password should be same"/>
-            <Rectangle Height="5" />
-            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"  Text="Encryption key"/>
+            <TextBox PlaceholderText="Example.net:5000"
+                     Text="{Binding Host,Mode = TwoWay,  UpdateSourceTrigger=PropertyChanged}" />
             <Rectangle Height="10" />
-            <PasswordBox PlaceholderText="Key" HorizontalAlignment="Stretch" Password="{Binding Key, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></PasswordBox>
+            <TextBox PlaceholderText="Login" Text="{Binding Login,Mode = TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Rectangle Height="5" Visibility="{Binding isDoubleInput}" />
+            <Rectangle Height="10" />
+            <PasswordBox HorizontalAlignment="Stretch" PlaceholderText="Password"
+                         Password="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
             <Rectangle Height="10" Visibility="{Binding isDoubleInput}" />
-            <PasswordBox PlaceholderText="Repeat key" Visibility="{Binding isDoubleInput}" HorizontalAlignment="Stretch" Password="{Binding KeyRepeat, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></PasswordBox>
-            <TextBlock Visibility="{Binding SameKeyTextVisible }" Text="Key should be same"/>
+            <PasswordBox Visibility="{Binding isDoubleInput}" PlaceholderText="Repeat password"
+                         HorizontalAlignment="Stretch"
+                         Password="{Binding PasswordRepeat, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Visibility="{Binding SamePasswordTextVisible }" Text="Password should be same" />
+            <Rectangle Height="5" />
+            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Encryption key" />
+            <Rectangle Height="10" />
+            <PasswordBox PlaceholderText="Key" HorizontalAlignment="Stretch"
+                         Password="{Binding Key, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+            <Rectangle Height="10" Visibility="{Binding isDoubleInput}" />
+            <PasswordBox PlaceholderText="Repeat key" Visibility="{Binding isDoubleInput}"
+                         HorizontalAlignment="Stretch"
+                         Password="{Binding KeyRepeat, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Visibility="{Binding SameKeyTextVisible }" Text="Key should be same" />
         </StackPanel>
     </Grid>
 </Page>

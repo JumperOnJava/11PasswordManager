@@ -1,14 +1,14 @@
 namespace Password11Server;
 
-class Program
+internal class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddEndpointsApiExplorer();
-        
-        
+
+
         builder.Services.AddControllers();
         builder.Services.AddSwaggerGen();
 
@@ -16,14 +16,11 @@ class Program
         if (app.Environment.IsDevelopment())
         {
         }
-        app.UseSwagger();   
+
+        app.UseSwagger();
         app.UseSwaggerUI();
         app.UseRouting();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         app.Run();
-
     }
 }

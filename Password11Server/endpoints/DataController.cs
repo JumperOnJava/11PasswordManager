@@ -1,8 +1,6 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Npgsql.Internal.Postgres;
 using Password11.src.Util;
 using Password11Lib.JsonModel;
 
@@ -22,6 +20,7 @@ public class DataController : ControllerBase
             Console.WriteLine($"Failed logindata {id}");
             return BadRequest("Login and password is required");
         }
+
         using (var db = new PasswordContext())
         {
             var accountQuery = db.Users.Where(user => user.Login == reqUser.Login)
@@ -37,34 +36,23 @@ public class DataController : ControllerBase
             var dbUser = accountQuery.First();
             reqUser.PasswordHash = reqUser.PasswordHash.EncodeUtf8().Sha256().EncodeBase64();
 
-            if (dbUser.PasswordHash != reqUser.PasswordHash)
-            {
-                return Unauthorized("Wrong password");
-            }
+            if (dbUser.PasswordHash != reqUser.PasswordHash) return Unauthorized("Wrong password");
 
             var result = await Uploader.instance.Enqueue(reqUser).GetResult();
             if (result.Item1)
-            {
                 return result.Item2;
-            }
-            else
-            {
-                return BadRequest("Failed to update data on server");
-            }
+            return BadRequest("Failed to update data on server");
         }
     }
 
     [Route("/api/getdata")]
     [HttpGet]
-    public IActionResult GetData([FromQuery(Name = "login")]string login)
+    public IActionResult GetData([FromQuery(Name = "login")] string login)
     {
         using (var db = new PasswordContext())
         {
             var accountQuery = db.Users.Where(user => user.Login == login);
-            if (!accountQuery.Any())
-            {
-                return NotFound("Account doesnt exist");
-            }
+            if (!accountQuery.Any()) return NotFound("Account doesnt exist");
             var dbUser = accountQuery
                 .Include(u => u.Tags)
                 .Include(u => u.Accounts)
