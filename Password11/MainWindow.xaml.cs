@@ -20,7 +20,6 @@ public sealed partial class MainWindow : Window
 
     public MainWindow()
     {
-        //Map((i) => new AccountEntry(i, (it) => model.CurrentEditAccount = it.Clone())));
 
         InitializeComponent();
         ExtendsContentIntoTitleBar = true;
@@ -32,7 +31,7 @@ public sealed partial class MainWindow : Window
         ContentFrame.Navigate(typeof(StartScreen), ContentFrame);
     }
 
-    public MainWindowModel model { get; set; }
+    public AppListPageModel model { get; set; }
 
     private void SetRegionsForCustomTitleBar()
     {

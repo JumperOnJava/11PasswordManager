@@ -10,19 +10,13 @@ namespace Password11.StorageDialogs.GlobalCreate;
 
 internal class FileOpenDialogManager : DialogManager
 {
-    private readonly EmptyOperation<StorageManager> operation;
 
-    public FileOpenDialogManager(EmptyOperation<StorageManager> managerOperation)
-    {
-        operation = managerOperation;
-    }
-
-    public async void Start(Page parent)
+    public override async void Start(Page parent)
     {
         var fileResult = await new FileOpenDialog().GetResult();
         if (!fileResult.Item1)
         {
-            operation.FinishFail();
+            FinishFail();
             return;
         }
 
@@ -34,6 +28,6 @@ internal class FileOpenDialogManager : DialogManager
         if (!passwordResult.Item1) return;
 
         var password = passwordResult.Item2;
-        operation.FinishSuccess(result.AesEncryptedManager(password));
+        FinishSuccess(result.AesEncryptedManager(password));
     }
 }

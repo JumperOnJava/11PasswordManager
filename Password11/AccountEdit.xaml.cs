@@ -17,11 +17,11 @@ namespace Password11;
 
 public sealed partial class AccountEdit : Page
 {
-    private readonly PasswordEditModel model;
+    private readonly AccountEditModel model;
 
     public AccountEdit()
     {
-        model = new PasswordEditModel();
+        model = new AccountEditModel();
         InitializeComponent();
     }
 
@@ -95,12 +95,12 @@ public sealed partial class AccountEdit : Page
     }
 }
 
-internal class PasswordEditModel : PropertyChangable
+internal class AccountEditModel : PropertyChangable
 {
     private PasswordRevealMode passwordRevealMode;
     private AccountEditor target;
 
-    public PasswordEditModel()
+    public AccountEditModel()
     {
         SelectedTags = new ObservableCollection<Tag>();
         UnselectedTags = new ObservableCollection<Tag>();

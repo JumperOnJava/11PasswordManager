@@ -59,6 +59,9 @@ public class Operation<T> : Operation
     {
         Target = Factory.Invoke();
     }
+    public Operation() : this(() => default)
+    {
+    }
 
     public T Target { get; set; }
 

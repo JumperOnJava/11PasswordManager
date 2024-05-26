@@ -1,0 +1,613 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Password11.Datatypes.FileByteLocation" BaseTypeListCollapsed="true">
+    <Position X="30.5" Y="16.25" Width="1.5" />
+    <Members>
+      <Property Name="DisplayName" Hidden="true" />
+      <Property Name="DisplayPath" Hidden="true" />
+      <Method Name="FileByteLocation" Hidden="true" />
+      <Method Name="IsValid" Hidden="true" />
+      <Property Name="LastAccessTime" Hidden="true" />
+      <Method Name="Load" Hidden="true" />
+      <Property Name="Model" Hidden="true" />
+      <Method Name="RequestPath" Hidden="true" />
+      <Method Name="Save" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAwkIAAAAAAAAIAAAgAAAAAAAAAIAAAAAgAAAAAAAA=</HashCode>
+      <FileName>src\Datatypes\Storage\ByteStorage\FileByteSaveLocation.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.Datatypes.JsonFileStorageManager" BaseTypeListCollapsed="true">
+    <Position X="30.25" Y="12" Width="2" />
+    <Members>
+      <Method Name="CreateNew" Hidden="true" />
+      <Property Name="DisplayInfo" Hidden="true" />
+      <Method Name="GetData" Hidden="true" />
+      <Method Name="IsValid" Hidden="true" />
+      <Method Name="JsonFileStorageManager" Hidden="true" />
+      <Method Name="ResetOnFail" Hidden="true" />
+      <Method Name="Restore" Hidden="true" />
+      <Method Name="SetData" Hidden="true" />
+      <Method Name="SetupManagerInGui" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAgCAAABEAAAEAAAIAgCAgAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>src\Datatypes\Storage\JsonFileStorageManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="DataLoader" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.Datatypes.StorageData" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="45.75" Y="21.25" Width="1.5" />
+    <AssociationLine Name="Accounts" Type="Password11.Datatypes.Account" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="46.312" Y="21.812" />
+        <Point X="46.312" Y="24.269" />
+        <Point X="41.5" Y="24.269" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Tags" Type="Password11.Datatypes.Tag" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="46.344" Y="21.25" />
+        <Point X="46.344" Y="20.188" />
+        <Point X="41.5" Y="20.188" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAIAAAAAAECAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Datatypes\Storage\StorageData.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Tags" />
+      <Property Name="Accounts" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Password11.Datatypes.FieldData" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAYAAAAAABAAAAAAQAQAEAA=</HashCode>
+      <FileName>src\Datatypes\Account.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Password11.Datatypes.AccountImpl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAEAAAACAAgAAAAQACAAoAAAQAAEACABAAwAAAgAA=</HashCode>
+      <FileName>src\Datatypes\AccountImpl.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Fields" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.6" />
+  </Class>
+  <Class Name="Password11.Datatypes.TagBasic" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40" Y="21.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAEAAQAAQAAAAEAAACAAIAAACAAAAAAAAAQIAAQAA=</HashCode>
+      <FileName>src\Datatypes\TagBasic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.615" />
+  </Class>
+  <Class Name="Password11.src.Util.AesStorageManager" BaseTypeListCollapsed="true">
+    <Position X="32.5" Y="12" Width="2.75" />
+    <Members>
+      <Method Name="AesStorageManager" Hidden="true" />
+      <Method Name="GetData" Hidden="true" />
+      <Method Name="IsValid" Hidden="true" />
+      <Method Name="ResetOnFail" Hidden="true" />
+      <Method Name="SetData" Hidden="true" />
+      <Method Name="SetupManagerInGui" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAgAAAABEAAAEAAAIAgEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Datatypes\Storage\AesStorageManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.src.Datatypes.Storage.DatabaseStorageManager" BaseTypeListCollapsed="true">
+    <Position X="35.5" Y="12" Width="2.25" />
+    <Members>
+      <Property Name="api" Hidden="true" />
+      <Method Name="DatabaseStorageManager" Hidden="true" />
+      <Property Name="DisplayInfo" Hidden="true" />
+      <Property Name="DisplayName" Hidden="true" />
+      <Property Name="DisplayPath" Hidden="true" />
+      <Method Name="GetData" Hidden="true" />
+      <Method Name="IsValid" Hidden="true" />
+      <Property Name="LastAccessTime" Hidden="true" />
+      <Field Name="password" Hidden="true" />
+      <Method Name="ResetOnFail" Hidden="true" />
+      <Method Name="SetData" Hidden="true" />
+      <Method Name="SetupManagerInGui" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAgwEABBEAAAEAAAIAgAAAAAAAAAAAAAACgABgAAQAA=</HashCode>
+      <FileName>src\Datatypes\Storage\DatabaseStorageManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.ViewModel.AccountEditor" Collapsed="true">
+    <Position X="36.25" Y="23" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAACAAgAAAIQACAApAADCACEACABAAwIAAgAg=</HashCode>
+      <FileName>src\ViewModel\AccountEditor.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="target" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Password11.ViewModel.UiAccount" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="30.75" Y="25.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAIECAACACAAAIABAAAAAASAAAAAg=</HashCode>
+      <FileName>src\ViewModel\UiAccount.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Target" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Password11.ViewModel.UiTag" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="30.75" Y="21.5" Width="1.5" />
+    <AssociationLine Name="Target" Type="Password11.Datatypes.Tag" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="32.25" Y="21.846" />
+        <Point X="32.625" Y="21.846" />
+        <Point X="32.625" Y="20.375" />
+        <Point X="40" Y="20.375" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>gAJAEgAQAAQAQAAAAAADACIAAACAAAAAAAAAQoAAAEI=</HashCode>
+      <FileName>src\ViewModel\UiTag.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Target" />
+    </ShowAsAssociation>
+    <Lollipop Position="1.3" Collapsed="true" />
+  </Class>
+  <Class Name="Password11.src.ViewModel.TagEditDialog" Collapsed="true">
+    <Position X="30.75" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>StorageDialogs\Tag\TagEditDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="target" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.AccountCreateDialog" Collapsed="true">
+    <Position X="30.75" Y="24" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AADAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAAgAAAIAAA=</HashCode>
+      <FileName>StorageDialogs\AccountCreateDialog\AccountCreateDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="model" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.AccountCreateDialogModel" Collapsed="true">
+    <Position X="33.5" Y="24" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIACAAAAAAAAAAAAAAAgACEAA=</HashCode>
+      <FileName>StorageDialogs\AccountCreateDialog\AccountCreateDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Target" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Password11.PasswordInputDialog" Collapsed="true">
+    <Position X="13.25" Y="12.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>StorageDialogs\Password\PasswordInputDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Password11.AccountEdit" Collapsed="true">
+    <Position X="30.75" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAYAAQAAAAAAAAAAAACYAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>AccountEdit.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="model" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.AccountEditModel" Collapsed="true">
+    <Position X="33.5" Y="22.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAIAAYACAAAAAAEAAAAAAAAgACEAA=</HashCode>
+      <FileName>AccountEdit.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="target" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Password11.AccountsListPage" Collapsed="true">
+    <Position X="25" Y="20.25" Width="1.5" />
+    <AssociationLine Name="Model" Type="Password11.ViewModel.AppListPageModel">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.787" Y="0.085" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAgwAAAgAgAEAQAAAABBQAAgAAAAABAAgAEgQIQCE=</HashCode>
+      <FileName>AccountsListPage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Model" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.App" Collapsed="true">
+    <Position X="21" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>App.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.MainWindow" Collapsed="true">
+    <Position X="21" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAgIAAA=</HashCode>
+      <FileName>MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.StartScreen">
+    <Position X="20.75" Y="6" Width="2" />
+    <Members>
+      <Field Name="navigator" Hidden="true" />
+      <Method Name="OnNavigatedTo" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AgAMAAAAAAAAAAAAAAAAAQQAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>StartScreen.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="model" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Password11.StartScreenModelStoragePath">
+    <Position X="26.5" Y="6" Width="2.25" />
+    <AssociationLine Name="Manager" Type="Password11.Datatypes.StorageManager" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="28.75" Y="7.079" />
+        <Point X="33.25" Y="7.079" />
+        <Point X="33.25" Y="10.25" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="3.68" Y="3.282" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAIAAAAAAAQAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>StartScreen.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Manager" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Password11.StorageDialogs.GlobalCreate.DatabaseDialogManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="23.75" Y="12" Width="2.25" />
+    <NestedTypes>
+      <Enum Name="Password11.StorageDialogs.GlobalCreate.DatabaseDialogManager.Variant" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>StorageDialogs\Database\DatabaseDialogManager.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <InheritanceLine Type="Password11.StorageDialogs.GlobalCreate.DialogManager" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="22.75" Y="12.875" />
+        <Point X="23.891" Y="12.875" />
+        <Point X="23.891" Y="12.691" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAIAAAAIAAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>StorageDialogs\Database\DatabaseDialogManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11.StorageDialogs.GlobalCreate.FileCreateDialogManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.5" Y="13" Width="2" />
+    <InheritanceLine Type="Password11.StorageDialogs.GlobalCreate.DialogManager" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="21.25" Y="13.438" />
+        <Point X="20.875" Y="13.438" />
+        <Point X="20.875" Y="13.437" />
+        <Point X="20.5" Y="13.437" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>StorageDialogs\FileStorage\FileCreateDialogManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11.StorageDialogs.GlobalCreate.FileOpenDialogManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.5" Y="12" Width="2" />
+    <InheritanceLine Type="Password11.StorageDialogs.GlobalCreate.DialogManager" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="21.25" Y="12.75" />
+        <Point X="19.438" Y="12.75" />
+        <Point X="19.438" Y="12.691" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>StorageDialogs\FileStorage\FileOpenDialogManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11.StorageDialogs.Database.DatabaseSetupDialog" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24.25" Y="13" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAEAgAAAADAAA=</HashCode>
+      <FileName>StorageDialogs\Database\DatabaseSetupDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Password11.StorageDialogs.Database.DatabaseSetupDialogModel" Collapsed="true">
+    <Position X="23.75" Y="14" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAQAIAAEAAAACEAACAgCAAgQAgiCEAA=</HashCode>
+      <FileName>StorageDialogs\Database\DatabaseSetupDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11.StorageDialogs.FileStorage.FileCreateDialog" Collapsed="true">
+    <Position X="15.5" Y="13" Width="2.25" />
+    <InheritanceLine Type="Password11.Datatypes.Operation&lt;T&gt;" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="20.75" Y="10.438" />
+        <Point X="18.288" Y="10.438" />
+        <Point X="18.288" Y="13.375" />
+        <Point X="17.75" Y="13.375" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>StorageDialogs\FileStorage\FileCreateDialog.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11.StorageDialogs.FileStorage.FileOpenDialog" Collapsed="true">
+    <Position X="15.5" Y="12" Width="2.25" />
+    <InheritanceLine Type="Password11.Datatypes.Operation&lt;T&gt;" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="20.75" Y="10.25" />
+        <Point X="18.125" Y="10.25" />
+        <Point X="18.125" Y="12.346" />
+        <Point X="17.75" Y="12.346" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAIAAAAAA=</HashCode>
+      <FileName>StorageDialogs\FileStorage\FileOpenDialog.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11.Datatypes.Operation&lt;T&gt;">
+    <Position X="20.75" Y="8.75" Width="1.5" />
+    <Members>
+      <Method Name="GetFinish" Hidden="true" />
+      <Method Name="Operation" Hidden="true" />
+      <Property Name="Target" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Password11.StorageDialogs.GlobalCreate.CreateStorageDialog" Collapsed="true">
+    <Position X="18.75" Y="8.25" Width="1.75" />
+    <AssociationLine Name="operation" Type="Password11.Datatypes.Operation&lt;T&gt;">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.246" Y="0.174" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>QAAAAAAARAAAAAAAAAAAAAAAAAAAAEAAEQAAAAADAAA=</HashCode>
+      <FileName>StorageDialogs\GlobalCreate\CreateStorageDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="operation" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Password11.StartScreenModel">
+    <Position X="23.75" Y="6" Width="1.75" />
+    <Members>
+      <Method Name="StartScreenModel" Hidden="true" />
+      <Method Name="UpdateHistory" Hidden="true" />
+    </Members>
+    <AssociationLine Name="History" Type="Password11.StartScreenModelStoragePath">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="0.06" Y="0.11" Height="0.182" Width="0.809" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAIAAGAAAAQAA=</HashCode>
+      <FileName>StartScreen.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="History" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Password11.ViewModel.AppListPageModel">
+    <Position X="28" Y="20.25" Width="1.75" />
+    <Members>
+      <Method Name="AppListPageModel" Hidden="true" />
+      <Property Name="DisplayAccounts" Hidden="true" />
+      <Method Name="EnqueueSave" Hidden="true" />
+      <Field Name="initialized" Hidden="true" />
+      <Method Name="isFiltered" Hidden="true" />
+      <Field Name="isPaneOpen" Hidden="true" />
+      <Property Name="IsPaneOpen" Hidden="true" />
+      <Property Name="LatestException" Hidden="true" />
+      <Field Name="Navigator" Hidden="true" />
+      <Property Name="NoTagsSelected" Hidden="true" />
+      <Field Name="onClose" Hidden="true" />
+      <Property Name="RawTags" Hidden="true" />
+      <Field Name="saveState" Hidden="true" />
+      <Property Name="SaveState" Hidden="true" />
+      <Method Name="SetNewManager" Hidden="true" />
+      <Field Name="tasks" Hidden="true" />
+      <Method Name="UpdateVisualAccounts" Hidden="true" />
+      <Method Name="UpdateVisualTags" Hidden="true" />
+    </Members>
+    <AssociationLine Name="manager" Type="Password11.Datatypes.StorageManager">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="3.709" Y="-9.05" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AgAAAIgSBBAACBAAAAAAAgAOAAAAAEiAMACAAAYCEAA=</HashCode>
+      <FileName>src\ViewModel\AppListPageModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="manager" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Password11Lib.JsonModel.JsonAccount">
+    <Position X="35.5" Y="14.25" Width="1.5" />
+    <Members>
+      <Method Name="JsonAccount" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Password11.StorageDialogs.GlobalCreate.DialogManager">
+    <Position X="21.25" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>StorageDialogs\GlobalCreate\CreateStorageDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Password11.src.Ui.AdvColor" Collapsed="true">
+    <Position X="43" Y="23.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABCAAAAgAAAAAAAEEAAAAAAAAAAAAAAIAQABCEGQAQA=</HashCode>
+      <FileName>src\Color\AdvColor.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Password11.src.Ui.ColorsScheme">
+    <Position X="43" Y="20.5" Width="1.5" />
+    <AssociationLine Name="BaseColor" Type="Password11.src.Ui.AdvColor">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.414" Y="0.338" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="HoverColor" Type="Password11.src.Ui.AdvColor">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="0.54" Y="0.553" Height="0.182" Width="1.146" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="SymbolColor" Type="Password11.src.Ui.AdvColor">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.004" Y="0.768" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AABAQAAAQAAAAAAEEAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>src\Color\ColorsScheme.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="BaseColor" />
+      <Property Name="HoverColor" />
+      <Property Name="SymbolColor" />
+    </ShowAsAssociation>
+  </Struct>
+  <Interface Name="Password11.Datatypes.ByteSaveLocation">
+    <Position X="30.5" Y="14" Width="1.5" />
+    <Members>
+      <Method Name="IsValid" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAgIAAAAAAAAAAAAgAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>src\Datatypes\Storage\ByteStorage\ByteSaveLocation.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Password11.Datatypes.LocationDisplayModel">
+    <Position X="35.5" Y="9.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Datatypes\Storage\ByteStorage\ByteSaveLocation.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Password11.Datatypes.StorageManager">
+    <Position X="32.5" Y="10.25" Width="1.5" />
+    <Members>
+      <Method Name="IsValid" Hidden="true" />
+      <Method Name="ResetOnFail" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAgAAAABEAAAEAAAIAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Datatypes\Storage\StorageManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DisplayInfo" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Password11.Datatypes.Account" Collapsed="true">
+    <Position X="40" Y="23.75" Width="1.5" />
+    <AssociationLine Name="Colors" Type="Password11.src.Ui.ColorsScheme" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="41.5" Y="23.889" />
+        <Point X="41.875" Y="23.889" />
+        <Point X="41.875" Y="22.227" />
+        <Point X="43" Y="22.227" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Fields" Type="Password11.Datatypes.FieldData" ManuallyRouted="true">
+      <Path>
+        <Point X="41.5" Y="24.516" />
+        <Point X="45.031" Y="24.516" />
+        <Point X="45.031" Y="25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAACAAgAAAAQAAAAgAAAAAAAACABAAgAAAhAA=</HashCode>
+      <FileName>src\Datatypes\Account.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Colors" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Fields" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="Password11.Datatypes.Tag" Collapsed="true">
+    <Position X="40" Y="20" Width="1.5" />
+    <AssociationLine Name="TagColors" Type="Password11.src.Ui.ColorsScheme" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="41.5" Y="20.562" />
+        <Point X="41.875" Y="20.562" />
+        <Point X="41.875" Y="21.147" />
+        <Point X="43" Y="21.147" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAIAEAAQAAQAAAAAAAAAAAAAAACAAAAAAAAAAIAAQAA=</HashCode>
+      <FileName>src\Datatypes\Tag.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="TagColors" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Password11.Datatypes.Taggable" Collapsed="true">
+    <Position X="40" Y="22.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Datatypes\Taggable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

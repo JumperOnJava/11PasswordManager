@@ -22,8 +22,6 @@ public class AesStorageManager : StorageManager
     private AesStorageManager(StorageManager target)
     {
         this.target = target;
-        if (target is KeyReceiver krc)
-            krc.KeyGetter = () => { return key; };
     }
 
     [JsonRequired] private StorageManager target { get; }
@@ -117,10 +115,6 @@ public class AesStorageManager : StorageManager
     }
 }
 
-internal interface KeyReceiver
-{
-    Func<string> KeyGetter { set; }
-}
 
 public static class AesStorageExtension
 {

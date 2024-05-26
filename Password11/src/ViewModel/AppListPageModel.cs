@@ -11,7 +11,7 @@ using Password11.src.Util;
 
 namespace Password11.ViewModel;
 
-public class MainWindowModel : PropertyChangable
+public class AppListPageModel : PropertyChangable
 {
     private readonly bool initialized;
 
@@ -26,7 +26,7 @@ public class MainWindowModel : PropertyChangable
 
     private readonly Queue<Task> tasks = new();
 
-    public MainWindowModel(StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
+    public AppListPageModel(StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
     {
         onClose = closeCallback;
         manager = storageManager;
@@ -46,7 +46,7 @@ public class MainWindowModel : PropertyChangable
 
     public ObservableCollection<UiAccount> Accounts { get; } = new();
 
-    private ObservableCollection<UiAccount> FilteredAccounts { get; } = new();
+    public ObservableCollection<UiAccount> FilteredAccounts { get; } = new();
 
     public ObservableCollection<UiAccount> DisplayAccounts => NoTagsSelected ? Accounts : FilteredAccounts;
 

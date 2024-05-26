@@ -8,10 +8,10 @@ namespace Password11.StorageDialogs.Database;
 
 public sealed partial class DatabaseSetupDialog : Page, DialogPage
 {
-    private readonly DatabaseCreateDialogModel Model = new();
-    private readonly EmptyOperation<Tuple<string, string, string, string>> operation;
+    private readonly DatabaseSetupDialogModel Model = new();
+    private readonly Operation<Tuple<string, string, string, string>> operation;
 
-    public DatabaseSetupDialog(EmptyOperation<Tuple<string, string, string, string>> operation,
+    public DatabaseSetupDialog(Operation<Tuple<string, string, string, string>> operation,
         bool hasSecondField)
     {
         this.operation = operation;
@@ -51,7 +51,7 @@ public sealed partial class DatabaseSetupDialog : Page, DialogPage
     }
 }
 
-public class DatabaseCreateDialogModel : PropertyChangable
+public class DatabaseSetupDialogModel : PropertyChangable
 {
     public bool HasSecondField;
 

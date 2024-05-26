@@ -7,22 +7,8 @@ namespace Password11.Dialogs;
 
 public class PasswordDialog
 {
-    public static EmptyOperation<string> AskPassword(Page parent, bool hasSecondField, string title = "Enter password")
+    public static Operation<string> AskPassword(Page parent, bool hasSecondField, string title = "Enter password")
     {
-        var dialog = new ContentDialog();
-        dialog.Title = title;
-        dialog.PrimaryButtonText = "Confirm";
-        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-        dialog.SecondaryButtonText = "Cancel";
-        dialog.XamlRoot = parent.XamlRoot;
-        dialog.Content = new PasswordInputDialog(dialog, hasSecondField);
-        var op = new EmptyOperation<string>();
-        parent.DispatcherQueue.TryEnqueue(async () =>
-        {
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-                op.FinishSuccess(((PasswordInputDialog)dialog.Content).model.Password);
-        });
-        return op;
+       return  PasswordInputDialog.AskPassword(parent, hasSecondField, title);
     }
 }

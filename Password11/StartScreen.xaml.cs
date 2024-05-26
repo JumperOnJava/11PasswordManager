@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -85,7 +86,7 @@ public sealed partial class StartScreen
         var data = tcs.Task.Result;
         model.History.Add(new StartScreenModelStoragePath(storageManager));
         navigator.Navigate(typeof(AccountsListPage),
-            new MainWindowModel(
+            new AppListPageModel(
                 storageManager,
                 data,
                 () => { },
@@ -111,38 +112,38 @@ public sealed partial class StartScreen
         CreateStorageDialog.CreateManager(this, OpenStorage);
     }
 
-
-    public class StartScreenModel
-    {
-        public StartScreenModel()
-        {
-            AppSettings.GLOBAL.Load();
-            History = new ObservableCollection<StartScreenModelStoragePath>();
-            foreach (var item in AppSettings.storageHistory)
-                if (item.IsValid())
-                    History.Add(new StartScreenModelStoragePath(item));
-            AppSettings.storageHistory.Sort((a, b) =>
-            {
-                if (a.DisplayInfo.LastAccessTime == b.DisplayInfo.LastAccessTime) return 0;
-                return a.DisplayInfo.LastAccessTime > b.DisplayInfo.LastAccessTime ? 1 : -1;
-            });
-            NotifyCollectionChangedEventHandler action = (a, e) =>
-            {
-                AppSettings.storageHistory.Clear();
-                foreach (var element in History.ToList()) AppSettings.storageHistory.Add(element.Manager);
-                AppSettings.GLOBAL.Save();
-            };
-            History.CollectionChanged += action;
-            action.Invoke(null, null);
-        }
-
-        public static AppSettings AppSettings => AppSettings.GLOBAL;
-        public Visibility HistoryVisibility => History.Any() ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility CreateVisibility => History.Any() ? Visibility.Collapsed : Visibility.Visible;
-        public ObservableCollection<StartScreenModelStoragePath> History { get; set; }
-    }
 }
+public class StartScreenModel
+{
+    public StartScreenModel()
+    {
+        AppSettings.GLOBAL.Load();
+        var history = new ObservableCollection<StartScreenModelStoragePath>();
+        History = history;
+        foreach (var item in AppSettings.storageHistory)
+            if (item.IsValid())
+                History.Add(new StartScreenModelStoragePath(item));
+        AppSettings.storageHistory.Sort((a, b) =>
+        {
+            if (a.DisplayInfo.LastAccessTime == b.DisplayInfo.LastAccessTime) return 0;
+            return a.DisplayInfo.LastAccessTime > b.DisplayInfo.LastAccessTime ? 1 : -1;
+        });
+        history.CollectionChanged += UpdateHistory;
+        UpdateHistory(null, null);
+    }
 
+    private void UpdateHistory(object a, NotifyCollectionChangedEventArgs e)
+    {
+        AppSettings.storageHistory.Clear();
+        foreach (var element in History.ToList()) AppSettings.storageHistory.Add(element.Manager);
+        AppSettings.GLOBAL.Save();
+    }
+
+    public static AppSettings AppSettings => AppSettings.GLOBAL;
+    public Visibility HistoryVisibility => History.Any() ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility CreateVisibility => History.Any() ? Visibility.Collapsed : Visibility.Visible;
+    public IList<StartScreenModelStoragePath> History { get; set; }
+}
 public class StartScreenModelStoragePath
 {
     public StartScreenModelStoragePath(StorageManager manager)

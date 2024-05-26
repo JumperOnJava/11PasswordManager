@@ -16,7 +16,6 @@ namespace Password11.src.ViewModel;
 public sealed partial class TagEditDialog : Page
 {
     private readonly UiTag target;
-
     public TagEditDialog(ContentDialog dialog, Operation<UiTag> tag)
     {
         InitializeComponent();

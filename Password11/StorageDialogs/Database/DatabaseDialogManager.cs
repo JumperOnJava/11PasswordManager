@@ -10,19 +10,17 @@ namespace Password11.StorageDialogs.GlobalCreate;
 
 internal class DatabaseDialogManager : DialogManager
 {
-    private readonly EmptyOperation<StorageManager> operation;
     private readonly Variant variant;
 
-    private DatabaseDialogManager(EmptyOperation<StorageManager> managerOperation, Variant variant)
+    private DatabaseDialogManager(Variant variant)
     {
-        operation = managerOperation;
         this.variant = variant;
     }
 
 
-    public async void Start(Page parent)
+    public override async void Start(Page parent)
     {
-        var loginDataOpearation = new EmptyOperation<Tuple<string, string, string, string>>();
+        var loginDataOpearation = new Operation<Tuple<string, string, string, string>>();
         var screen = new DatabaseSetupDialog(loginDataOpearation, variant == Variant.Register);
         screen.StartDialog(parent);
         var loginResult = await loginDataOpearation.GetResult();
@@ -41,23 +39,23 @@ internal class DatabaseDialogManager : DialogManager
         try
         {
             task.Wait();
-            operation.FinishSuccess(task.Result.AesEncryptedManager(key));
+            FinishSuccess(task.Result.AesEncryptedManager(key));
         }
         catch (Exception e)
         {
-            operation.FinishFail();
+            FinishFail();
             await ExceptionDialog.ShowException(parent, e);
         }
     }
 
-    public static DatabaseDialogManager CreateOpenManager(EmptyOperation<StorageManager> managerOperation)
+    public static DatabaseDialogManager CreateOpenManager()
     {
-        return new DatabaseDialogManager(managerOperation, Variant.Open);
+        return new DatabaseDialogManager(Variant.Open);
     }
 
-    public static DatabaseDialogManager CreateRegisterManager(EmptyOperation<StorageManager> managerOperation)
+    public static DatabaseDialogManager CreateRegisterManager()
     {
-        return new DatabaseDialogManager(managerOperation, Variant.Register);
+        return new DatabaseDialogManager(Variant.Register);
     }
 
     private enum Variant

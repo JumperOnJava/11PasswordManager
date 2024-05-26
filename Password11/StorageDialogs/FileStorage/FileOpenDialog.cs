@@ -6,10 +6,9 @@ using WinRT.Interop;
 
 namespace Password11.StorageDialogs.FileStorage;
 
-public sealed class FileOpenDialog : EmptyOperation<StorageManager>
+public sealed class FileOpenDialog : Operation<StorageManager>
 {
     public static bool _opening;
-    private readonly Operation<StorageManager> operation;
 
     public FileOpenDialog()
     {

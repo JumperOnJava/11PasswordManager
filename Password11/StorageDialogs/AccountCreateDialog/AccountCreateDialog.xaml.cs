@@ -19,7 +19,7 @@ public sealed partial class AccountCreateDialog : Page
         @"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
 
     private readonly ContentDialog dialog;
-    private readonly AccountCreationModel model;
+    private readonly AccountCreateDialogModel model;
 
     public AccountCreateDialog(ContentDialog dialog, AccountEditor account, IList<Tag> tags)
     {
@@ -44,20 +44,20 @@ public sealed partial class AccountCreateDialog : Page
             a.Hide();
             account.Finish(false);
         };
-        model = new AccountCreationModel(account);
-        model.Account.PropertyChanged += (_, _) => UpdateSaveButton();
+        model = new AccountCreateDialogModel(account);
+        model.Target.PropertyChanged += (_, _) => UpdateSaveButton();
         model.PropertyChanged += (_, _) => UpdateSaveButton();
         model.UnselectedTags = new ObservableCollection<Tag>(tags);
         model.SelectedTags = new ObservableCollection<Tag>();
-        ColorPickerRing.Color = model.Account.BaseColorBindable;
+        ColorPickerRing.Color = model.Target.BaseColorBindable;
     }
 
     private void UpdateSaveButton()
     {
-        var isTargetAppFilled = !string.IsNullOrEmpty(model.Account.TargetApp);
-        var isPasswordFilled = !string.IsNullOrEmpty(model.Account.Password);
-        var isUsernameFilled = !string.IsNullOrEmpty(model.Account.Username);
-        var isEmailFilled = !string.IsNullOrEmpty(model.Account.Email);
+        var isTargetAppFilled = !string.IsNullOrEmpty(model.Target.TargetApp);
+        var isPasswordFilled = !string.IsNullOrEmpty(model.Target.Password);
+        var isUsernameFilled = !string.IsNullOrEmpty(model.Target.Username);
+        var isEmailFilled = !string.IsNullOrEmpty(model.Target.Email);
         var isEmailCorrectOrEmpty = model.EmailCorrect || !isEmailFilled;
 
         var enabled = isTargetAppFilled &&
@@ -71,7 +71,7 @@ public sealed partial class AccountCreateDialog : Page
     {
         if (args.NewColor == args.OldColor)
             return;
-        model.Account.Colors = new ColorsScheme(new AdvColor(args.NewColor));
+        model.Target.Colors = new ColorsScheme(new AdvColor(args.NewColor));
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -92,21 +92,21 @@ public sealed partial class AccountCreateDialog : Page
     }
 }
 
-internal class AccountCreationModel : PropertyChangable
+class AccountCreateDialogModel : PropertyChangable
 {
-    public AccountCreationModel(AccountEditor account)
+    public AccountCreateDialogModel(AccountEditor account)
     {
         account.PropertyChanged += (_, _) =>
         {
             onPropertyChanged(nameof(EmailCorrect));
             onPropertyChanged(nameof(EmailWarningVisibility));
         };
-        Account = account;
+        Target = account;
     }
 
-    public AccountEditor Account { get; }
+    public AccountEditor Target { get; }
     public ObservableCollection<Tag> SelectedTags { get; set; }
     public ObservableCollection<Tag> UnselectedTags { get; set; }
-    public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(Account.Email);
+    public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(Target.Email);
     public Visibility EmailWarningVisibility => EmailCorrect ? Visibility.Collapsed : Visibility.Visible;
 }

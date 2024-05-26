@@ -9,34 +9,29 @@ public struct ColorsScheme
 {
     public AdvColor BaseColor { get; set; }
 
-    private AdvColor hoverColor;
 
-    public AdvColor HoverColor
-    {
-        get => hoverColor;
-        set => hoverColor = value;
-    }
+    public AdvColor HoverColor { get; set; }
 
     public AdvColor SymbolColor { get; set; }
 
     public ColorsScheme(AdvColor baseColor, AdvColor hoverColor, AdvColor symbolColor)
     {
         this.BaseColor = baseColor;
-        this.hoverColor = hoverColor;
+        this.HoverColor = hoverColor;
         this.SymbolColor = symbolColor;
     }
 
     public ColorsScheme(AdvColor baseColor)
     {
         this.BaseColor = baseColor;
-        hoverColor = baseColor;
-
-        Console.WriteLine($"S1 H{hoverColor.H} S:{hoverColor.S} V:{hoverColor.V}");
+        var hoverColor = baseColor;
+        
         hoverColor.S = hoverColor.S;
-        Console.WriteLine($"S2 H{hoverColor.H} S:{hoverColor.S} V:{hoverColor.V}");
         hoverColor.S *= 0.66f;
-        Console.WriteLine($"S3 H{hoverColor.H} S:{hoverColor.S} V:{hoverColor.V}");
         hoverColor.V *= 1.07f;
+
+        HoverColor = hoverColor;
+
         SymbolColor = baseColor.S < 0.5f || (hoverColor.H > 40 && hoverColor.H < 200)
             ? new AdvColor(0, 0, 0)
             : new AdvColor(1, 1, 1);

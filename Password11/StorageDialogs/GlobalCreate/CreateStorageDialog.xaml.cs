@@ -14,14 +14,12 @@ namespace Password11.StorageDialogs.GlobalCreate;
 /// </summary>
 public sealed partial class CreateStorageDialog : Page, DialogPage
 {
-    private readonly EmptyOperation<StorageManager> managerOperation;
     private readonly Operation<DialogManager> operation;
 
-    public CreateStorageDialog(Operation<DialogManager> operation, EmptyOperation<StorageManager> managerOperation)
+    public CreateStorageDialog(Operation<DialogManager> operation, Operation<StorageManager> managerOperation)
     {
         InitializeComponent();
         this.operation = operation;
-        this.managerOperation = managerOperation;
         operation.OnFinished += _ => onClose.Invoke();
     }
 
@@ -39,28 +37,28 @@ public sealed partial class CreateStorageDialog : Page, DialogPage
 
     private void StartDatabase(object sender, RoutedEventArgs e)
     {
-        operation.FinishSuccess(DatabaseDialogManager.CreateRegisterManager(managerOperation));
+        operation.FinishSuccess(DatabaseDialogManager.CreateRegisterManager());
     }
 
     private void StartFile(object sender, RoutedEventArgs e)
     {
-        operation.FinishSuccess(new FileCreateDialogManager(managerOperation));
+        operation.FinishSuccess(new FileCreateDialogManager());
     }
 
     private void OpenDatabase(object sender, RoutedEventArgs e)
     {
-        operation.FinishSuccess(DatabaseDialogManager.CreateOpenManager(managerOperation));
+        operation.FinishSuccess(DatabaseDialogManager.CreateOpenManager());
     }
 
     private void OpenFile(object sender, RoutedEventArgs e)
     {
-        operation.FinishSuccess(new FileOpenDialogManager(managerOperation));
+        operation.FinishSuccess(new FileOpenDialogManager());
     }
 
     public static void CreateManager(Page page, Action<StorageManager> receiveMethod)
     {
-        var dialogCreator = new EmptyOperation<DialogManager>();
-        var managerCreator = new EmptyOperation<StorageManager>();
+        var dialogCreator = new Operation<DialogManager>();
+        var managerCreator = new Operation<StorageManager>();
         dialogCreator.OnResult += (success, result) =>
         {
             if (success) result.Start(page);
@@ -73,7 +71,7 @@ public sealed partial class CreateStorageDialog : Page, DialogPage
     }
 }
 
-public interface DialogManager
+public abstract class DialogManager : Operation<StorageManager>
 {
-    void Start(Page parent);
+    public abstract void Start(Page parent);
 }
