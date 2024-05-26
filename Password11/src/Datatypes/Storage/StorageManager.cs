@@ -10,5 +10,5 @@ public interface StorageManager
     public bool IsValid();
     LocationDisplayModel DisplayInfo { get; }
     Task<bool> SetupManagerInGui(Page parent);
-    void Fail();
+    void ResetOnFail();
 }

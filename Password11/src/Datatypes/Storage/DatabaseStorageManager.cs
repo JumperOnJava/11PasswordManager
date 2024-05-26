@@ -246,9 +246,9 @@ namespace Password11.src.Datatypes.Storage
             return true;
         }
 
-        public void Fail()
+        public void ResetOnFail()
         {
-
+            password = null;
         }
 
         public bool IsValid()

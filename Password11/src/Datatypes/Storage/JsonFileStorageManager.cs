@@ -24,7 +24,7 @@ public class JsonFileStorageManager : StorageManager
         return true;
     }
 
-    public void Fail()
+    public void ResetOnFail()
     {
         
     }

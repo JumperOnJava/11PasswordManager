@@ -27,8 +27,8 @@ namespace Password11
             {
                 model.Target = (AccountEditor)e.Parameter;
                 var allTags = new ObservableCollection<Tag>(AccountsListPage.Model.RawTags);
-                model.SelectedTags = new ObservableCollection<Tag>(allTags.Where(e => model.Target.Tags.Contains(e.Identifier)));
-                model.UnselectedTags = new ObservableCollection<Tag>(allTags.Where(e => !model.Target.Tags.Contains(e.Identifier)));
+                model.SelectedTags = new ObservableCollection<Tag>(allTags.Where(tag => model.Target.Tags.Contains(tag.Identifier)));
+                model.UnselectedTags = new ObservableCollection<Tag>(allTags.Where(tag => !model.Target.Tags.Contains(tag.Identifier)));
                 ColorPickerRing.Color = model.Target.Colors.BaseColor.asWinColor;
                 model.SelectedTags.CollectionChanged += (_, _) =>
                 {

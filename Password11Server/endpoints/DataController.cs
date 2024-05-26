@@ -43,16 +43,27 @@ public class DataController : ControllerBase
                 return Unauthorized("Wrong password");
             }
 
+            foreach (var tag in reqUser.Tags)
+            {
+                var oldid = tag.Id;
+                var newId = Random.Shared.NextInt64();
+                tag.Id = newId;
+                db.Tags.Add(tag);
+                foreach (var reqAccount in reqUser.Accounts)
+                {
+                    reqAccount.Tags = reqAccount.Tags.Select(t =>
+                    {
+                        if (t == oldid)
+                            return newId;
+                        return t;
+                    }
+                    ).ToList();
+                }
+            }
+
 
             foreach (var reqAccount in reqUser.Accounts)
             {
-                reqAccount.Tags = reqAccount.Tags.Select(id =>
-                {
-                    var newId = Random.Shared.NextInt64();
-                    reqUser.Tags.First(t => t.Id == id).Id = newId;
-                    return newId;
-                }).ToList();
-
                 reqAccount.Fields = reqAccount.Fields.Select(id =>
                 {
                     var newId = Random.Shared.NextInt64();
@@ -64,7 +75,6 @@ public class DataController : ControllerBase
 
             foreach (var reqAccount in reqUser.Accounts)
             {
-                reqUser.Tags.ForEach(e => db.Tags.Add(e));
                 reqUser.Fields.ForEach(e => db.Fields.Add(e));
                 db.Accounts.Add(reqAccount);
             }

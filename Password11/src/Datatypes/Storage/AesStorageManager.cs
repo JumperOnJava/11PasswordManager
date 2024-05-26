@@ -39,7 +39,6 @@ public class AesStorageManager : StorageManager
             decryptedData.Tags = decryptedData.Tags.Select(tag =>
             {
                 tag.DisplayName = tag.DisplayName.DecodeBase64().DecryptAes(key).DecodeUtf8();
-                ;
                 tag.TagColorsString = tag.TagColorsString.DecodeBase64().DecryptAes(key).DecodeUtf8();
                 return tag;
             }).ToList();
@@ -102,26 +101,24 @@ public class AesStorageManager : StorageManager
         }
 
         key = r.Item2;
-        var src = new TaskCompletionSource<bool>();
-        ExceptionDialog.ShowExceptionOnFail(parent, async () =>
+        bool result;        
+        try
         {
-            try
-            {
-                (await GetData()).CloneRef();
-            }
-            catch (Exception)
-            {
-                src.SetResult(false);
-                throw;
-            }
-            src.SetResult(true);
-        });
-        return await src.Task;
+            (await GetData()).CloneRef();
+            result = true;
+        }
+        catch (Exception e)
+        {
+            await ExceptionDialog.ShowExceptionOnFail(parent, () => throw e);
+            result = false;
+        }
+        return result;
     }
 
-    public void Fail()
+    public void ResetOnFail()
     {
         this.key = null;
+        target.ResetOnFail();
     }
 }
 

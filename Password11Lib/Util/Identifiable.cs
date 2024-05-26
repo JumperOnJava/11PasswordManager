@@ -25,6 +25,15 @@ namespace Password11Lib.Util
         {
             return id.ToString();
         }
+
+        public override bool Equals(object? other)
+        {
+            return id == (other as UniqueId<T>)?.id;
+        }
+        public override int GetHashCode()
+        {
+            return id.GetHashCode();
+        }
     }
 
 }
