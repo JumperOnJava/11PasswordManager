@@ -18,7 +18,7 @@ namespace Password11.src.Util
             var dialog = new DialogBuilder(page)
                 .Content(dialogPage)
                 .SecondaryButtonText("Cancel")
-                .AddSecondaryClickAction(dialogPage.Cancel)
+                .AddSecondaryClickAction(_=>dialogPage.Cancel())
                 .Build();
             dialogPage.Dialog = dialog;
             dialogPage.onClose += dialog.Hide;

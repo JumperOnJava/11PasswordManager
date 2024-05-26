@@ -80,8 +80,7 @@ public class AesStorageManager : StorageManager
             }).ToDictionary(k => k.Name, k => k);
             return Account;
         }).ToList();
-        target.SetData(encryptedData);
-        return Task.CompletedTask;
+        return target.SetData(encryptedData);
     }
 
     public bool IsValid()
@@ -93,7 +92,7 @@ public class AesStorageManager : StorageManager
     public async Task<bool> SetupManagerInGui(Page parent)
     {
         if (!await target.SetupManagerInGui(parent)) return false;
-        if (key != null) return true;
+        key = null;
         var r = await PasswordDialog.AskPassword(parent, false,title:"Enter encryption key").GetResult();
         if (!r.Item1)
         {
@@ -109,7 +108,7 @@ public class AesStorageManager : StorageManager
         }
         catch (Exception e)
         {
-            await ExceptionDialog.ShowExceptionOnFail(parent, () => throw e);
+            await ExceptionDialog.ShowException(parent,e);
             result = false;
         }
         return result;

@@ -12,6 +12,7 @@ using Password11.Datatypes;
 using Password11.Datatypes.Serializing;
 using Password11.Dialogs;
 using Password11.src.Util;
+using Password11.Util;
 using Password11Lib.JsonModel;
 using Password11Lib.Util;
 
@@ -43,64 +44,7 @@ namespace Password11.src.Datatypes.Storage
             this.login = login;
         }
 
-        public async static Task<DatabaseStorageManager> OpenWithConnectionCheck(string host, string login, string password)
-        {
-            var manager = new DatabaseStorageManager(host,login);
-            manager.password = password;
-
-            var requestTask =  client.GetAsync(manager.api.Endpoint($"api/checklogin?login={login}&password={password}"));
-            requestTask.Wait();
-            if (requestTask.IsFaulted)
-            {
-                throw requestTask.Exception;
-            }
-            var result = requestTask.Result;
-            if (result.StatusCode == HttpStatusCode.NotFound)
-            {
-                throw new ExceptionDialog.DialogException("Wrong server link","");
-            }
-            if (result.StatusCode == HttpStatusCode.OK)
-            {
-                manager.LastAccessTime = DateTime.Now;
-                return manager;
-            }
-            else
-            {
-                throw new ExceptionDialog.DialogException("Wrong login or password","");
-            }
-        }
-        public async static Task<DatabaseStorageManager> RegisterWithConnectionCheck(string host, string login, string password)
-        {
-            var manager = new DatabaseStorageManager(host,login);
-            manager.password = password;
-
-            var requestTask = client.PutAsync(manager.api.Endpoint($"api/register"),new StringContent(JsonTools.Serialize(new
-            {
-                login,
-                password
-            }),Encoding.UTF8,"application/json"));
-            requestTask.Wait();
-            if (requestTask.IsFaulted)
-            {
-                throw requestTask.Exception;
-            }
-            var result = requestTask.Result;
-            if (result.StatusCode == HttpStatusCode.NotFound)
-            {
-                throw new ExceptionDialog.DialogException("Wrong server link","");
-            }
-            if (result.StatusCode == HttpStatusCode.Conflict)
-            {
-                throw new ExceptionDialog.DialogException("Account already exists","");
-            }
-            if (result.StatusCode != HttpStatusCode.OK)
-            {
-                throw new ExceptionDialog.DialogException($"Error {result.StatusCode}", result.ReasonPhrase);
-            }
-            return manager;
-            
-        }
-
+      
         public async Task<StorageData> GetData()
         {
             var okCheck = await client.GetAsync(api.Endpoint($"api/ok"));
@@ -207,7 +151,11 @@ namespace Password11.src.Datatypes.Storage
             var json = JsonConvert.SerializeObject(jsonUser);
             var endpoint = api.Endpoint("api/setdata");
             var req = await client.PutAsync(endpoint,new StringContent(json,Encoding.UTF8,"application/json"));
-            Console.WriteLine($"Status code: {req.StatusCode}");
+
+            if (req.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception(req.ReasonPhrase);
+            }
         }
 
         [JsonIgnore] public LocationDisplayModel DisplayInfo => this;
@@ -225,25 +173,89 @@ namespace Password11.src.Datatypes.Storage
                 this.password = r.Item2;
             }
             
-            var requestTask =  client.GetAsync(api.Endpoint($"api/checklogin?login={login}&password={password}"));
-            requestTask.Wait();
-            var result = requestTask.Result;
-            if (requestTask.IsFaulted)
+            Task<HttpResponseMessage> requestTask;
+            HttpResponseMessage result;
+            var dialog = new DialogBuilder(parent).Title($"Loading...").Content("Connecting to "+DisplayPath).SecondaryButtonText("Cancel").Build();
+            try
             {
-                await ExceptionDialog.ShowExceptionOnFail(parent, () => { throw requestTask.Exception; });
-                this.password = null;
+                dialog.ShowAsync();
+                requestTask = client.GetAsync(api.Endpoint($"api/checklogin?login={login}&password={password}"));
+                await requestTask;
+                result = requestTask.Result;
+                dialog.Hide();
+            }
+            catch (Exception e)
+            {
+                dialog.Hide();
+                await ExceptionDialog.ShowException(parent, e);
                 return false;
             }
 
             if (result.StatusCode == HttpStatusCode.Unauthorized)
             {
-                await ExceptionDialog.ShowExceptionOnFail(parent, () => { throw new ExceptionDialog.DialogException("Error","Wrong login or password"); });
-                this.password = null;
+                await ExceptionDialog.ShowException(parent, new ExceptionDialog.DialogException("Error","Wrong login or password"));
                 return false;
             }
             
             LastAccessTime = DateTime.Now;
             return true;
+        }
+        public async static Task<DatabaseStorageManager> OpenWithConnectionCheck(string host, string login, string password)
+        {
+            var manager = new DatabaseStorageManager(host,login);
+            manager.password = password;
+
+            var requestTask =  client.GetAsync(manager.api.Endpoint($"api/checklogin?login={login}&password={password}"));
+            requestTask.Wait();
+            if (requestTask.IsFaulted)
+            {
+                throw requestTask.Exception;
+            }
+            var result = requestTask.Result;
+            if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new ExceptionDialog.DialogException("Wrong server link","");
+            }
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                manager.LastAccessTime = DateTime.Now;
+                return manager;
+            }
+            else
+            {
+                throw new ExceptionDialog.DialogException("Wrong login or password","");
+            }
+        }
+        public async static Task<DatabaseStorageManager> RegisterWithConnectionCheck(string host, string login, string password)
+        {
+            var manager = new DatabaseStorageManager(host,login);
+            manager.password = password;
+
+            var requestTask = client.PutAsync(manager.api.Endpoint($"api/register"),new StringContent(JsonTools.Serialize(new
+            {
+                login,
+                password
+            }),Encoding.UTF8,"application/json"));
+            requestTask.Wait();
+            if (requestTask.IsFaulted)
+            {
+                throw requestTask.Exception;
+            }
+            var result = requestTask.Result;
+            if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new ExceptionDialog.DialogException("Wrong server link","");
+            }
+            if (result.StatusCode == HttpStatusCode.Conflict)
+            {
+                throw new ExceptionDialog.DialogException("Account already exists","");
+            }
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                throw new ExceptionDialog.DialogException($"Error {result.StatusCode}", result.ReasonPhrase);
+            }
+            return manager;
+            
         }
 
         public void ResetOnFail()

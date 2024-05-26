@@ -42,6 +42,7 @@ namespace Password11
         }
         public AccountEdit()
         {
+            
             model = new PasswordEditModel();
             InitializeComponent();
         }

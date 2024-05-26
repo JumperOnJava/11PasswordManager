@@ -51,6 +51,27 @@ namespace Password11.StorageDialogs.GlobalCreate
         {
             operation.FinishSuccess(new FileOpenDialogManager(managerOperation));
         }
+
+        public static void CreateManager(Page page,Action<StorageManager> receiveMethod)
+        {
+            var dialogCreator = new EmptyOperation<DialogManager>();
+            var managerCreator = new EmptyOperation<StorageManager>();
+            dialogCreator.OnResult += (success, result) =>
+            {
+                if (success)
+                {
+                    result.Start(page);
+                }
+            };
+            managerCreator.OnResult += (success, result) =>
+            {
+                if (success)
+                {
+                    receiveMethod(result);
+                }
+            };
+            new CreateStorageDialog(dialogCreator, managerCreator).StartDialog(page);
+        }
     }
 
     public interface DialogManager

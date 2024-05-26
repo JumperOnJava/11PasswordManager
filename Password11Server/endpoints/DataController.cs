@@ -13,7 +13,7 @@ public class DataController : ControllerBase
 {
     [Route("/api/setdata")]
     [HttpPut]
-    public IActionResult SetData([FromBody] JsonUser? reqUser)
+    public async Task<IActionResult> SetData([FromBody] JsonUser? reqUser)
     {
         var id = Random.Shared.NextInt64();
         Console.WriteLine($"Started handling {id}");
@@ -22,7 +22,6 @@ public class DataController : ControllerBase
             Console.WriteLine($"Failed logindata {id}");
             return BadRequest("Login and password is required");
         }
-
         using (var db = new PasswordContext())
         {
             var accountQuery = db.Users.Where(user => user.Login == reqUser.Login)
@@ -43,70 +42,15 @@ public class DataController : ControllerBase
                 return Unauthorized("Wrong password");
             }
 
-            foreach (var tag in reqUser.Tags)
+            var result = await Uploader.instance.Enqueue(reqUser).GetResult();
+            if (result.Item1)
             {
-                var oldid = tag.Id;
-                var newId = Random.Shared.NextInt64();
-                tag.Id = newId;
-                db.Tags.Add(tag);
-                foreach (var reqAccount in reqUser.Accounts)
-                {
-                    reqAccount.Tags = reqAccount.Tags.Select(t =>
-                    {
-                        if (t == oldid)
-                            return newId;
-                        return t;
-                    }
-                    ).ToList();
-                }
+                return result.Item2;
             }
-
-
-            foreach (var reqAccount in reqUser.Accounts)
+            else
             {
-                reqAccount.Fields = reqAccount.Fields.Select(id =>
-                {
-                    var newId = Random.Shared.NextInt64();
-                    reqUser.Fields.First(f => f.Id == id).Id = newId;
-                    return newId;
-                }).ToList();
-                reqAccount.Id = Random.Shared.NextInt64();
+                return BadRequest("Failed to update data on server");
             }
-
-            foreach (var reqAccount in reqUser.Accounts)
-            {
-                reqUser.Fields.ForEach(e => db.Fields.Add(e));
-                db.Accounts.Add(reqAccount);
-            }
-
-            while (true)
-            {
-                try
-                {
-                    accountQuery = db.Users.Where(user => user.Login == reqUser.Login)
-                        .Include(u => u.Tags)
-                        .Include(u => u.Fields)
-                        .Include(u => u.Accounts);
-                    dbUser = accountQuery.First();
-                    db.Fields.RemoveRange(dbUser.Fields.ToList());
-                    db.Accounts.RemoveRange(dbUser.Accounts.ToList());
-                    db.Tags.RemoveRange(dbUser.Tags.ToList());
-                    dbUser.Tags.AddRange(reqUser.Tags);
-                    dbUser.Fields.AddRange(reqUser.Fields);
-                    dbUser.Accounts.AddRange(reqUser.Accounts);
-
-                    db.Update(dbUser);
-                    db.SaveChanges();
-                    Console.WriteLine($"Finished ok {id}");
-                    return Ok(dbUser);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    Console.WriteLine($"Failed - too fast {id}");
-                    return new StatusCodeResult(429);
-                }
-            }
-
         }
     }
 

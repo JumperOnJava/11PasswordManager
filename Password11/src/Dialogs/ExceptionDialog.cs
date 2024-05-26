@@ -10,7 +10,6 @@ namespace Password11.Dialogs;
 
 public static class ExceptionDialog
 {
-
     public static async Task ShowExceptionOnFail(Page page,Action action)
     {
         try
@@ -19,45 +18,50 @@ public static class ExceptionDialog
         }
         catch (Exception e)
         {
-            AddExceptions(e);
-            if(alreadyhandled)
-                return;
-            alreadyhandled = true;
-            while (Exceptions.Any())
-            {
-                var exception = Exceptions.Dequeue();
-                if (exception is AggregateException)
-                {
-                    AddExceptions(exception);
-                }
-                else
-                if (exception is DialogException dialogException)
-                {
-                    var dialog = new ContentDialog
-                    {
-                        PrimaryButtonText = "Ok",
-                        Title = dialogException.Title,
-                        Content = dialogException.Content,
-                        XamlRoot = page.XamlRoot
-                    };
-                    await dialog.ShowAsync();
-                }
-                else
-                if (exception is Exception)
-                {
-                    var dialog = new ContentDialog
-                    {
-                        PrimaryButtonText = "Ok",
-                        Title = "Error while executing operation",
-                        Content = exception.Message,
-                        XamlRoot = page.XamlRoot
-                    };
-                    await dialog.ShowAsync();
-                }
-            }
-            alreadyhandled = false;
+            await ShowException(page, e);
         }
         
+    }
+
+    public static async Task ShowException(Page page, Exception e)
+    {
+        AddExceptions(e);
+        if(alreadyhandled)
+            return;
+        alreadyhandled = true;
+        while (Exceptions.Any())
+        {
+            var exception = Exceptions.Dequeue();
+            if (exception is AggregateException)
+            {
+                AddExceptions(exception);
+            }
+            else
+            if (exception is DialogException dialogException)
+            {
+                var dialog = new ContentDialog
+                {
+                    PrimaryButtonText = "Ok",
+                    Title = dialogException.Title,
+                    Content = dialogException.Content,
+                    XamlRoot = page.XamlRoot
+                };
+                await dialog.ShowAsync();
+            }
+            else
+            if (exception is Exception)
+            {
+                var dialog = new ContentDialog
+                {
+                    PrimaryButtonText = "Ok",
+                    Title = "Error while executing operation",
+                    Content = exception.Message,
+                    XamlRoot = page.XamlRoot
+                };
+                await dialog.ShowAsync();
+            }
+        }
+        alreadyhandled = false;
     }
 
     private static Queue<Exception> Exceptions = new();

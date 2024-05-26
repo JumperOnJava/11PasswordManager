@@ -55,19 +55,15 @@ internal class DatabaseDialogManager : DialogManager
                    == Variant.Open 
                     ? DatabaseStorageManager.OpenWithConnectionCheck(host, login, password) 
                     : DatabaseStorageManager.RegisterWithConnectionCheck(host, login, password);
-        await ExceptionDialog.ShowExceptionOnFail(parent, () =>
+        try
         {
-            try
-            {
-                task.Wait();
-            }
-            catch (Exception e)
-            {
-                operation.FinishFail();
-                throw;
-            }
+            task.Wait();
             operation.FinishSuccess(task.Result.AesEncryptedManager(key));
-        });
-        operation.FinishFail();
+        }
+        catch (Exception e)
+        {
+            operation.FinishFail();
+            await ExceptionDialog.ShowException(parent, e);
+        }
     }
 }

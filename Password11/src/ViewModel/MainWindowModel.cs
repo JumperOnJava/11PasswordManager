@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
+using Windows.UI;
+using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Password11.Datatypes;
+using Password11.src.Ui;
 using Password11.src.Util;
 
 namespace Password11.ViewModel;
 
 public class MainWindowModel : PropertyChangable
 {
+
     public readonly Frame Navigator;
     private readonly ObservableCollection<UiTag> tags = new();
 
@@ -25,7 +31,24 @@ public class MainWindowModel : PropertyChangable
 
     private ObservableCollection<UiAccount> filteredAccounts = new();
     private ObservableCollection<UiAccount> FilteredAccounts => filteredAccounts;
-    public ObservableCollection<UiAccount> DisplayAccounts => NoTagsSelected ? Accounts : FilteredAccounts; 
+    public ObservableCollection<UiAccount> DisplayAccounts => NoTagsSelected ? Accounts : FilteredAccounts;
+
+    public SaveState saveState = SaveState.STATE_OK;
+
+    public SaveState SaveState
+    {
+        get => saveState;
+        set
+        {
+            saveState = value;
+            if(saveState!= SaveState.STATE_FAIL)
+            {
+                LatestException = null;
+            }
+            onPropertyChanged();
+            onPropertyChanged(nameof(LatestException));
+        }
+    }
 
     public bool isPaneOpen = true;
 
@@ -41,12 +64,21 @@ public class MainWindowModel : PropertyChangable
 
     public bool NoTagsSelected => !Tags.Any(t => t.Selected);
     
-    private readonly StorageManager manager;
+    private StorageManager manager ;
+    public void SetNewManager(StorageManager manager)
+    {
+        this.manager = manager;
+        tasks.Clear();
+        AppSettings.GLOBAL.storageHistory.Add(this.manager);
+        AppSettings.GLOBAL.Save();
+        Save();
+    }
     public readonly Action onClose;
     private readonly bool initialized;
 
     public MainWindowModel(StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
     {
+        
         onClose = closeCallback;
         manager = storageManager;
         Navigator = navigator;
@@ -54,8 +86,14 @@ public class MainWindowModel : PropertyChangable
         data.Tags.Select(tag => new UiTag(tag)).ToList().ForEach(Tags.Add);
         data.Accounts.Select(account => new UiAccount(account)).ToList().ForEach(Accounts.Add);
 
-        Tags.CollectionChanged += (_, _) => UpdateVisualTags();
-        Accounts.CollectionChanged += (_, _) => UpdateVisualAccounts();
+        Tags.CollectionChanged += (a1, a2) =>
+        {
+            UpdateVisualTags();
+        };
+        Accounts.CollectionChanged += (a1, a2) =>
+        {
+            UpdateVisualAccounts();
+        };
         UpdateVisualTags();
         UpdateVisualAccounts();
         initialized = true;
@@ -69,6 +107,7 @@ public class MainWindowModel : PropertyChangable
 
     private void UpdateVisualTags()
     {
+        Save();
         RawTags.Clear();
         foreach (var uiTag in Tags)
         {
@@ -85,7 +124,7 @@ public class MainWindowModel : PropertyChangable
         onPropertyChanged(nameof(FilteredAccounts));
         onPropertyChanged(nameof(DisplayAccounts));
         onPropertyChanged(nameof(Tags));
-        Save();
+
     }
 
     public List<Tag> RawTags { get; } = new();
@@ -97,8 +136,43 @@ public class MainWindowModel : PropertyChangable
         var newStorage = new StorageData();
         newStorage.Accounts = Accounts.Select(a => a.Target.CloneRef()).ToList();
         newStorage.Tags = Tags.Select(a => a.Target.CloneRef()).ToList();
-        manager.SetData(newStorage);
+        EnqueueSave(manager.SetData(newStorage));
+        
     }
+
+    private Queue<Task> tasks= new();
+    public Exception LatestException { get; set; }
+
+    private async void EnqueueSave(Task func)
+    {
+        if (tasks.Any())
+        {
+            tasks.Enqueue(func);
+            return;
+        }
+        tasks.Enqueue(func);
+        while (tasks.Any())
+        {
+            SaveState = SaveState.STATE_UPLOAD;
+            var task = tasks.Dequeue();
+            try
+            {
+                await task;
+                if (task.IsFaulted)
+                {
+                    throw task.Exception;
+                }
+            }
+            catch (Exception e)
+            {
+                LatestException = e;
+                this.SaveState = SaveState.STATE_FAIL;
+                continue;
+            }
+            this.SaveState = SaveState.STATE_OK;
+        }
+    }
+
 
     internal void FilterAccounts()
     {
@@ -134,5 +208,21 @@ public class MainWindowModel : PropertyChangable
     internal void Exit()
     {
         Navigator.GoBack();
+    }
+    
+}
+
+public class SaveState
+{
+    public static readonly SaveState STATE_OK = new (new SymbolIcon(Symbol.Accept),new SolidColorBrush(Colors.Transparent));
+    public static readonly SaveState STATE_FAIL = new (new SymbolIcon(Symbol.Cancel),new SolidColorBrush(Colors.OrangeRed));
+    public static readonly SaveState STATE_UPLOAD = new (new SymbolIcon(Symbol.Upload),new SolidColorBrush(Colors.Gray));
+
+    public IconElement Icon { get; }
+    public Brush Brush { get; }
+    private SaveState(IconElement icon, Brush brush)
+    {
+        Icon = icon;
+        Brush = brush;
     }
 }

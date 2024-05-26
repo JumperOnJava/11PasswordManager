@@ -49,15 +49,15 @@ public class DialogBuilder
         return this;
     }
 
-    public DialogBuilder AddPrimaryClickAction(Action handler)
+    public DialogBuilder AddPrimaryClickAction(Action<ContentDialog> handler)
     {
-        dialog.PrimaryButtonClick += (_,_) => handler();
+        dialog.PrimaryButtonClick += (dialog,_) => handler(dialog);
         return this;
     }
 
-    public DialogBuilder AddSecondaryClickAction(Action handler)
+    public DialogBuilder AddSecondaryClickAction(Action<ContentDialog> handler)
     {
-        dialog.SecondaryButtonClick += (_,_) => handler();
+        dialog.SecondaryButtonClick += (dialog,_) => handler(dialog);
         return this;
     }
 

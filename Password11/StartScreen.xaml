@@ -27,7 +27,7 @@
                                 <TextBlock Text="{Binding Path}"/>
                             </StackPanel>
                             <TextBlock HorizontalAlignment="Right" HorizontalTextAlignment="Right" Margin="0,5,15,0" Text="{Binding DisplayTime}"/>
-                            <Button Margin="0,0,5,0" Click="OpenRecentStorage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CommandParameter="{Binding Manager}">
+                            <Button Margin="0,0,5,0" Click="OpenStorageWithSetup" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CommandParameter="{Binding Manager}">
                             </Button>
 
                         </Grid>

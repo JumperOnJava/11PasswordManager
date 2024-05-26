@@ -57,6 +57,7 @@
                                     BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}" 
                                     Visibility="Collapsed" 
                                     Icon="Delete" />
+                                
                             </CommandBar>
                             <ListView Width="300"
                                   CanDragItems="True" 
@@ -103,6 +104,15 @@
                     </Grid>
                 </SplitView.Pane>
                 <Grid Background="Transparent">
+                    <AppBarButton 
+                        DataContext="{Binding SaveState, UpdateSourceTrigger=PropertyChanged}"
+                        Background="{Binding Brush}" 
+                        Width="60" 
+                        HorizontalAlignment="Right"
+                        x:Name="StatusButton"
+                        BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}" 
+                        Click="OnErrorButtonClick"
+                        Icon="{Binding Icon}"  Height="48"/>
                     <CommandBar HorizontalAlignment="Left" DefaultLabelPosition="Collapsed">
                         <AppBarButton x:Name="ShowPane" Icon="OpenPane" Label="Add" Visibility="Visible" Click="ShowPane_Click"/>
                         <AppBarButton Icon="Add" Label="Add" Click="CreateAccount"/>
@@ -116,7 +126,7 @@
                             BorderBrush="{StaticResource AcrylicBackgroundFillColorBaseBrush}" 
                             Visibility="Collapsed" 
                             Icon="Delete" />
-
+                        
                     </CommandBar>
 
                     <Grid x:Name="AccountsList" Margin="0,48,0,0" Padding="8,8,8,8" CornerRadius="16">

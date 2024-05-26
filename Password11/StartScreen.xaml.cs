@@ -43,17 +43,10 @@ namespace Password11
 
         private async void OpenStorage(StorageManager storageManager)
         {
-            if (!await storageManager.SetupManagerInGui(this))
-            {
-                return;
-            }
-
-
             var tcs = new TaskCompletionSource<StorageData>();
 
-            ContentDialog dialog=null;
-            dialog = new DialogBuilder(this).Title($"Loading data from {storageManager.DisplayInfo.DisplayPath}").SecondaryButtonText("Cancel").AddSecondaryClickAction(
-                () =>
+            var dialog = new DialogBuilder(this).Title($"Loading data from {storageManager.DisplayInfo.DisplayPath}").SecondaryButtonText("Cancel").AddSecondaryClickAction(
+                dialog =>
                 {
                     tcs.SetCanceled();
                     dialog.Hide();
@@ -99,23 +92,28 @@ namespace Password11
                 new DrillInNavigationTransitionInfo());
         }
 
-        private void OpenRecentStorage(object sender, RoutedEventArgs e)
+        private async void OpenStorageWithSetup(object sender, RoutedEventArgs e)
         {
-            //throw new NotImplementedException();
-            OpenStorage(((ButtonBase)sender).CommandParameter as StorageManager);
+            var storageManager = ((ButtonBase)sender).CommandParameter as StorageManager;
+            if (!await storageManager.SetupManagerInGui(this))
+            {
+                storageManager.ResetOnFail();
+                return;
+            }
+            OpenStorage(storageManager);
         }
 
 
 
         public class StartScreenModel
         {
-            public static AppSettings AppSettings => AppSettings.settings;
+            public static AppSettings AppSettings => AppSettings.GLOBAL;
             public Visibility HistoryVisibility => History.Any() ? Visibility.Visible : Visibility.Collapsed; 
             public Visibility CreateVisibility => History.Any() ? Visibility.Collapsed : Visibility.Visible; 
             public ObservableCollection<StartScreenModelStoragePath> History { get; set; }
             public StartScreenModel()
             {
-                AppSettings.Load();
+                AppSettings.GLOBAL.Load();
                 History = new ObservableCollection<StartScreenModelStoragePath>();
                 foreach (var item in AppSettings.storageHistory)
                 {
@@ -134,7 +132,7 @@ namespace Password11
                     {
                         AppSettings.storageHistory.Add(element.Manager);
                     }
-                    AppSettings.Save();
+                    AppSettings.GLOBAL.Save();
                 };
                 History.CollectionChanged += action;
                 action.Invoke(null, null);
@@ -143,25 +141,7 @@ namespace Password11
         
         private void CreateDialog(object sender, RoutedEventArgs e)
         {
-            var dialogCreator = new EmptyOperation<DialogManager>();
-            var managerCreator = new EmptyOperation<StorageManager>();
-            dialogCreator.OnResult += (success, result) =>
-            {
-                if (success)
-                {
-                    result.Start(this);
-                }
-            };
-            managerCreator.OnResult += (success, result) =>
-            {
-                if (success)
-                {
-                    OpenStorage(result);
-                }
-            };
-            
-            var dialog = new CreateStorageDialog(dialogCreator, managerCreator);
-            dialog.StartDialog(this);
+            CreateStorageDialog.CreateManager(this, OpenStorage);
         }
     }
     public class StartScreenModelStoragePath

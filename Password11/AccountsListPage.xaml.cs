@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Password11.Datatypes;
 using Password11.src.Util;
 using Password11.src.ViewModel;
+using Password11.StorageDialogs.GlobalCreate;
 using Password11.Util;
 using Password11.ViewModel;
 using Password11Lib.Util;
@@ -174,7 +175,6 @@ namespace Password11
                         break;
                     }
                 }
-                model.Save();
             }
         }
 
@@ -218,6 +218,25 @@ namespace Password11
         {
             var uiAccount = (UiAccount)((ButtonBase)sender).CommandParameter;
             uiAccount.CopyMenuVisible = !uiAccount.CopyMenuVisible;
+        }
+
+        private void OnErrorButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (Model.LatestException == null)
+            {
+                return;
+            }
+            new DialogBuilder(this).Title("Error happened while saving").Content(Model.LatestException.Message)
+                .PrimaryButtonText("Save in new storage")
+                .AddPrimaryClickAction(dialog =>
+                {
+                    dialog.Hide();
+                    CreateStorageDialog.CreateManager(this,Model.SetNewManager);
+                })
+                .SecondaryButtonText("Ignore").AddPrimaryClickAction((dialog) =>
+                {
+                    dialog.Hide();
+                }).Build().ShowAsync();
         }
     }
 }
