@@ -2,7 +2,7 @@
 using System.Linq;
 using Windows.UI;
 using Newtonsoft.Json;
-using Password11.src.Ui;
+using Password11.ColorLib;
 using Password11Lib.Util;
 
 namespace Password11.Datatypes;
@@ -70,7 +70,7 @@ public class AccountImpl : Account
     [JsonIgnore]
     public Color BaseColorBindable
     {
-        get => Colors.BaseColor.asWinColor;
+        get => Colors.BaseColor.AsWinColor;
         set => Colors = new ColorsScheme(new AdvColor(value));
     }
 

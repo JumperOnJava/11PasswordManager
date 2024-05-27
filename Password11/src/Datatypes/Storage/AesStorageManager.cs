@@ -115,7 +115,6 @@ public class AesStorageManager : StorageManager
     }
 }
 
-
 public static class AesStorageExtension
 {
     public static StorageManager AesEncryptedManager(this StorageManager manager, string key)

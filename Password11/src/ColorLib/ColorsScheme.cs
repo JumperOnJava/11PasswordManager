@@ -1,14 +1,12 @@
-﻿using System;
-using Windows.UI;
+﻿using Windows.UI;
 using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 
-namespace Password11.src.Ui;
+namespace Password11.ColorLib;
 
 public struct ColorsScheme
 {
     public AdvColor BaseColor { get; set; }
-
 
     public AdvColor HoverColor { get; set; }
 
@@ -16,16 +14,16 @@ public struct ColorsScheme
 
     public ColorsScheme(AdvColor baseColor, AdvColor hoverColor, AdvColor symbolColor)
     {
-        this.BaseColor = baseColor;
-        this.HoverColor = hoverColor;
-        this.SymbolColor = symbolColor;
+        BaseColor = baseColor;
+        HoverColor = hoverColor;
+        SymbolColor = symbolColor;
     }
 
     public ColorsScheme(AdvColor baseColor)
     {
-        this.BaseColor = baseColor;
+        BaseColor = baseColor;
         var hoverColor = baseColor;
-        
+
         hoverColor.S = hoverColor.S;
         hoverColor.S *= 0.66f;
         hoverColor.V *= 1.07f;

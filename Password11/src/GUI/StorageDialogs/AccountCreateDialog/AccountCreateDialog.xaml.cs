@@ -6,14 +6,13 @@ using System.Text.RegularExpressions;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Password11.Datatypes;
-using Password11.src.Ui;
+using Password11.ColorLib;
 using Password11.src.Util;
 using Password11.ViewModel;
 
-namespace Password11;
+namespace Password11.GUI.StorageDialogs.AccountCreateDialog;
 
-public sealed partial class AccountCreateDialog : Page
+public sealed partial class AccountCreateDialog
 {
     public const string EmailPattern =
         @"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
@@ -21,7 +20,7 @@ public sealed partial class AccountCreateDialog : Page
     private readonly ContentDialog dialog;
     private readonly AccountCreateDialogModel model;
 
-    public AccountCreateDialog(ContentDialog dialog, AccountEditor account, IList<Tag> tags)
+    public AccountCreateDialog(ContentDialog dialog, AccountEditor account, IList<Datatypes.Tag> tags)
     {
         dialog.Content = this;
         dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -33,13 +32,13 @@ public sealed partial class AccountCreateDialog : Page
         InitializeComponent();
         dialog.ShowAsync().GetResults();
         dialog.IsPrimaryButtonEnabled = false;
-        dialog.PrimaryButtonClick += (a, b) =>
+        dialog.PrimaryButtonClick += (a, _) =>
         {
-            account.Tags = new List<Tag>(model.SelectedTags).Select(e => e.Identifier).ToList();
+            account.Tags = new List<Datatypes.Tag>(model.SelectedTags).Select(e => e.Identifier).ToList();
             account.Finish(true);
             a.Hide();
         };
-        dialog.CloseButtonClick += (a, b) =>
+        dialog.CloseButtonClick += (a, _) =>
         {
             a.Hide();
             account.Finish(false);
@@ -47,8 +46,8 @@ public sealed partial class AccountCreateDialog : Page
         model = new AccountCreateDialogModel(account);
         model.Target.PropertyChanged += (_, _) => UpdateSaveButton();
         model.PropertyChanged += (_, _) => UpdateSaveButton();
-        model.UnselectedTags = new ObservableCollection<Tag>(tags);
-        model.SelectedTags = new ObservableCollection<Tag>();
+        model.UnselectedTags = new ObservableCollection<Datatypes.Tag>(tags);
+        model.SelectedTags = new ObservableCollection<Datatypes.Tag>();
         ColorPickerRing.Color = model.Target.BaseColorBindable;
     }
 
@@ -74,16 +73,16 @@ public sealed partial class AccountCreateDialog : Page
         model.Target.Colors = new ColorsScheme(new AdvColor(args.NewColor));
     }
 
-    private void Button_Click(object sender, RoutedEventArgs e)
+    private void Button_Click(object sender, RoutedEventArgs args)
     {
-        var r = (Tag)((ButtonBase)sender).CommandParameter;
+        var r = (Datatypes.Tag)((ButtonBase)sender).CommandParameter;
         try
         {
             var tag = model.SelectedTags.First(e => e == r);
             model.SelectedTags.Remove(tag);
             model.UnselectedTags.Add(tag);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             var tag = model.UnselectedTags.First(e => e == r);
             model.UnselectedTags.Remove(tag);
@@ -92,7 +91,7 @@ public sealed partial class AccountCreateDialog : Page
     }
 }
 
-class AccountCreateDialogModel : PropertyChangable
+internal class AccountCreateDialogModel : PropertyChangable
 {
     public AccountCreateDialogModel(AccountEditor account)
     {
@@ -105,8 +104,8 @@ class AccountCreateDialogModel : PropertyChangable
     }
 
     public AccountEditor Target { get; }
-    public ObservableCollection<Tag> SelectedTags { get; set; }
-    public ObservableCollection<Tag> UnselectedTags { get; set; }
+    public ObservableCollection<Datatypes.Tag> SelectedTags { get; set; }
+    public ObservableCollection<Datatypes.Tag> UnselectedTags { get; set; }
     public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(Target.Email);
     public Visibility EmailWarningVisibility => EmailCorrect ? Visibility.Collapsed : Visibility.Visible;
 }

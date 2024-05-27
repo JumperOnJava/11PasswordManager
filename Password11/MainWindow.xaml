@@ -11,7 +11,7 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
     <Grid x:Name="RootGrid">
-        <Grid x:Name="AppTitleBar" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Grid Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Margin="10,10,10,10">Password11 manager</TextBlock>
         </Grid>
         <Grid>

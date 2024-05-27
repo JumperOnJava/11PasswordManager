@@ -1,14 +1,14 @@
 using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Password11.ColorLib;
 using Password11.Datatypes;
-using Password11.src.Ui;
 using Password11.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Password11.src.ViewModel;
+namespace Password11.GUI.StorageDialogs.Tag;
 
 /// <summary>
 ///     An empty page that can be used on its own or navigated to within a Frame.
@@ -16,11 +16,12 @@ namespace Password11.src.ViewModel;
 public sealed partial class TagEditDialog : Page
 {
     private readonly UiTag target;
+
     public TagEditDialog(ContentDialog dialog, Operation<UiTag> tag)
     {
         InitializeComponent();
         target = tag.Target;
-        ColorPickerRing.Color = target.TagColors.BaseColor.asWinColor;
+        ColorPickerRing.Color = target.TagColors.BaseColor.AsWinColor;
         Action<string> buttonEnabled = s => { dialog.IsPrimaryButtonEnabled = s != string.Empty; };
         target.TextChanged += buttonEnabled;
         buttonEnabled(tag.Target.DisplayName);

@@ -2,9 +2,9 @@
 using Windows.UI;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
+using Password11.ColorLib;
 using Password11.Datatypes;
 using Password11.Datatypes.Serializing;
-using Password11.src.Ui;
 using Password11.src.Util;
 using Password11Lib.Util;
 
@@ -57,13 +57,13 @@ public class UiTag : PropertyChangable, RefClonable<UiTag>, Identifiable<Tag>
         }
     }
 
-    [JsonIgnore] public Color baseColor => TagColors.BaseColor.asWinColor;
+    [JsonIgnore] public Color baseColor => TagColors.BaseColor.AsWinColor;
 
-    [JsonIgnore] public SolidColorBrush baseColorBrush => new(TagColors.BaseColor.asWinColor);
+    [JsonIgnore] public SolidColorBrush baseColorBrush => new(TagColors.BaseColor.AsWinColor);
 
-    [JsonIgnore] public Color hoverColor => TagColors.HoverColor.asWinColor;
+    [JsonIgnore] public Color hoverColor => TagColors.HoverColor.AsWinColor;
 
-    [JsonIgnore] public Color symbolColor => TagColors.SymbolColor.asWinColor;
+    [JsonIgnore] public Color symbolColor => TagColors.SymbolColor.AsWinColor;
 
     [JsonIgnore] public Brush BaseColorBrush => Target.BaseColorBrush;
 

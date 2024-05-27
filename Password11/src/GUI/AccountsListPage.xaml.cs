@@ -8,16 +8,17 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Password11.Datatypes;
-using Password11.src.ViewModel;
-using Password11.StorageDialogs.GlobalCreate;
+using Password11.GUI.StorageDialogs.AccountCreateDialog;
 using Password11.Util;
 using Password11.ViewModel;
 using Password11Lib.Util;
+using CreateStorageDialog = Password11.GUI.StorageDialogs.GlobalCreate.CreateStorageDialog;
+using TagEditDialog = Password11.GUI.StorageDialogs.Tag.TagEditDialog;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Password11;
+namespace Password11.GUI;
 
 public sealed partial class AccountsListPage : Page
 {

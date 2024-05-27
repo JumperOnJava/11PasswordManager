@@ -59,6 +59,7 @@ public class Operation<T> : Operation
     {
         Target = Factory.Invoke();
     }
+
     public Operation() : this(() => default)
     {
     }

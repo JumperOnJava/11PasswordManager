@@ -5,10 +5,9 @@ using Password11.Datatypes.Serializing;
 
 namespace Password11;
 
-public partial class App : Application
+public partial class App
 {
     public static MainWindow MainWindow = new();
-    private Window m_window;
 
     public App()
     {
@@ -19,8 +18,7 @@ public partial class App : Application
     {
         Test.Start();
         MainWindow = new MainWindow();
-        m_window = MainWindow;
-        MainWindow.SizeChanged += (sender, e) =>
+        MainWindow.SizeChanged += (_, e) =>
         {
             e.Handled = true;
             MainWindow.AppWindow.Resize(new SizeInt32(

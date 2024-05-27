@@ -18,13 +18,13 @@ public class AppListPageModel : PropertyChangable
     public readonly Frame Navigator;
     public readonly Action onClose;
 
+    private readonly Queue<Task> tasks = new();
+
     public bool isPaneOpen = true;
 
     private StorageManager manager;
 
     public SaveState saveState = SaveState.STATE_OK;
-
-    private readonly Queue<Task> tasks = new();
 
     public AppListPageModel(StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
     {

@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
-using Microsoft.UI.Xaml;
 using Password11.Datatypes;
-using Password11.src.Util;
+using Password11.StorageDialogs.FileStorage;
 using WinRT.Interop;
 
-namespace Password11.StorageDialogs.FileStorage;
+namespace Password11.GUI.StorageDialogs.FileStorage;
 
 public sealed class FileCreateDialog : Operation<StorageManager>
 {

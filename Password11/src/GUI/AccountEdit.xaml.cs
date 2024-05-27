@@ -7,8 +7,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
+using Password11.ColorLib;
 using Password11.Datatypes;
-using Password11.src.Ui;
+using Password11.GUI;
+using Password11.GUI.StorageDialogs.AccountCreateDialog;
 using Password11.src.Util;
 using Password11.Util;
 using Password11.ViewModel;
@@ -36,7 +38,7 @@ public sealed partial class AccountEdit : Page
                 new ObservableCollection<Tag>(allTags.Where(tag => model.Target.Tags.Contains(tag.Identifier)));
             model.UnselectedTags =
                 new ObservableCollection<Tag>(allTags.Where(tag => !model.Target.Tags.Contains(tag.Identifier)));
-            ColorPickerRing.Color = model.Target.Colors.BaseColor.asWinColor;
+            ColorPickerRing.Color = model.Target.Colors.BaseColor.AsWinColor;
             model.SelectedTags.CollectionChanged += (_, _) =>
             {
                 model.Target.Tags = new List<Tag>(model.SelectedTags).Select(e => e.Identifier).ToList();

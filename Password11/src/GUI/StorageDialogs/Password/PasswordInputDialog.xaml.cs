@@ -1,17 +1,30 @@
+using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Password11.Datatypes;
 using Password11.src.Util;
-using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Password11;
+namespace Password11.GUI.StorageDialogs.Password;
 
 public sealed partial class PasswordInputDialog : Page
 {
     public PasswordInputDialogModel model = new();
+
+    public PasswordInputDialog(ContentDialog dialog, bool hasSecondField)
+    {
+        model.HasSecondField = hasSecondField;
+        model.PropertyChanged += (_, _) =>
+        {
+            dialog.IsPrimaryButtonEnabled = model.SamePasswordTextVisible == Visibility.Collapsed &&
+                                            !string.IsNullOrEmpty(model.Password);
+        };
+        model.onPropertyChanged();
+        InitializeComponent();
+    }
+
     public static Operation<string> AskPassword(Page parent, bool hasSecondField, string title = "Enter password")
     {
         var dialog = new ContentDialog();
@@ -29,17 +42,6 @@ public sealed partial class PasswordInputDialog : Page
                 op.FinishSuccess(((PasswordInputDialog)dialog.Content).model.Password);
         });
         return op;
-    }
-    public PasswordInputDialog(ContentDialog dialog, bool hasSecondField)
-    {
-        model.HasSecondField = hasSecondField;
-        model.PropertyChanged += (_, _) =>
-        {
-            dialog.IsPrimaryButtonEnabled = model.SamePasswordTextVisible == Visibility.Collapsed &&
-                                            !string.IsNullOrEmpty(model.Password);
-        };
-        model.onPropertyChanged();
-        InitializeComponent();
     }
 
     public class PasswordInputDialogModel : PropertyChangable

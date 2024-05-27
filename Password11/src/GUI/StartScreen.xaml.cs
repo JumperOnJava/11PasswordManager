@@ -10,9 +10,10 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Password11.Datatypes;
-using Password11.StorageDialogs.GlobalCreate;
+using Password11.GUI;
 using Password11.Util;
 using Password11.ViewModel;
+using CreateStorageDialog = Password11.GUI.StorageDialogs.GlobalCreate.CreateStorageDialog;
 
 namespace Password11;
 
@@ -111,8 +112,8 @@ public sealed partial class StartScreen
     {
         CreateStorageDialog.CreateManager(this, OpenStorage);
     }
-
 }
+
 public class StartScreenModel
 {
     public StartScreenModel()
@@ -132,18 +133,19 @@ public class StartScreenModel
         UpdateHistory(null, null);
     }
 
+    public static AppSettings AppSettings => AppSettings.GLOBAL;
+    public Visibility HistoryVisibility => History.Any() ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility CreateVisibility => History.Any() ? Visibility.Collapsed : Visibility.Visible;
+    public IList<StartScreenModelStoragePath> History { get; set; }
+
     private void UpdateHistory(object a, NotifyCollectionChangedEventArgs e)
     {
         AppSettings.storageHistory.Clear();
         foreach (var element in History.ToList()) AppSettings.storageHistory.Add(element.Manager);
         AppSettings.GLOBAL.Save();
     }
-
-    public static AppSettings AppSettings => AppSettings.GLOBAL;
-    public Visibility HistoryVisibility => History.Any() ? Visibility.Visible : Visibility.Collapsed;
-    public Visibility CreateVisibility => History.Any() ? Visibility.Collapsed : Visibility.Visible;
-    public IList<StartScreenModelStoragePath> History { get; set; }
 }
+
 public class StartScreenModelStoragePath
 {
     public StartScreenModelStoragePath(StorageManager manager)

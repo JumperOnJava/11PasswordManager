@@ -3,18 +3,19 @@ using Windows.UI;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
 
-namespace Password11.src.Ui;
+// ReSharper disable CompareOfFloatsByEqualityOperator
+
+namespace Password11.ColorLib;
 
 public struct AdvColor
 {
-    [JsonRequired] public int G { get; set; }
     [JsonRequired] public int R { get; set; }
-
+    [JsonRequired] public int G { get; set; }
     [JsonRequired] public int B { get; set; }
 
-    [JsonIgnore] public Color asWinColor => new() { A = 255, R = (byte)R, G = (byte)G, B = (byte)B };
+    [JsonIgnore] public Color AsWinColor => new() { A = 255, R = (byte)R, G = (byte)G, B = (byte)B };
 
-    [JsonIgnore] public SolidColorBrush asBrush => new(asWinColor);
+    [JsonIgnore] public SolidColorBrush AsBrush => new(AsWinColor);
 
     public AdvColor(int r, int g, int b)
     {
@@ -36,21 +37,21 @@ public struct AdvColor
 
 
     [JsonIgnore]
-    public float r
+    public float Rf
     {
         get => R / 255f;
         set => R = (int)(value * 255);
     }
 
     [JsonIgnore]
-    public float g
+    public float Gf
     {
         get => G / 255f;
         set => G = (int)(value * 255);
     }
 
     [JsonIgnore]
-    public float b
+    public float Bf
     {
         get => B / 255f;
         set => B = (int)(value * 255);
@@ -61,14 +62,12 @@ public struct AdvColor
     {
         get
         {
-            float hue, saturation, value;
-            RgbToHsv(R, G, B, out hue, out saturation, out value);
+            RgbToHsv(R, G, B, out var hue, out _, out _);
             return hue;
         }
         set
         {
-            int r, g, b;
-            HsvToRgb(value, S, V, out r, out g, out b);
+            HsvToRgb(value, S, V, out var r, out var g, out var b);
             R = r;
             G = g;
             B = b;
@@ -81,8 +80,7 @@ public struct AdvColor
     {
         get
         {
-            float hue, saturation, value;
-            RgbToHsv(R, G, B, out hue, out saturation, out value);
+            RgbToHsv(R, G, B, out _, out var saturation, out _);
             return saturation;
         }
         set
@@ -103,8 +101,8 @@ public struct AdvColor
     {
         get
         {
-            float hue, saturation, value;
-            RgbToHsv(R, G, B, out hue, out saturation, out value);
+            float value;
+            RgbToHsv(R, G, B, out _, out _, out value);
             return value;
         }
         set

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using Password11.ColorLib;
 using Password11.Datatypes;
-using Password11.src.Ui;
 using Password11.src.Util;
 using Password11Lib.Util;
 
@@ -119,9 +119,9 @@ public class AccountEditor : PropertyChangable
         }
     }
 
-    public Brush BaseColorBrush => Colors.BaseColor.asBrush;
-    public Brush HoverColorBrush => Colors.HoverColor.asBrush;
-    public Brush SymbolColoBrush => Colors.SymbolColor.asBrush;
+    public Brush BaseColorBrush => Colors.BaseColor.AsBrush;
+    public Brush HoverColorBrush => Colors.HoverColor.AsBrush;
+    public Brush SymbolColoBrush => Colors.SymbolColor.AsBrush;
 
     public string AppLink
     {

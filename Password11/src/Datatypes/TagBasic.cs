@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
-using Password11.src.Ui;
+using Password11.ColorLib;
 using Password11Lib.Util;
 
 namespace Password11.Datatypes;
@@ -40,11 +40,11 @@ public class TagBasic : Tag
         set => TagColorsString = value.ToString();
     }
 
-    [JsonIgnore] public Brush BaseColorBrush => TagColors.BaseColor.asBrush;
+    [JsonIgnore] public Brush BaseColorBrush => TagColors.BaseColor.AsBrush;
 
-    [JsonIgnore] public Brush HoverColorBrush => TagColors.HoverColor.asBrush;
+    [JsonIgnore] public Brush HoverColorBrush => TagColors.HoverColor.AsBrush;
 
-    [JsonIgnore] public Brush SymbolColorBrush => TagColors.SymbolColor.asBrush;
+    [JsonIgnore] public Brush SymbolColorBrush => TagColors.SymbolColor.AsBrush;
 
     public bool matches(Taggable account)
     {
