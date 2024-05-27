@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Password11Server.DataController">
+    <Position X="7.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>endpoints\DataController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11Server.RegisterController">
+    <Position X="5.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAA=</HashCode>
+      <FileName>endpoints\RegisterController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11Server.RegisterModel">
+    <Position X="5.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAQAAAAAAA=</HashCode>
+      <FileName>endpoints\RegisterController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11Server.PasswordContext">
+    <Position X="7.25" Y="1.5" Width="1.5" />
+    <Members>
+      <Method Name="OnConfiguring" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAQAAAAAAAAAAAAAAAAAAAECAAAAAAAAAgAA=</HashCode>
+      <FileName>Systems\PasswordContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11Server.Uploader">
+    <Position X="7.25" Y="5.25" Width="1.5" />
+    <Members>
+      <Field Name="instance" Hidden="true" />
+      <Field Name="localRandom" Hidden="true" />
+      <Field Name="taskNum" Hidden="true" />
+      <Field Name="tcs" Hidden="true" />
+      <Method Name="Uploader" Hidden="true" />
+      <Method Name="WorkerInit" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AABCAAAAAAAAAAAAAAAAAAAAQABAAoAAAAAAAAAAAIA=</HashCode>
+      <FileName>Systems\Uploader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Password11Server.Program" Collapsed="true">
+    <Position X="5.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

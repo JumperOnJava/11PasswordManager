@@ -58,7 +58,7 @@ public class DataController : ControllerBase
                 .Include(u => u.Accounts)
                 .Include(u => u.Fields)
                 .FirstOrDefault(u => u.Login == login);
-            return Ok(JsonConvert.SerializeObject(dbUser));
+            return Ok();
         }
     }
 }
