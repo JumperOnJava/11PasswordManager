@@ -1,10 +1,11 @@
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
+using Password11.Datatypes;
 using Password11.Datatypes.Serializing;
 using Password11.src.Util;
 
-namespace Password11.Datatypes;
+namespace Password11.StorageManager;
 
 public class JsonFileStorageManager : StorageManager
 {

@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
+using Password11.Datatypes;
 
-namespace Password11.Datatypes;
+namespace Password11.StorageManager;
 
 public interface StorageManager
 {

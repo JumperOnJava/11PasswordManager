@@ -2,11 +2,12 @@ using System;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using Password11.Datatypes;
+using Password11.StorageManager;
 using WinRT.Interop;
 
-namespace Password11.StorageDialogs.FileStorage;
+namespace Password11.GUI.Dialogs;
 
-public sealed class FileOpenDialog : Operation<StorageManager>
+public sealed class FileOpenDialog : Operation<StorageManager.StorageManager>
 {
     public static bool _opening;
 

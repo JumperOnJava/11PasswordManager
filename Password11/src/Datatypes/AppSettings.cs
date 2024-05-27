@@ -13,7 +13,7 @@ public class AppSettings
     private AppSettings(string path)
     {
         this.path = path;
-        storageHistory = new List<StorageManager>();
+        storageHistory = new List<StorageManager.StorageManager>();
     }
 
     [JsonConstructor]
@@ -22,7 +22,7 @@ public class AppSettings
     }
 
     public static AppSettings GLOBAL { get; set; } = new("global_settings.json");
-    public List<StorageManager> storageHistory { get; set; }
+    public List<StorageManager.StorageManager> storageHistory { get; set; }
 
     public void Load()
     {
@@ -33,7 +33,7 @@ public class AppSettings
             storageHistory = target.storageHistory;
         }
 
-        storageHistory = new List<StorageManager>(storageHistory
+        storageHistory = new List<StorageManager.StorageManager>(storageHistory
             .GroupBy(s => s.DisplayInfo.DisplayPath)
             .Select(s => s.First())
             .ToList());
@@ -42,7 +42,7 @@ public class AppSettings
 
     public void Save()
     {
-        storageHistory = new List<StorageManager>(storageHistory.Distinct().ToList());
+        storageHistory = new List<StorageManager.StorageManager>(storageHistory.Distinct().ToList());
         File.WriteAllText("global_settings.json", JsonTools.SerializeSmart(this));
     }
 }

@@ -13,7 +13,7 @@ using Password11.Datatypes;
 using Password11.GUI;
 using Password11.Util;
 using Password11.ViewModel;
-using CreateStorageDialog = Password11.GUI.StorageDialogs.GlobalCreate.CreateStorageDialog;
+using CreateStorageDialog = Password11.GUI.Dialogs.CreateStorageDialog;
 
 namespace Password11;
 
@@ -43,7 +43,7 @@ public sealed partial class StartScreen
     }
 
 
-    private async void OpenStorage(StorageManager storageManager)
+    private async void OpenStorage(StorageManager.StorageManager storageManager)
     {
         var tcs = new TaskCompletionSource<StorageData>();
 
@@ -98,7 +98,7 @@ public sealed partial class StartScreen
 
     private async void OpenStorageWithSetup(object sender, RoutedEventArgs e)
     {
-        var storageManager = ((ButtonBase)sender).CommandParameter as StorageManager;
+        var storageManager = ((ButtonBase)sender).CommandParameter as StorageManager.StorageManager;
         if (!await storageManager.SetupManagerInGui(this))
         {
             storageManager.ResetOnFail();
@@ -148,14 +148,14 @@ public class StartScreenModel
 
 public class StartScreenModelStoragePath
 {
-    public StartScreenModelStoragePath(StorageManager manager)
+    public StartScreenModelStoragePath(StorageManager.StorageManager manager)
     {
         Manager = manager;
         Name = manager.DisplayInfo.DisplayName;
         DisplayTime = manager.DisplayInfo.LastAccessTime.ToString("hh:mm dd/MM/yy");
     }
 
-    public StorageManager Manager { get; }
+    public StorageManager.StorageManager Manager { get; }
     public string Name { get; }
     public string DisplayTime { get; set; }
     public string Path => Manager.DisplayInfo.DisplayPath;

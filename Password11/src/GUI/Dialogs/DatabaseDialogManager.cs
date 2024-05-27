@@ -2,12 +2,11 @@ using System;
 using Microsoft.UI.Xaml.Controls;
 using Password11.Datatypes;
 using Password11.Dialogs;
-using Password11.GUI.StorageDialogs.Database;
-using Password11.GUI.StorageDialogs.GlobalCreate;
-using Password11.src.Datatypes.Storage;
 using Password11.src.Util;
+using Password11.StorageManager;
+using DatabaseSetupDialog = Password11.GUI.Dialogs.DatabaseSetupDialog;
 
-namespace Password11.StorageDialogs.GlobalCreate;
+namespace Password11.GUI.Dialogs;
 
 internal class DatabaseDialogManager : DialogManager
 {

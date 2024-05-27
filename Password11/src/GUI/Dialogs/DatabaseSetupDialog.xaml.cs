@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Password11.Datatypes;
 using Password11.src.Util;
 
-namespace Password11.GUI.StorageDialogs.Database;
+namespace Password11.GUI.Dialogs;
 
 public sealed partial class DatabaseSetupDialog : Page, DialogPage
 {

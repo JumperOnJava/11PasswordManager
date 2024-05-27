@@ -1,12 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
+using Password11.Datatypes;
 using Password11.Dialogs;
-using Password11.GUI.StorageDialogs.GlobalCreate;
-using Password11.src.Util;
-using Password11.StorageDialogs.FileStorage;
+using Password11.StorageManager;
 
-namespace Password11.StorageDialogs.GlobalCreate;
+namespace Password11.GUI.Dialogs;
 
 internal class FileOpenDialogManager : DialogManager
 {
@@ -22,7 +21,7 @@ internal class FileOpenDialogManager : DialogManager
         var result = fileResult.Item2;
 
         var tcs = new TaskCompletionSource<Tuple<bool, string>>();
-        var passwordResult = await PasswordDialog.AskPassword(parent, false).GetResult();
+        var passwordResult = await PasswordInputDialog.AskPassword(parent, false, "Enter password").GetResult();
 
         if (!passwordResult.Item1) return;
 

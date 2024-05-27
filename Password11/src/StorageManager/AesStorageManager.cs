@@ -5,8 +5,10 @@ using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
 using Password11.Datatypes;
 using Password11.Dialogs;
+using Password11.GUI.Dialogs;
+using Password11.src.Util;
 
-namespace Password11.src.Util;
+namespace Password11.StorageManager;
 
 public class AesStorageManager : StorageManager
 {
@@ -33,8 +35,8 @@ public class AesStorageManager : StorageManager
             var decryptedData = (await target.GetData()).CloneRef();
             decryptedData.Tags = decryptedData.Tags.Select(tag =>
             {
-                tag.DisplayName = tag.DisplayName.DecodeBase64().DecryptAes(key).DecodeUtf8();
-                tag.TagColorsString = tag.TagColorsString.DecodeBase64().DecryptAes(key).DecodeUtf8();
+                tag.DisplayName = Extensions.DecodeBase64(tag.DisplayName).DecryptAes(key).DecodeUtf8();
+                tag.TagColorsString = Extensions.DecodeBase64(tag.TagColorsString).DecryptAes(key).DecodeUtf8();
                 return tag;
             }).ToList();
             decryptedData.Accounts = decryptedData.Accounts.Select(account =>
@@ -89,7 +91,7 @@ public class AesStorageManager : StorageManager
     {
         if (!await target.SetupManagerInGui(parent)) return false;
         key = null;
-        var r = await PasswordDialog.AskPassword(parent, false, "Enter encryption key").GetResult();
+        var r = await PasswordInputDialog.AskPassword(parent, false, "Enter encryption key").GetResult();
         if (!r.Item1) return false;
 
         key = r.Item2;

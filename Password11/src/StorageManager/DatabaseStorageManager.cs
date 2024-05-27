@@ -10,12 +10,13 @@ using Newtonsoft.Json;
 using Password11.Datatypes;
 using Password11.Datatypes.Serializing;
 using Password11.Dialogs;
+using Password11.GUI.Dialogs;
 using Password11.src.Util;
 using Password11.Util;
 using Password11Lib.JsonModel;
 using Password11Lib.Util;
 
-namespace Password11.src.Datatypes.Storage;
+namespace Password11.StorageManager;
 
 public class DatabaseStorageManager : StorageManager, LocationDisplayModel
 {
@@ -151,7 +152,7 @@ public class DatabaseStorageManager : StorageManager, LocationDisplayModel
     {
         if (password == null)
         {
-            var r = await PasswordDialog.AskPassword(parent, false, "Enter account password").GetResult();
+            var r = await PasswordInputDialog.AskPassword(parent, false, "Enter account password").GetResult();
             if (!r.Item1)
             {
                 password = null;

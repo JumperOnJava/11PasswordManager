@@ -22,11 +22,11 @@ public class AppListPageModel : PropertyChangable
 
     public bool isPaneOpen = true;
 
-    private StorageManager manager;
+    private StorageManager.StorageManager manager;
 
     public SaveState saveState = SaveState.STATE_OK;
 
-    public AppListPageModel(StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
+    public AppListPageModel(StorageManager.StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
     {
         onClose = closeCallback;
         manager = storageManager;
@@ -77,7 +77,7 @@ public class AppListPageModel : PropertyChangable
     public List<Tag> RawTags { get; } = new();
     public Exception LatestException { get; set; }
 
-    public void SetNewManager(StorageManager manager)
+    public void SetNewManager(StorageManager.StorageManager manager)
     {
         this.manager = manager;
         tasks.Clear();

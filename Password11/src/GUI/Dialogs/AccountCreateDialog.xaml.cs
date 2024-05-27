@@ -10,7 +10,7 @@ using Password11.ColorLib;
 using Password11.src.Util;
 using Password11.ViewModel;
 
-namespace Password11.GUI.StorageDialogs.AccountCreateDialog;
+namespace Password11.GUI.Dialogs;
 
 public sealed partial class AccountCreateDialog
 {

@@ -8,12 +8,12 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Password11.Datatypes;
-using Password11.GUI.StorageDialogs.AccountCreateDialog;
 using Password11.Util;
 using Password11.ViewModel;
 using Password11Lib.Util;
-using CreateStorageDialog = Password11.GUI.StorageDialogs.GlobalCreate.CreateStorageDialog;
-using TagEditDialog = Password11.GUI.StorageDialogs.Tag.TagEditDialog;
+using AccountCreateDialog = Password11.GUI.Dialogs.AccountCreateDialog;
+using CreateStorageDialog = Password11.GUI.Dialogs.CreateStorageDialog;
+using TagEditDialog = Password11.GUI.Dialogs.TagEditDialog;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

@@ -10,10 +10,10 @@ using Microsoft.UI.Xaml.Navigation;
 using Password11.ColorLib;
 using Password11.Datatypes;
 using Password11.GUI;
-using Password11.GUI.StorageDialogs.AccountCreateDialog;
 using Password11.src.Util;
 using Password11.Util;
 using Password11.ViewModel;
+using AccountCreateDialog = Password11.GUI.Dialogs.AccountCreateDialog;
 
 namespace Password11;
 

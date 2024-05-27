@@ -2,6 +2,7 @@
 using Windows.Graphics;
 using Microsoft.UI.Xaml;
 using Password11.Datatypes.Serializing;
+using Password11.GUI.Dialogs;
 
 namespace Password11;
 
@@ -16,7 +17,6 @@ public partial class App
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Test.Start();
         MainWindow = new MainWindow();
         MainWindow.SizeChanged += (_, e) =>
         {
