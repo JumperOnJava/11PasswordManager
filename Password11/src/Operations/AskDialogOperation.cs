@@ -16,6 +16,8 @@ public class AskDialogOperation : Operation
             .DefaultButton(ContentDialogButton.Primary)
             .AddPrimaryClickAction((_) => Finish(true))
             .AddSecondaryClickAction((_) => Finish(false))
-            .Build().ShowAsync();
+            .Build()
+            .ShowAsync();
+
     }
 }

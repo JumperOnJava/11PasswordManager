@@ -105,7 +105,7 @@ namespace Password11
         public ObservableCollection<Tag> SelectedTags { get; set; }
         public ObservableCollection<Tag> UnselectedTags { get; set; }
         public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(Account.Email);
-        public Visibility EmailWarningVisibility => EmailCorrect ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility EmailWarningVisibility => EmailCorrect || string.IsNullOrEmpty(Account.Email) ? Visibility.Collapsed : Visibility.Visible;
         public AccountCreationModel(AccountEditor account)
         {
             account.PropertyChanged += (_, _) =>

@@ -109,6 +109,7 @@ namespace Password11
                     model.Tags[index] = result;
                     tag.onPropertyChanged("Target");
                 };
+
             }
         }
 

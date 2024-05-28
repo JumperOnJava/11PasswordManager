@@ -4,11 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
-using Password11.Datatypes;
 using Password11.Datatypes.Serializing;
 using Password11.Dialogs;
 using Password11.src.Util;
@@ -16,14 +14,14 @@ using Password11.Util;
 using Password11Lib.JsonModel;
 using Password11Lib.Util;
 
-namespace Password11.src.Datatypes.Storage
+namespace Password11.Datatypes.Storage
 {
     public class DatabaseStorageManager : StorageManager, LocationDisplayModel
     {
-        private static HttpClient client = new();
-        private Uri api => new Uri(host);
+        private static readonly HttpClient Client = new();
+        private Uri Api => new Uri(host);
         [JsonRequired]
-        private string host = "http://localhost:5000/";
+        private string host;
         [JsonRequired]
         private string login;
         [JsonIgnore]
@@ -47,14 +45,14 @@ namespace Password11.src.Datatypes.Storage
       
         public async Task<StorageData> GetData()
         {
-            var okCheck = await client.GetAsync(api.Endpoint($"api/ok"));
+            var okCheck = await Client.GetAsync(Api.Endpoint($"api/ok"));
             if (okCheck.StatusCode != HttpStatusCode.OK)
             {
                 throw new ExceptionDialog.DialogException("Failed to connect to server: ",okCheck.ReasonPhrase);
             }
             
             
-            var req = await client.GetAsync(api.Endpoint($"api/getdata?login={login}"));
+            var req = await Client.GetAsync(Api.Endpoint($"api/getdata?login={login}"));
             var testString = await req.Content.ReadAsStringAsync();
             if (String.IsNullOrWhiteSpace(testString))
             {
@@ -62,25 +60,29 @@ namespace Password11.src.Datatypes.Storage
             }
             
             var jsonUser = JsonConvert.DeserializeObject<JsonUser>(testString);
-            var storage = new StorageData();
-
-            storage.Tags = jsonUser.Tags.ToList().Select(jtag =>
+            var storage = new StorageData
             {
-                var storageTag = new TagBasic();
-                storageTag.TagColorsString = jtag.TagColorString.EncodeBase64();
-                storageTag.DisplayName = jtag.DisplayName.EncodeBase64();
-                storageTag.Identifier = new UniqueId<Tag>(jtag.Id);
-                return (Tag)storageTag;
-            }).ToList();
-
-            storage.Accounts = new List<Account>();
+                Tags = jsonUser.Tags.ToList().Select(jtag =>
+                {
+                    var storageTag = new TagBasic
+                    {
+                        TagColorsString = jtag.TagColorString.EncodeBase64(),
+                        DisplayName = jtag.DisplayName.EncodeBase64(),
+                        Identifier = new UniqueId<Tag>(jtag.Id)
+                    };
+                    return (Tag)storageTag;
+                }).ToList(),
+                Accounts = new List<Account>()
+            };
 
             foreach (var jsonAccount in jsonUser.Accounts)
             {
-                var storageAccount = new AccountImpl();
-                storageAccount.Identifier = new UniqueId<Account>(jsonAccount.Id);
-                storageAccount.Tags = jsonAccount.Tags.Select(id => new UniqueId<Tag>(id)).ToList();
-                storageAccount.Fields = new Dictionary<string, FieldData>();
+                var storageAccount = new AccountImpl
+                {
+                    Identifier = new UniqueId<Account>(jsonAccount.Id),
+                    Tags = jsonAccount.Tags.Select(id => new UniqueId<Tag>(id)).ToList(),
+                    Fields = new Dictionary<string, FieldData>()
+                };
                 foreach (var jsonAccountField in jsonAccount.Fields)
                 {
                     var jsonField = jsonUser.Fields.First(f => f.Id == jsonAccountField);
@@ -136,10 +138,12 @@ namespace Password11.src.Datatypes.Storage
 
             foreach (var dataAccount in storage.Accounts)
             {
-                var jsonAccount = new JsonAccount();
-                jsonAccount.Fields = dataAccount.Fields.Select(pair => pair.Value.Identifier.id).ToList();
-                jsonAccount.Tags = dataAccount.Tags.Select(identifier => identifier.id).ToList();
-                jsonAccount.Id = dataAccount.Identifier.id;
+                var jsonAccount = new JsonAccount
+                {
+                    Fields = dataAccount.Fields.Select(pair => pair.Value.Identifier.id).ToList(),
+                    Tags = dataAccount.Tags.Select(identifier => identifier.id).ToList(),
+                    Id = dataAccount.Identifier.id
+                };
                 accounts.Add(jsonAccount);
             }
 
@@ -149,13 +153,14 @@ namespace Password11.src.Datatypes.Storage
             jsonUser.PasswordHash = this.password;
             
             var json = JsonConvert.SerializeObject(jsonUser);
-            var endpoint = api.Endpoint("api/setdata");
-            var req = await client.PutAsync(endpoint,new StringContent(json,Encoding.UTF8,"application/json"));
+            var endpoint = Api.Endpoint("api/setdata");
+            var req = await Client.PutAsync(endpoint,new StringContent(json,Encoding.UTF8,"application/json"));
 
             if (req.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception(req.ReasonPhrase);
             }
+            
         }
 
         [JsonIgnore] public LocationDisplayModel DisplayInfo => this;
@@ -172,14 +177,19 @@ namespace Password11.src.Datatypes.Storage
                 }
                 this.password = r.Item2;
             }
-            
-            Task<HttpResponseMessage> requestTask;
+
             HttpResponseMessage result;
-            var dialog = new DialogBuilder(parent).Title($"Loading...").Content("Connecting to "+DisplayPath).SecondaryButtonText("Cancel").Build();
+            var cancelled = true;
+            var dialog = new DialogBuilder(parent).Title($"Loading...").Content("Connecting to "+DisplayPath).SecondaryButtonText("Cancel").AddSecondaryClickAction(
+                dialog =>
+                {
+                    dialog.Hide();
+                    cancelled = true;
+                }).Build();
             try
             {
                 dialog.ShowAsync();
-                requestTask = client.GetAsync(api.Endpoint($"api/checklogin?login={login}&password={password}"));
+                var requestTask = Client.GetAsync(Api.Endpoint($"api/checklogin?login={login}&password={password}"));
                 await requestTask;
                 result = requestTask.Result;
                 dialog.Hide();
@@ -187,7 +197,8 @@ namespace Password11.src.Datatypes.Storage
             catch (Exception e)
             {
                 dialog.Hide();
-                await ExceptionDialog.ShowException(parent, e);
+                if(!cancelled)
+                    await ExceptionDialog.ShowException(parent, e);
                 return false;
             }
 
@@ -200,16 +211,18 @@ namespace Password11.src.Datatypes.Storage
             LastAccessTime = DateTime.Now;
             return true;
         }
-        public async static Task<DatabaseStorageManager> OpenWithConnectionCheck(string host, string login, string password)
+        public static Task<DatabaseStorageManager> OpenWithConnectionCheck(string host, string login, string password)
         {
-            var manager = new DatabaseStorageManager(host,login);
-            manager.password = password;
+            var manager = new DatabaseStorageManager(host,login)
+            {
+                password = password
+            };
 
-            var requestTask =  client.GetAsync(manager.api.Endpoint($"api/checklogin?login={login}&password={password}"));
+            var requestTask =  Client.GetAsync(manager.Api.Endpoint($"api/checklogin?login={login}&password={password}"));
             requestTask.Wait();
             if (requestTask.IsFaulted)
             {
-                throw requestTask.Exception;
+                throw requestTask.Exception!;
             }
             var result = requestTask.Result;
             if (result.StatusCode == HttpStatusCode.NotFound)
@@ -219,19 +232,19 @@ namespace Password11.src.Datatypes.Storage
             if (result.StatusCode == HttpStatusCode.OK)
             {
                 manager.LastAccessTime = DateTime.Now;
-                return manager;
+                return Task.FromResult(manager);
             }
             else
             {
                 throw new ExceptionDialog.DialogException("Wrong login or password","");
             }
         }
-        public async static Task<DatabaseStorageManager> RegisterWithConnectionCheck(string host, string login, string password)
+        public static Task<DatabaseStorageManager> RegisterWithConnectionCheck(string host, string login, string password)
         {
             var manager = new DatabaseStorageManager(host,login);
             manager.password = password;
 
-            var requestTask = client.PutAsync(manager.api.Endpoint($"api/register"),new StringContent(JsonTools.Serialize(new
+            var requestTask = Client.PutAsync(manager.Api.Endpoint($"api/register"),new StringContent(JsonTools.Serialize(new
             {
                 login,
                 password
@@ -239,7 +252,7 @@ namespace Password11.src.Datatypes.Storage
             requestTask.Wait();
             if (requestTask.IsFaulted)
             {
-                throw requestTask.Exception;
+                throw requestTask.Exception!;
             }
             var result = requestTask.Result;
             if (result.StatusCode == HttpStatusCode.NotFound)
@@ -254,7 +267,7 @@ namespace Password11.src.Datatypes.Storage
             {
                 throw new ExceptionDialog.DialogException($"Error {result.StatusCode}", result.ReasonPhrase);
             }
-            return manager;
+            return Task.FromResult(manager);
             
         }
 

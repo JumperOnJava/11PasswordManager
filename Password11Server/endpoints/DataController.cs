@@ -45,7 +45,7 @@ public class DataController : ControllerBase
             var result = await Uploader.instance.Enqueue(reqUser).GetResult();
             if (result.Item1)
             {
-                return result.Item2;
+                return Accepted();
             }
             else
             {

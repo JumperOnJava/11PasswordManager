@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
@@ -11,6 +12,7 @@ using Microsoft.UI.Xaml.Media;
 using Password11.Datatypes;
 using Password11.src.Ui;
 using Password11.src.Util;
+using Password11Lib.Util;
 
 namespace Password11.ViewModel;
 
@@ -140,9 +142,10 @@ public class MainWindowModel : PropertyChangable
         
     }
 
-    private Queue<Task> tasks= new();
+    private Queue<Task> tasks = new();
     public Exception LatestException { get; set; }
 
+    private UniqueId<object> latestTaskId;
     private async void EnqueueSave(Task func)
     {
         if (tasks.Any())
@@ -155,13 +158,16 @@ public class MainWindowModel : PropertyChangable
         {
             SaveState = SaveState.STATE_UPLOAD;
             var task = tasks.Dequeue();
+            var currentTaskId =  UniqueId<object>.CreateRandom<object>();
+            latestTaskId = currentTaskId ;
             try
             {
                 await task;
-                if (task.IsFaulted)
+                if (task.IsFaulted && ReferenceEquals(currentTaskId,latestTaskId))
                 {
                     throw task.Exception;
                 }
+                Console.WriteLine("");
             }
             catch (Exception e)
             {

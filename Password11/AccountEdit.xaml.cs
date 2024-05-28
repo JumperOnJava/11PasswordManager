@@ -106,7 +106,7 @@ namespace Password11
 
         private PasswordRevealMode passwordRevealMode;
         public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(target.Email);
-        public Visibility EmailWarningVisibility => EmailCorrect ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility EmailWarningVisibility => EmailCorrect || string.IsNullOrEmpty(target.Email) ? Visibility.Collapsed : Visibility.Visible;
         public bool ButtonEnabled
         {
             get

@@ -11,7 +11,6 @@ namespace Password11Lib.Util
     public class UniqueId<T>
     {
         [JsonRequired] public readonly long id;
-
         public UniqueId(long id)
         {
             this.id = id;
