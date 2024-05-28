@@ -107,5 +107,5 @@ internal class AccountCreateDialogModel : PropertyChangable
     public ObservableCollection<Datatypes.Tag> SelectedTags { get; set; }
     public ObservableCollection<Datatypes.Tag> UnselectedTags { get; set; }
     public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(Target.Email);
-    public Visibility EmailWarningVisibility => EmailCorrect ? Visibility.Collapsed : Visibility.Visible;
+    public Visibility EmailWarningVisibility => EmailCorrect || string.IsNullOrEmpty(Target.Email) ? Visibility.Collapsed : Visibility.Visible;
 }

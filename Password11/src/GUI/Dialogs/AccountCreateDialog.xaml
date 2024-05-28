@@ -12,13 +12,13 @@
     Background="Transparent">
     <Grid>
         <Grid Margin="0,-40,0,0" DataContext="{x:Bind model}" Background="Transparent" CornerRadius="8">
-            <Grid>
+            <Grid >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="220" />
                     <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="256" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Margin="0,40,0,0" Width="220" DataContext="{Binding Account}">
+                <StackPanel Grid.Column="0" Margin="0,40,0,0" Width="220" DataContext="{Binding Target}">
                     <TextBlock>App</TextBlock>
                     <AppBarSeparator Height="5" />
                     <TextBox PlaceholderText=""

@@ -35,6 +35,8 @@ public sealed partial class StartScreen
         {
             navigator = e.Parameter as Frame;
             model = new StartScreenModel();
+            AppSettings.GLOBAL.Load(this);
+            
         }
         catch (InvalidCastException ex)
         {
@@ -118,7 +120,6 @@ public class StartScreenModel
 {
     public StartScreenModel()
     {
-        AppSettings.GLOBAL.Load();
         var history = new ObservableCollection<StartScreenModelStoragePath>();
         History = history;
         foreach (var item in AppSettings.storageHistory)

@@ -22,7 +22,7 @@ public class DatabaseStorageManager : StorageManager, LocationDisplayModel
 {
     private static readonly HttpClient client = new();
 
-    [JsonRequired] private readonly string host = "http://localhost:5000/";
+    [JsonRequired] private readonly string host;
 
     [JsonIgnore] private string password;
 
@@ -37,7 +37,7 @@ public class DatabaseStorageManager : StorageManager, LocationDisplayModel
     private Uri api => new(host);
 
     public DateTime LastAccessTime { get; set; }
-    [field: JsonRequired] public string DisplayName { get; }
+    [JsonRequired] public string DisplayName { get; set; }
 
     public string DisplayPath => $"{DisplayName} at {host.Replace("http://", "").Replace("https://", "")}";
 
@@ -49,7 +49,7 @@ public class DatabaseStorageManager : StorageManager, LocationDisplayModel
             throw new ExceptionDialog.DialogException("Failed to connect to server: ", okCheck.ReasonPhrase);
 
 
-        var req = await client.GetAsync(api.Endpoint($"api/getdata?login={DisplayName}"));
+        var req = await client.GetAsync(api.Endpoint($"api/getdata?login={DisplayName}&password={password}"));
         var testString = await req.Content.ReadAsStringAsync();
         if (string.IsNullOrWhiteSpace(testString)) return new StorageData();
 
@@ -141,26 +141,25 @@ public class DatabaseStorageManager : StorageManager, LocationDisplayModel
 
         var json = JsonConvert.SerializeObject(jsonUser);
         var endpoint = api.Endpoint("api/setdata");
-        var req = await client.PutAsync(endpoint, new StringContent(json, Encoding.UTF8, "application/json"));
-
-        if (req.StatusCode != HttpStatusCode.OK) throw new Exception(req.ReasonPhrase);
+        var reqTask =  client.PutAsync(endpoint, new StringContent(json, Encoding.UTF8, "application/json"));
+        await reqTask;
+        var req = reqTask.Result;
+        if (req.StatusCode != HttpStatusCode.Accepted) throw new Exception("Wrong status code: "+req.ReasonPhrase);
     }
 
     [JsonIgnore] public LocationDisplayModel DisplayInfo => this;
 
     public async Task<bool> SetupManagerInGui(Page parent)
     {
-        if (password == null)
+        password = null;
+        var r = await PasswordInputDialog.AskPassword(parent, false, "Enter account password").GetResult();
+        if (!r.Item1)
         {
-            var r = await PasswordInputDialog.AskPassword(parent, false, "Enter account password").GetResult();
-            if (!r.Item1)
-            {
-                password = null;
-                return false;
-            }
-
-            password = r.Item2;
+            password = null;
+            return false;
         }
+
+        password = r.Item2;
 
         Task<HttpResponseMessage> requestTask;
         HttpResponseMessage result;
@@ -178,6 +177,7 @@ public class DatabaseStorageManager : StorageManager, LocationDisplayModel
         {
             dialog.Hide();
             await ExceptionDialog.ShowException(parent, e);
+            password = null;
             return false;
         }
 
@@ -185,6 +185,7 @@ public class DatabaseStorageManager : StorageManager, LocationDisplayModel
         {
             await ExceptionDialog.ShowException(parent,
                 new ExceptionDialog.DialogException("Error", "Wrong login or password"));
+            password = null;
             return false;
         }
 
@@ -208,7 +209,7 @@ public class DatabaseStorageManager : StorageManager, LocationDisplayModel
         manager.password = password;
 
         var requestTask = client.GetAsync(manager.api.Endpoint($"api/checklogin?login={login}&password={password}"));
-        requestTask.Wait();
+        await requestTask;
         if (requestTask.IsFaulted) throw requestTask.Exception;
         var result = requestTask.Result;
         if (result.StatusCode == HttpStatusCode.NotFound)

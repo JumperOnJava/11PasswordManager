@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Password11.src.Util;
 using Password11Lib.JsonModel;
+using System.Text.Json;
 
 namespace Password11Server;
 
@@ -51,18 +52,27 @@ public class DataController : ControllerBase
 
     [Route("/api/getdata")]
     [HttpGet]
-    public IActionResult GetData([FromQuery(Name = "login")] string login)
+    public IActionResult GetData([FromQuery(Name = "login")] string login, [FromQuery(Name = "password")] string password)
     {
         using (var db = new PasswordContext())
         {
             var accountQuery = db.Users.Where(user => user.Login == login);
-            if (!accountQuery.Any()) return NotFound("Account doesnt exist");
+            if (!accountQuery.Any()) return Unauthorized("Wrong account credentials");
+
             var dbUser = accountQuery
                 .Include(u => u.Tags)
                 .Include(u => u.Accounts)
                 .Include(u => u.Fields)
                 .FirstOrDefault(u => u.Login == login);
-            return Ok();
+
+            var PasswordHash = password.EncodeUtf8().Sha256().EncodeBase64();
+
+            if (dbUser.PasswordHash != PasswordHash) return Unauthorized("Wrong account credentials");
+
+            dbUser.PasswordHash = "";
+            dbUser.Login = "";
+
+            return Ok(JsonSerializer.Serialize(dbUser));
         }
     }
 }

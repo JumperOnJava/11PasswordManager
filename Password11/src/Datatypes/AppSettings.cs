@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Password11.Datatypes.Serializing;
+using Password11.Dialogs;
 
 namespace Password11.Datatypes;
 
@@ -24,12 +26,20 @@ public class AppSettings
     public static AppSettings GLOBAL { get; set; } = new("global_settings.json");
     public List<StorageManager.StorageManager> storageHistory { get; set; }
 
-    public void Load()
+    public void Load(StartScreen page)
     {
         if (File.Exists(path))
         {
-            var target = JsonTools.DeserializeSmart<AppSettings>(File.ReadAllText(path));
-            path = target.path;
+            AppSettings target;
+            try
+            {
+                 target = JsonTools.DeserializeSmart<AppSettings>(File.ReadAllText(path));
+            }
+            catch(Exception e)
+            {
+                ExceptionDialog.ShowException(page,e);
+                return;
+            }
             storageHistory = target.storageHistory;
         }
 

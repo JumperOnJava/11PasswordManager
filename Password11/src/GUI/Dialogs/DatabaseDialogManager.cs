@@ -4,6 +4,7 @@ using Password11.Datatypes;
 using Password11.Dialogs;
 using Password11.src.Util;
 using Password11.StorageManager;
+using Password11.Util;
 using DatabaseSetupDialog = Password11.GUI.Dialogs.DatabaseSetupDialog;
 
 namespace Password11.GUI.Dialogs;
@@ -36,16 +37,29 @@ internal class DatabaseDialogManager : DialogManager
                    == Variant.Open
             ? DatabaseStorageManager.OpenWithConnectionCheck(host, login, password)
             : DatabaseStorageManager.RegisterWithConnectionCheck(host, login, password);
+        bool cancelled=false;
+        var dialog = new DialogBuilder(parent).Title($"Loading {login} from {host}").SecondaryButtonText("Cancel").AddSecondaryClickAction(_ =>
+        {
+            cancelled = true;
+        }).Build();
+        dialog.ShowAsync();
         try
         {
-            task.Wait();
-            FinishSuccess(task.Result.AesEncryptedManager(key));
+            await task;
+            dialog.Hide();
+            if (!cancelled)
+            {
+                FinishSuccess(task.Result.AesEncryptedManager(key));
+                return;
+            }
         }
         catch (Exception e)
         {
-            FinishFail();
-            await ExceptionDialog.ShowException(parent, e);
+            dialog.Hide();
+            if(!cancelled)
+                await ExceptionDialog.ShowException(parent, e);
         }
+        FinishFail();
     }
 
     public static DatabaseDialogManager CreateOpenManager()

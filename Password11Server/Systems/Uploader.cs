@@ -19,7 +19,7 @@ public class Uploader
 
     public Operation<IActionResult> Enqueue(JsonUser reqUser)
     {
-        var operation = new EmptyOperation<IActionResult>();
+        var operation = new Operation<IActionResult>();
 
         void Action()
         {

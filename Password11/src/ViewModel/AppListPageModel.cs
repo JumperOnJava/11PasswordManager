@@ -21,7 +21,6 @@ public class AppListPageModel : PropertyChangable
     public readonly Frame Navigator;
     public readonly Action onClose;
 
-    private readonly Queue<Task> tasks = new();
 
     public bool isPaneOpen = true;
 
@@ -78,7 +77,6 @@ public class AppListPageModel : PropertyChangable
     public bool NoTagsSelected => !Tags.Any(t => t.Selected);
 
     public List<Tag> RawTags { get; } = new();
-    public Exception LatestException { get; set; }
 
     public void SetNewManager(StorageManager.StorageManager manager)
     {
@@ -149,7 +147,7 @@ public class AppListPageModel : PropertyChangable
             try
             {
                 await task;
-                if (task.IsFaulted && ReferenceEquals(currentTaskId,latestTaskId))
+                if (task.IsFaulted && latestTaskId.id == currentTaskId.id)
                 {
                     throw task.Exception;
                 }

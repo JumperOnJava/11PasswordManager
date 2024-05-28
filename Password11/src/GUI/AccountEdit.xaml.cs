@@ -110,17 +110,17 @@ internal class AccountEditModel : PropertyChangable
 
     public ObservableCollection<Tag> SelectedTags { get; set; }
     public ObservableCollection<Tag> UnselectedTags { get; set; }
-    public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(target.Email);
-    public Visibility EmailWarningVisibility => EmailCorrect ? Visibility.Collapsed : Visibility.Visible;
+    public bool EmailCorrect => new Regex(AccountCreateDialog.EmailPattern).IsMatch(Target.Email);
+    public Visibility EmailWarningVisibility => EmailCorrect || string.IsNullOrEmpty(Target.Email) ? Visibility.Collapsed : Visibility.Visible;
 
     public bool ButtonEnabled
     {
         get
         {
-            var isTargetAppFilled = !string.IsNullOrEmpty(target.TargetApp);
-            var isPasswordFilled = !string.IsNullOrEmpty(target.Password);
-            var isUsernameFilled = !string.IsNullOrEmpty(target.Username);
-            var isEmailFilled = !string.IsNullOrEmpty(target.Email);
+            var isTargetAppFilled = !string.IsNullOrEmpty(Target.TargetApp);
+            var isPasswordFilled = !string.IsNullOrEmpty(Target.Password);
+            var isUsernameFilled = !string.IsNullOrEmpty(Target.Username);
+            var isEmailFilled = !string.IsNullOrEmpty(Target.Email);
             var isEmailCorrectOrEmpty = EmailCorrect || !isEmailFilled;
 
             var enabled = isTargetAppFilled &&
