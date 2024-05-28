@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
+using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Password11.Datatypes;
 using Password11.src.Util;
+using Password11Lib.Util;
 
 namespace Password11.ViewModel;
 
@@ -124,6 +127,10 @@ public class AppListPageModel : PropertyChangable
         EnqueueSave(manager.SetData(newStorage));
     }
 
+    private Queue<Task> tasks = new();
+    public Exception LatestException { get; set; }
+
+    private UniqueId<object> latestTaskId;
     private async void EnqueueSave(Task func)
     {
         if (tasks.Any())
@@ -137,10 +144,15 @@ public class AppListPageModel : PropertyChangable
         {
             SaveState = SaveState.STATE_UPLOAD;
             var task = tasks.Dequeue();
+            var currentTaskId =  UniqueId<object>.CreateRandom<object>();
+            latestTaskId = currentTaskId ;
             try
             {
                 await task;
-                if (task.IsFaulted) throw task.Exception;
+                if (task.IsFaulted && ReferenceEquals(currentTaskId,latestTaskId))
+                {
+                    throw task.Exception;
+                }
             }
             catch (Exception e)
             {

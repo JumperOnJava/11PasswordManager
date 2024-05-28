@@ -15,7 +15,7 @@ public class UniqueId<T>
     {
         this.id = id;
     }
-
+    
     public static UniqueId<T> CreateRandom<T>()
     {
         return new UniqueId<T>(Random.Shared.NextInt64());

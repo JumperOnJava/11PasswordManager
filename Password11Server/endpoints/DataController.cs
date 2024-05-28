@@ -39,8 +39,13 @@ public class DataController : ControllerBase
 
             var result = await Uploader.instance.Enqueue(reqUser).GetResult();
             if (result.Item1)
-                return result.Item2;
-            return BadRequest("Failed to update data on server");
+            {
+                return Accepted();
+            }
+            else
+            {
+                return BadRequest("Failed to update data on server");
+            }
         }
     }
 
