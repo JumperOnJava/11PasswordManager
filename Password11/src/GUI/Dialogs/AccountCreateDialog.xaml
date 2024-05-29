@@ -10,8 +10,8 @@
     mc:Ignorable="d"
 
     Background="Transparent">
-    <Grid>
-        <Grid Margin="0,-40,0,0" DataContext="{x:Bind model}" Background="Transparent" CornerRadius="8">
+    <Grid DataContext="{x:Bind model}">
+        <Grid Margin="0,-40,0,0"  Background="Transparent" CornerRadius="8">
             <Grid >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="220" />
@@ -41,7 +41,7 @@
                     <AppBarSeparator Height="5" />
                     <PasswordBox Password="{Binding Password,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
-                <StackPanel Grid.Column="2" DataContext="{Binding Account}">
+                <StackPanel Grid.Column="2" DataContext="{Binding Target}">
                     <ColorPicker
                         x:Name="ColorPickerRing"
                         ColorChanged="ColorPickerRing_ColorChanged"
@@ -74,6 +74,10 @@
                                 <Button Content="{Binding DisplayName}" Click="Button_Click"
                                         CommandParameter="{Binding }">
                                     <Button.Resources>
+                                        <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.AsWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.AsWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.AsWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/>
                                     </Button.Resources>
                                 </Button>
                             </Grid>
@@ -89,6 +93,10 @@
                                 <Button Content="{Binding DisplayName}" Click="Button_Click"
                                         CommandParameter="{Binding }">
                                     <Button.Resources>
+                                        <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.AsWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.AsWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.AsWinColor}"/>
+                                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/>
                                     </Button.Resources>
                                 </Button>
                             </Grid>

@@ -94,6 +94,11 @@
                                             <Button Content="{Binding DisplayName}" Click="ButtonBase_OnClick"
                                                     CommandParameter="{Binding}">
                                                 <Button.Resources>
+                                                    
+                                                    <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.AsWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.AsWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.AsWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/> 
                                                 </Button.Resources>
                                             </Button>
                                         </Grid>
@@ -110,6 +115,12 @@
                                             <Button Content="{Binding DisplayName}" HorizontalAlignment="Right"
                                                     Click="ButtonBase_OnClick" CommandParameter="{Binding}">
                                                 <Button.Resources>
+                                                             
+                                                    <SolidColorBrush x:Key="ButtonBackground" Color="{Binding TagColors.BaseColor.AsWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding TagColors.HoverColor.AsWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonForeground" Color="{Binding TagColors.SymbolColor.AsWinColor}"/>
+                                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black"/>                               
+
                                                 </Button.Resources>
                                             </Button>
                                         </Grid>

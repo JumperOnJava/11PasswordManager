@@ -88,7 +88,6 @@ public class Operation<T> : Operation
     /// <param name="successful"></param>
     public override void Finish(bool successful)
     {
-        base.Finish(successful);
         OnResult?.Invoke(successful, Target);
         OnResult = null;
     }

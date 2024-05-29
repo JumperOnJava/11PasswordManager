@@ -11,17 +11,7 @@ public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
         Path = filePath;
     }
 
-    [JsonIgnore]
-    public string Path
-    {
-        get
-        {
-            if (DisplayPath == null)
-                RequestPath();
-            return DisplayPath;
-        }
-        set => DisplayPath = value;
-    }
+    [JsonRequired] public string Path;
 
     public bool Save(byte[] data)
     {
@@ -48,13 +38,10 @@ public class FileByteLocation : ByteSaveLocation, LocationDisplayModel
 
     [JsonIgnore] public LocationDisplayModel Model => this;
 
-    [JsonIgnore] [field: JsonRequired] public string DisplayPath { get; private set; }
+    [JsonIgnore] public string DisplayPath => Path;
 
-    public string DisplayName => System.IO.Path.GetFileNameWithoutExtension(Path);
+    [JsonIgnore] public string DisplayName => System.IO.Path.GetFileNameWithoutExtension(Path);
 
     [JsonIgnore] public DateTime LastAccessTime => File.GetLastAccessTime(DisplayPath);
 
-    private void RequestPath()
-    {
-    }
 }

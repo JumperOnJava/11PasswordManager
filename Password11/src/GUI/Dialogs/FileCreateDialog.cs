@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using Password11.Datatypes;
-using Password11.StorageManager;
+using Password11.StorageManagers;
 using WinRT.Interop;
 
 namespace Password11.GUI.Dialogs;
 
-public sealed class FileCreateDialog : Operation<StorageManager.StorageManager>
+public sealed class FileCreateDialog : Operation<StorageManager>
 {
     public FileCreateDialog()
     {
@@ -36,6 +36,7 @@ public sealed class FileCreateDialog : Operation<StorageManager.StorageManager>
                 FinishSuccess(JsonFileStorageManager.CreateNew(new FileByteLocation(file.Path)));
             else
                 Finish(false);
+            FileOpenDialog._opening = false;
         }
         catch (Exception ex)
         {

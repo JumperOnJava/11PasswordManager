@@ -25,7 +25,7 @@ public sealed partial class MainWindow
         ContentFrame.Navigate(typeof(StartScreen), ContentFrame);
     }
 
-    public AppListPageModel Model { get; set; }
+    public AccountListPageModel Model { get; set; }
 
     private void SetRegionsForCustomTitleBar()
     {

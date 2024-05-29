@@ -10,11 +10,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Password11.Datatypes;
 using Password11.src.Util;
+using Password11.StorageManagers;
 using Password11Lib.Util;
 
 namespace Password11.ViewModel;
 
-public class AppListPageModel : PropertyChangable
+public class AccountListPageModel : PropertyChangable
 {
     private readonly bool initialized;
 
@@ -24,11 +25,11 @@ public class AppListPageModel : PropertyChangable
 
     public bool isPaneOpen = true;
 
-    private StorageManager.StorageManager manager;
+    private StorageManager manager;
 
     public SaveState saveState = SaveState.STATE_OK;
 
-    public AppListPageModel(StorageManager.StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
+    public AccountListPageModel(StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
     {
         onClose = closeCallback;
         manager = storageManager;
@@ -78,7 +79,7 @@ public class AppListPageModel : PropertyChangable
 
     public List<Tag> RawTags { get; } = new();
 
-    public void SetNewManager(StorageManager.StorageManager manager)
+    public void SetNewManager(StorageManager manager)
     {
         this.manager = manager;
         tasks.Clear();
@@ -95,7 +96,6 @@ public class AppListPageModel : PropertyChangable
 
     private void UpdateVisualTags()
     {
-        Save();
         RawTags.Clear();
         foreach (var uiTag in Tags)
         {
@@ -106,8 +106,8 @@ public class AppListPageModel : PropertyChangable
             };
             RawTags.Add(uiTag.Target);
         }
-
         FilterAccounts();
+        Save();
         onPropertyChanged(nameof(NoTagsSelected));
         onPropertyChanged(nameof(Accounts));
         onPropertyChanged(nameof(FilteredAccounts));

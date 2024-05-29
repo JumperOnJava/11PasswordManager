@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Password11.Datatypes;
 using Password11.GUI;
+using Password11.StorageManagers;
 using Password11.Util;
 using Password11.ViewModel;
 using CreateStorageDialog = Password11.GUI.Dialogs.CreateStorageDialog;
@@ -34,8 +35,8 @@ public sealed partial class StartScreen
         try
         {
             navigator = e.Parameter as Frame;
-            model = new StartScreenModel();
             AppSettings.GLOBAL.Load(this);
+            model = new StartScreenModel();
             
         }
         catch (InvalidCastException ex)
@@ -45,20 +46,12 @@ public sealed partial class StartScreen
     }
 
 
-    private async void OpenStorage(StorageManager.StorageManager storageManager)
+    private async void OpenStorage(StorageManager storageManager)
     {
         var tcs = new TaskCompletionSource<StorageData>();
 
-        var dialog = new DialogBuilder(this).Title($"Loading data from {storageManager.DisplayInfo.DisplayPath}")
-            .SecondaryButtonText("Cancel").AddSecondaryClickAction(
-                dialog =>
-                {
-                    tcs.SetCanceled();
-                    dialog.Hide();
-                }).Build();
-        dialog.ShowAsync();
         var dataTask = storageManager.GetData();
-        dataTask.ContinueWith(t =>
+        await dataTask.ContinueWith(t =>
         {
             if (t.IsCompletedSuccessfully)
             {
@@ -75,8 +68,6 @@ public sealed partial class StartScreen
             throw new Exception("Should not be here");
         });
 
-        await tcs.Task;
-        dialog.Hide();
 
         if (tcs.Task.IsFaulted || tcs.Task.Result == null)
         {
@@ -89,7 +80,7 @@ public sealed partial class StartScreen
         var data = tcs.Task.Result;
         model.History.Add(new StartScreenModelStoragePath(storageManager));
         navigator.Navigate(typeof(AccountsListPage),
-            new AppListPageModel(
+            new AccountListPageModel(
                 storageManager,
                 data,
                 () => { },
@@ -100,7 +91,7 @@ public sealed partial class StartScreen
 
     private async void OpenStorageWithSetup(object sender, RoutedEventArgs e)
     {
-        var storageManager = ((ButtonBase)sender).CommandParameter as StorageManager.StorageManager;
+        var storageManager = ((ButtonBase)sender).CommandParameter as StorageManager;
         if (!await storageManager.SetupManagerInGui(this))
         {
             storageManager.ResetOnFail();
@@ -149,14 +140,14 @@ public class StartScreenModel
 
 public class StartScreenModelStoragePath
 {
-    public StartScreenModelStoragePath(StorageManager.StorageManager manager)
+    public StartScreenModelStoragePath(StorageManager manager)
     {
         Manager = manager;
         Name = manager.DisplayInfo.DisplayName;
         DisplayTime = manager.DisplayInfo.LastAccessTime.ToString("hh:mm dd/MM/yy");
     }
 
-    public StorageManager.StorageManager Manager { get; }
+    public StorageManager Manager { get; }
     public string Name { get; }
     public string DisplayTime { get; set; }
     public string Path => Manager.DisplayInfo.DisplayPath;

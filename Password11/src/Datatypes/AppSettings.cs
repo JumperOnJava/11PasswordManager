@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Password11.Datatypes.Serializing;
 using Password11.Dialogs;
+using Password11.StorageManagers;
 
 namespace Password11.Datatypes;
 
@@ -15,7 +16,7 @@ public class AppSettings
     private AppSettings(string path)
     {
         this.path = path;
-        storageHistory = new List<StorageManager.StorageManager>();
+        storageHistory = new List<StorageManager>();
     }
 
     [JsonConstructor]
@@ -24,7 +25,8 @@ public class AppSettings
     }
 
     public static AppSettings GLOBAL { get; set; } = new("global_settings.json");
-    public List<StorageManager.StorageManager> storageHistory { get; set; }
+    [JsonRequired]
+    public List<StorageManager> storageHistory { get; set; }
 
     public void Load(StartScreen page)
     {
@@ -43,7 +45,7 @@ public class AppSettings
             storageHistory = target.storageHistory;
         }
 
-        storageHistory = new List<StorageManager.StorageManager>(storageHistory
+        storageHistory = new List<StorageManager>(storageHistory
             .GroupBy(s => s.DisplayInfo.DisplayPath)
             .Select(s => s.First())
             .ToList());
@@ -52,7 +54,7 @@ public class AppSettings
 
     public void Save()
     {
-        storageHistory = new List<StorageManager.StorageManager>(storageHistory.Distinct().ToList());
-        File.WriteAllText("global_settings.json", JsonTools.SerializeSmart(this));
+        storageHistory = new List<StorageManager>(storageHistory.Distinct().ToList());
+        File.WriteAllText(path, JsonTools.SerializeSmart(this));
     }
 }

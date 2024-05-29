@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Password11.Datatypes;
 using Password11.Dialogs;
 using Password11.src.Util;
-using Password11.StorageManager;
+using Password11.StorageManagers;
 using Password11.Util;
 using DatabaseSetupDialog = Password11.GUI.Dialogs.DatabaseSetupDialog;
 
@@ -17,7 +17,6 @@ internal class DatabaseDialogManager : DialogManager
     {
         this.variant = variant;
     }
-
 
     public override async void Start(Page parent)
     {

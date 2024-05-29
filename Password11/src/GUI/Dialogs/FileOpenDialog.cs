@@ -2,12 +2,12 @@ using System;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using Password11.Datatypes;
-using Password11.StorageManager;
+using Password11.StorageManagers;
 using WinRT.Interop;
 
 namespace Password11.GUI.Dialogs;
 
-public sealed class FileOpenDialog : Operation<StorageManager.StorageManager>
+public sealed class FileOpenDialog : Operation<StorageManager>
 {
     public static bool _opening;
 
@@ -40,6 +40,7 @@ public sealed class FileOpenDialog : Operation<StorageManager.StorageManager>
             if (file != null)
             {
                 FinishSuccess(new JsonFileStorageManager(new FileByteLocation(file.Path)));
+                _opening = false;
                 return;
             }
 

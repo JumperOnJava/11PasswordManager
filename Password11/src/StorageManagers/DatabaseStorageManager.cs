@@ -16,7 +16,7 @@ using Password11.Util;
 using Password11Lib.JsonModel;
 using Password11Lib.Util;
 
-namespace Password11.StorageManager;
+namespace Password11.StorageManagers;
 
 public class DatabaseStorageManager : StorageManager, LocationDisplayModel
 {

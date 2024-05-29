@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Password11.Datatypes;
 using Password11.Dialogs;
-using Password11.StorageManager;
+using Password11.StorageManagers;
 
 namespace Password11.GUI.Dialogs;
 

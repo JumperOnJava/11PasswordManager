@@ -8,7 +8,7 @@ using Password11.Dialogs;
 using Password11.GUI.Dialogs;
 using Password11.src.Util;
 
-namespace Password11.StorageManager;
+namespace Password11.StorageManagers;
 
 public class AesStorageManager : StorageManager
 {

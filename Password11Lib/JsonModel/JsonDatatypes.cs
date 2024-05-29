@@ -14,7 +14,6 @@ public class JsonUser
 public class JsonAccount
 {
     [Key] public long Id { get; set; }
-
     public List<long> Tags { get; set; } = new();
     public List<long> Fields { get; set; } = new();
 }

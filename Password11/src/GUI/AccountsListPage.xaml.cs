@@ -22,14 +22,14 @@ namespace Password11.GUI;
 
 public sealed partial class AccountsListPage : Page
 {
-    public static AppListPageModel Model;
+    public static AccountListPageModel Model;
 
     public AccountsListPage()
     {
         InitializeComponent();
     }
 
-    public AppListPageModel model
+    public AccountListPageModel model
     {
         get => Model;
         set => Model = value;
@@ -40,7 +40,7 @@ public sealed partial class AccountsListPage : Page
         base.OnNavigatedTo(e);
         try
         {
-            model = e.Parameter as AppListPageModel;
+            model = e.Parameter as AccountListPageModel;
             model.Accounts.CollectionChanged += (_, _) => Refilter();
         }
         catch (InvalidCastException ex)

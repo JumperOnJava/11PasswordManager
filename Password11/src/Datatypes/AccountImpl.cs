@@ -105,6 +105,6 @@ public class AccountImpl : Account
         if (Fields.ContainsKey(fieldName))
             Fields[fieldName].Data = data;
         else
-            Fields[fieldName] = new FieldData(false, fieldName, string.Empty, true);
+            Fields[fieldName] = new FieldData(false, fieldName, data, true);
     }
 }

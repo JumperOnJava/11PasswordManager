@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Password11.Datatypes;
 using Password11Lib.JsonModel;
+using System.Collections.Concurrent;
 
 namespace Password11Server;
 
@@ -12,10 +13,10 @@ public class Uploader
 
     public Uploader()
     {
-        this.Queue = new Queue<Task>();
+        this.Queue = new ConcurrentQueue<Task>();
     }
 
-    public Queue<Task> Queue { get; set; }
+    public ConcurrentQueue<Task> Queue { get; set; }
 
     public Operation<IActionResult> Enqueue(JsonUser reqUser)
     {
@@ -71,7 +72,6 @@ public class Uploader
                 reqUser.Fields.ForEach(e => db.Fields.Add(e));
                 db.Accounts.Add(reqAccount);
             }
-
             try
             {
                 accountQuery = db.Users.Where(user => user.Login == reqUser.Login)
@@ -95,8 +95,8 @@ public class Uploader
             catch (DbUpdateConcurrencyException)
             {
                 Console.WriteLine($"Failed - too fast");
-                operation.FinishSuccess(new StatusCodeResult(429));
-                return;
+                Action();
+                //operation.FinishSuccess(new StatusCodeResult(429));
             }
         }
 
@@ -107,10 +107,10 @@ public class Uploader
         else
         {
             Queue.Enqueue(new Task(Action));
-            while (Queue.Any())
+            while (Queue.TryDequeue(out var task))
             {
-                var task = Queue.Dequeue();
-                task.Start();
+                if(task!=null)
+                    task.Start();
                 Console.WriteLine($"Finished task #{++taskNum}");
             }
         }
