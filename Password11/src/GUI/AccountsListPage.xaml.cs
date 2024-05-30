@@ -238,8 +238,18 @@ public sealed partial class AccountsListPage : Page
             .AddPrimaryClickAction(dialog =>
             {
                 dialog.Hide();
-                CreateStorageDialog.CreateManager(this, Model.SetNewManager);
+                SaveToNewManager();
             })
             .SecondaryButtonText("Ignore").AddPrimaryClickAction(dialog => { dialog.Hide(); }).Build().ShowAsync();
+    }
+
+    private void SaveToNewManager()
+    {
+        CreateStorageDialog.CreateManager(this, Model.SetNewManager);
+    }
+
+    private void OnSaveAsButtonClick(object sender, RoutedEventArgs e)
+    {
+        SaveToNewManager();
     }
 }

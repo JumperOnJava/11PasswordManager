@@ -9,7 +9,7 @@
     xmlns:viewModel1="using:Password11.ViewModel"
     mc:Ignorable="d"
     Background="Transparent">
-    <Grid>
+    <Grid DataContext="{x:Bind model}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="WideStateState">
@@ -29,13 +29,15 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid Margin="0,-40,0,0" x:Name="AppTitleBar" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <MenuBar Name="menuBar_main">
+            <MenuBar>
                 <MenuBarItem Title="File">
+                    <MenuFlyoutItem Text="Save as" Click="OnSaveAsButtonClick" />
                     <MenuFlyoutItem Text="Close storage" Click="ExitButton" />
                 </MenuBarItem>
             </MenuBar>
+            <TextBlock Margin="0,12,0,0" DataContext="{Binding Manager, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Text="{Binding DisplayInfo.DisplayName}"/>
         </Grid>
-        <Grid DataContext="{x:Bind model}" Padding="0,0,8,8">
+        <Grid Padding="0,0,8,8">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>

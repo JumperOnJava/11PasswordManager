@@ -11,9 +11,6 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
     <Grid x:Name="RootGrid">
-        <Grid Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Margin="10,10,10,10">Password11 manager</TextBlock>
-        </Grid>
         <Grid>
             <Frame x:Name="ContentFrame" Padding="0,40,0,0">
                 <Frame.ContentTransitions>

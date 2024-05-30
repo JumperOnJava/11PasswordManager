@@ -25,14 +25,14 @@ public class AccountListPageModel : PropertyChangable
 
     public bool isPaneOpen = true;
 
-    private StorageManager manager;
+    public StorageManager Manager { get; private set; }
 
     public SaveState saveState = SaveState.STATE_OK;
 
     public AccountListPageModel(StorageManager storageManager, StorageData data, Action closeCallback, Frame navigator)
     {
         onClose = closeCallback;
-        manager = storageManager;
+        Manager = storageManager;
         Navigator = navigator;
 
         data.Tags.Select(tag => new UiTag(tag)).ToList().ForEach(Tags.Add);
@@ -81,9 +81,10 @@ public class AccountListPageModel : PropertyChangable
 
     public void SetNewManager(StorageManager manager)
     {
-        this.manager = manager;
+        this.Manager = manager;
+        onPropertyChanged(nameof(this.Manager));
         tasks.Clear();
-        AppSettings.GLOBAL.storageHistory.Add(this.manager);
+        AppSettings.GLOBAL.storageHistory.Add(this.Manager);
         AppSettings.GLOBAL.Save();
         Save();
     }
@@ -122,7 +123,7 @@ public class AccountListPageModel : PropertyChangable
         var newStorage = new StorageData();
         newStorage.Accounts = Accounts.Select(a => a.Target.CloneRef()).ToList();
         newStorage.Tags = Tags.Select(a => a.Target.CloneRef()).ToList();
-        EnqueueSave(manager.SetData(newStorage));
+        EnqueueSave(Manager.SetData(newStorage));
     }
 
     private Queue<Task> tasks = new();
