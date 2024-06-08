@@ -61,7 +61,7 @@ public class DatabaseSetupDialogModel : PropertyChangable
     private string login;
     private string password;
     public string passwordRepeat;
-    public Visibility isDoubleInput => HasSecondField ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility SecondFieldVisible => HasSecondField ? Visibility.Visible : Visibility.Collapsed;
 
     public string Password
     {
